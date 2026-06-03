@@ -1,0 +1,2573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>War Room Assistant</title>
+  <style>
+    :root {
+      --bg: #0f1220;
+      --panel: rgba(18, 22, 38, 0.92);
+      --panel-strong: #171d31;
+      --text: #f4f7fb;
+      --muted: #aab5cc;
+      --accent: #f4c84a;
+      --accent-2: #4ed0ff;
+      --green: rgba(46, 204, 113, 0.24);
+      --green-border: rgba(46, 204, 113, 0.78);
+      --yellow: rgba(244, 200, 74, 0.38);
+      --yellow-border: rgba(244, 200, 74, 0.95);
+      --red: rgba(231, 76, 60, 0.38);
+      --red-border: rgba(231, 76, 60, 0.95);
+      --shadow: 0 18px 60px rgba(0, 0, 0, 0.42);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(78, 208, 255, 0.16), transparent 34%),
+        radial-gradient(circle at 80% 0%, rgba(244, 200, 74, 0.14), transparent 32%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      overflow: hidden;
+      user-select: none;
+    }
+
+    button,
+    input,
+    label {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      color: var(--text);
+      background: linear-gradient(180deg, #27304d, #1a2138);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 22px rgba(0, 0, 0, 0.28);
+      cursor: pointer;
+      transition: transform 0.14s ease, filter 0.14s ease, border-color 0.14s ease;
+    }
+
+    button:hover {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .app {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .view {
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    .home-view {
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    .home-card {
+      width: min(960px, calc(100vw - 48px));
+      padding: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(23, 29, 49, 0.96), rgba(12, 16, 31, 0.96));
+      box-shadow: var(--shadow);
+    }
+
+    .home-title {
+      margin: 0 0 8px;
+      font-size: clamp(34px, 5vw, 64px);
+      letter-spacing: 0.02em;
+      line-height: 1;
+    }
+
+    .home-subtitle {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .option-panel,
+    .placeholder-card {
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .option-panel h2,
+    .placeholder-card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+      color: #ffffff;
+    }
+
+    .radio-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .radio-card {
+      position: relative;
+      display: flex;
+      flex: 1 1 180px;
+      gap: 10px;
+      align-items: center;
+      min-height: 58px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.18);
+      cursor: pointer;
+    }
+
+    .radio-card input {
+      accent-color: var(--accent);
+      transform: scale(1.15);
+    }
+
+    .radio-card:has(input:checked) {
+      border-color: rgba(244, 200, 74, 0.9);
+      background: rgba(244, 200, 74, 0.12);
+      box-shadow: 0 0 0 1px rgba(244, 200, 74, 0.22) inset;
+    }
+
+    .home-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .home-actions button,
+    .placeholder-actions button {
+      min-height: 54px;
+      padding: 0 22px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .primary-button {
+      color: #171103;
+      background: linear-gradient(180deg, #ffe18a, #f4b83f);
+    }
+
+    .danger-button {
+      background: linear-gradient(180deg, #7a2632, #4b1620);
+    }
+
+    .home-note {
+      margin: 18px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .battle-view,
+    .placeholder-view {
+      flex-direction: column;
+      background: #080b14;
+    }
+
+    .toolbar {
+      z-index: 20;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      min-height: 76px;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(9, 12, 22, 0.96);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    .toolbar button {
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 700;
+    }
+
+    .toolbar-spacer {
+      flex: 1 1 auto;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .status-pill strong {
+      margin-left: 6px;
+      color: #fff;
+    }
+
+    .input-status {
+      border-color: rgba(244, 200, 74, 0.4);
+      color: #fff5c6;
+    }
+
+    .battle-view {
+      --battle-board-height-offset: 400px;
+    }
+
+    .battle-view.control-panel-collapsed {
+      --battle-board-height-offset: 150px;
+    }
+
+    .battle-control-panel {
+      z-index: 12;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 0 8px 6px;
+      padding: 5px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-top: 0;
+      border-radius: 0 0 14px 14px;
+      background: rgba(11, 15, 27, 0.96);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.26);
+    }
+
+    .battle-control-panel.collapsed .battle-control-body {
+      display: none;
+    }
+
+    .battle-control-header {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 26px;
+    }
+
+    .battle-control-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .battle-actions,
+    .roll-result-panel,
+    .roll-summary-panel {
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .battle-actions {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .battle-action-row,
+    .battle-roll-row {
+      display: flex;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .battle-action-row {
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .battle-roll-row {
+      justify-content: center;
+      width: 40%;
+      min-width: 360px;
+    }
+
+    .battle-roll-row .dice-group-button {
+      flex: 1 1 0;
+      width: auto;
+    }
+
+    .battle-action-row .battle-action-button {
+      width: auto;
+    }
+
+    .battle-actions-title {
+      color: #ffe08a;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .roll-result-row {
+      display: flex;
+      gap: 6px;
+      min-width: 0;
+      overflow-x: auto;
+    }
+
+    .roll-result-panel {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) minmax(330px, 1.15fr);
+      grid-template-rows: auto auto;
+      gap: 6px 12px;
+      flex: 1 0 610px;
+      min-width: 610px;
+      align-items: stretch;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 4px 5px;
+      transition: border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .roll-result-panel[data-side="allied"] .roll-result-grid {
+      grid-column: 2;
+    }
+
+    .roll-result-panel[data-side="allied"] .roll-summary {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .roll-summary-row {
+      display: none;
+    }
+
+    .dice-group-button,
+    .battle-action-button {
+      flex: 0 0 auto;
+      min-width: 0;
+      min-height: 28px;
+      padding: 0 12px;
+      border-radius: 9px;
+      color: #171103;
+      background: linear-gradient(180deg, #ffe18a, #f4b83f);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .dice-group-button.completed {
+      background: linear-gradient(180deg, #b8f58f, #60cc60);
+    }
+
+    .battle-action-button.secondary {
+      color: #fff;
+      background: linear-gradient(180deg, #34405f, #202943);
+    }
+
+    .battle-action-button.danger {
+      color: #fff;
+      background: linear-gradient(180deg, #7a2632, #4b1620);
+    }
+
+    .battle-control-toggle {
+      flex: 0 0 auto;
+      min-width: 86px;
+      min-height: 30px;
+    }
+
+    .roll-result-panel.force-advantage,
+    .dice-card.force-advantage {
+      border-color: rgba(244, 200, 74, 0.95);
+      background: linear-gradient(180deg, rgba(244, 200, 74, 0.16), rgba(255, 255, 255, 0.04));
+      box-shadow: 0 0 0 1px rgba(244, 200, 74, 0.30) inset, 0 0 18px rgba(244, 200, 74, 0.18);
+    }
+
+    .advantage-control-row {
+      display: flex;
+      grid-column: 1 / -1;
+      align-items: center;
+      gap: 8px;
+      min-height: 24px;
+      margin-bottom: 0;
+    }
+
+    .roll-result-panel[data-side="axis"] .advantage-control-row {
+      justify-content: flex-end;
+    }
+
+    .roll-result-panel[data-side="allied"] .advantage-control-row {
+      justify-content: flex-start;
+    }
+
+    .port-advantage-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(78, 208, 255, 0.12);
+      color: #d9f5ff;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .port-advantage-toggle.disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    .port-advantage-toggle input {
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      accent-color: var(--accent-2);
+    }
+
+    .force-advantage-badge,
+    .dice-advantage-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      padding: 3px 9px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.28);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .force-advantage-badge {
+      margin-bottom: 0;
+    }
+
+    .force-advantage-badge.active,
+    .dice-advantage-tag.active {
+      border-color: rgba(244, 200, 74, 0.95);
+      background: rgba(244, 200, 74, 0.20);
+      color: #ffe08a;
+    }
+
+    .force-advantage-badge.warning,
+    .dice-advantage-tag.warning {
+      border-color: rgba(231, 76, 60, 0.68);
+      background: rgba(231, 76, 60, 0.16);
+      color: #ffd3ce;
+    }
+
+    .force-advantage-badge.neutral,
+    .dice-advantage-tag.neutral {
+      color: var(--muted);
+    }
+
+    .roll-result-panel h3,
+    .roll-summary-panel h3,
+    .dice-side-panel h3 {
+      margin: 0 0 5px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .roll-result-grid {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(34px, 1fr));
+      grid-auto-rows: minmax(34px, 1fr);
+      gap: 4px;
+      min-height: 110px;
+      align-content: start;
+      justify-content: stretch;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .dice-empty {
+      grid-column: 1 / -1;
+      grid-row: 1 / -1;
+      align-self: center;
+      justify-self: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .die-token {
+      width: 100%;
+      max-width: clamp(26px, 2.4vw, 36px);
+      aspect-ratio: 1 / 1;
+      height: auto;
+      align-self: center;
+      justify-self: center;
+      will-change: transform;
+    }
+
+    .die-token img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.65));
+      pointer-events: none;
+    }
+
+    .die-token.rolling {
+      animation: diceJitter 90ms linear infinite;
+    }
+
+    @keyframes diceJitter {
+      0% { transform: translateY(0) rotate(0deg) scale(1); }
+      50% { transform: translateY(-1px) rotate(8deg) scale(1.08); }
+      100% { transform: translateY(0) rotate(-7deg) scale(1); }
+    }
+
+    .battle-main-layout {
+      display: grid;
+      grid-template-columns: 174px minmax(0, 1fr) 174px;
+      gap: 8px;
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 8px;
+      overflow: hidden;
+    }
+
+    .dice-side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      overflow: auto;
+    }
+
+    .dice-card {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .dice-card:not(.compact) {
+      padding: 12px;
+      border-radius: 16px;
+    }
+
+    .dice-card.compact {
+      padding: 6px;
+      opacity: 0.94;
+    }
+
+    .dice-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 7px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .dice-card.compact .dice-card-header {
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .dice-count-large {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      min-height: 54px;
+      padding: 5px 6px;
+      border-radius: 13px;
+      background: rgba(0, 0, 0, 0.34);
+      color: #ffe08a;
+      font-size: 42px;
+      font-weight: 950;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .dice-card.compact .dice-count-large {
+      min-height: 32px;
+      font-size: 25px;
+    }
+
+    .dice-count-large small {
+      margin-left: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .dice-card.compact .dice-count-large small {
+      font-size: 11px;
+    }
+
+    .dice-summary,
+    .dice-total-summary,
+    .roll-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .roll-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-content: center;
+      align-self: center;
+      justify-items: stretch;
+      gap: 10px 12px;
+      width: min(100%, 560px);
+      min-width: 0;
+      margin-top: 0;
+      font-size: 42px;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .roll-result-panel[data-side="axis"] .roll-summary {
+      justify-self: end;
+      padding-right: 4px;
+    }
+
+    .roll-result-panel[data-side="allied"] .roll-summary {
+      justify-self: start;
+      padding-left: 4px;
+    }
+
+    .dice-color-count {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+      padding: 3px 7px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.24);
+      white-space: nowrap;
+    }
+
+    .roll-summary .dice-color-count {
+      justify-content: center;
+      gap: 0.34em;
+      min-width: 0;
+      min-height: 0;
+      padding: 0.22em 0.42em;
+      border-radius: 0.52em;
+      font-size: inherit;
+      line-height: 1;
+    }
+
+    .roll-summary .dice-color-count.black {
+      grid-column: 2;
+    }
+
+    .roll-summary .dice-color-count.white {
+      grid-column: 3;
+    }
+
+    .dice-count-number.red { color: #ff6a62; }
+    .dice-count-number.green { color: #65e690; }
+    .dice-count-number.blue { color: #66c3ff; }
+    .dice-count-number.yellow { color: #ffe070; }
+    .dice-count-number.black { color: #d7d7d7; }
+    .dice-count-number.white { color: #ffffff; }
+
+    .dice-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+    }
+
+    .roll-summary .dice-dot {
+      flex: 0 0 auto;
+      width: 0.9em;
+      height: 0.9em;
+    }
+
+    .dice-dot.red { background: #d6342c; }
+    .dice-dot.green { background: #36b96c; }
+    .dice-dot.blue { background: #3292d4; }
+    .dice-dot.yellow { background: #f1c84b; }
+    .dice-dot.black { background: #141414; }
+    .dice-dot.white { background: #f5f5ef; }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .board-stage {
+      position: relative;
+      display: flex;
+      flex: 1 1 auto;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .board-frame {
+      position: relative;
+      width: min(100%, calc((100vh - var(--battle-board-height-offset)) * 1940 / 1230));
+      aspect-ratio: 1940 / 1230;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #111;
+      box-shadow: var(--shadow);
+    }
+
+    .board-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #080808;
+      pointer-events: none;
+    }
+
+    .board-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    .hot-zone {
+      position: absolute;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid rgba(78, 208, 255, 0.45);
+      border-radius: 4px;
+      background: rgba(10, 18, 36, 0.82);
+      color: #fff;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .hot-zone.debug {
+      border-color: rgba(78, 208, 255, 0.55);
+      background: rgba(10, 18, 36, 0.82);
+    }
+
+    .hot-zone.has-value {
+      border-color: rgba(46, 204, 113, 0.7);
+      background: rgba(14, 32, 24, 0.88);
+    }
+
+    .hot-zone.active,
+    .hot-zone.debug.active {
+      z-index: 3;
+      border-color: var(--yellow-border);
+      background: rgba(50, 42, 10, 0.92);
+      box-shadow: 0 0 14px rgba(244, 200, 74, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    }
+
+    .hot-zone.invalid,
+    .hot-zone.debug.invalid {
+      border-color: var(--red-border);
+      background: rgba(60, 14, 14, 0.88);
+    }
+
+    .count-badge {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #fff;
+      font-size: clamp(12px, 2.8vw, 42px);
+      font-weight: 950;
+      line-height: 1;
+      text-align: center;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+    }
+
+    .hot-zone.has-value .count-badge {
+      color: #b8ffd0;
+    }
+
+    .hot-zone.active .count-badge {
+      color: #ffe08a;
+    }
+
+    .hot-zone:not(.has-value):not(.debug) .count-badge {
+      display: none;
+    }
+
+    .zone-debug-label {
+      position: absolute;
+      inset: 2px;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1px;
+      padding: 2px;
+      color: rgba(255, 255, 255, 0.94);
+      font-size: clamp(7px, 0.62vw, 10px);
+      line-height: 1.05;
+      text-shadow: 0 1px 2px #000;
+      pointer-events: none;
+    }
+
+    .zone-debug-label .coords {
+      color: #d6ffd9;
+      font-size: 0.88em;
+    }
+
+    .nation-control {
+      position: absolute;
+      z-index: 7;
+      display: grid;
+      grid-template-rows: 1fr 0.72fr 1fr;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.58);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.40);
+    }
+
+    .nation-control.active {
+      border-color: rgba(244, 200, 74, 0.92);
+      box-shadow: 0 0 16px rgba(244, 200, 74, 0.42), 0 8px 24px rgba(0, 0, 0, 0.42);
+    }
+
+    .nation-control button {
+      width: 100%;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      color: #fff;
+      font-size: clamp(6px, 0.62vw, 11px);
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 1px 2px #000;
+    }
+
+    .nation-control button:hover {
+      transform: none;
+      filter: brightness(1.2);
+    }
+
+    .nation-control .mode-air {
+      background: rgba(78, 208, 255, 0.24);
+    }
+
+    .nation-control .mode-all {
+      background: rgba(244, 200, 74, 0.22);
+      color: #fff4bc;
+      font-size: clamp(7px, 0.72vw, 12px);
+    }
+
+    .nation-control .mode-land {
+      background: rgba(46, 204, 113, 0.22);
+    }
+
+    .battle-info {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 40;
+      width: min(420px, calc(100vw - 32px));
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      background: rgba(7, 10, 18, 0.82);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.42);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      pointer-events: none;
+    }
+
+    .battle-info strong {
+      color: #fff;
+    }
+
+    .battle-info .warning {
+      color: #ffe08a;
+    }
+
+    .placeholder-view {
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+    }
+
+    .placeholder-card {
+      width: min(720px, calc(100vw - 48px));
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .placeholder-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .placeholder-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        overflow: auto;
+      }
+
+      .app {
+        min-height: 100vh;
+        height: auto;
+      }
+
+      .home-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .battle-view.active {
+        min-height: 100vh;
+      }
+
+      .toolbar {
+        min-height: auto;
+      }
+
+      .battle-view {
+        --battle-board-height-offset: 520px;
+      }
+
+      .battle-view.control-panel-collapsed {
+        --battle-board-height-offset: 164px;
+      }
+
+      .battle-control-panel {
+        padding: 8px;
+      }
+
+      .battle-control-header {
+        min-width: 0;
+      }
+
+      .battle-actions {
+        overflow-x: auto;
+      }
+
+      .roll-result-row,
+      .roll-summary-row {
+        display: flex;
+        overflow-x: auto;
+      }
+
+      .roll-result-panel,
+      .roll-summary-panel {
+        flex: 0 0 760px;
+      }
+
+      .battle-main-layout {
+        grid-template-columns: 136px minmax(480px, 1fr) 136px;
+        overflow-x: auto;
+      }
+
+      .dice-count-large {
+        font-size: 28px;
+      }
+
+      .board-frame {
+        width: min(640px, calc(100vw - 12px));
+      }
+
+      .battle-info {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="view-home" class="view home-view" aria-labelledby="home-title">
+      <div class="home-card">
+        <h1 id="home-title" class="home-title">War Room Assistant</h1>
+        <p class="home-subtitle">桌面共用战斗辅助终端 · Phase 1</p>
+
+        <div class="home-grid">
+          <section class="option-panel" aria-labelledby="battle-mode-title">
+            <h2 id="battle-mode-title">战斗模式</h2>
+            <div class="radio-row">
+              <label class="radio-card">
+                <input type="radio" name="battleMode" value="normal">
+                <span>完整战斗模式</span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="battleMode" value="quick">
+                <span>快速战斗模式</span>
+              </label>
+            </div>
+          </section>
+
+          <section class="option-panel" aria-labelledby="battle-type-title">
+            <h2 id="battle-type-title">战场类型</h2>
+            <div class="radio-row">
+              <label class="radio-card">
+                <input type="radio" name="battleType" value="land">
+                <span>陆战</span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="battleType" value="sea">
+                <span>海战</span>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <div class="home-actions">
+          <button id="startBattleButton" class="primary-button" type="button">开始新战斗</button>
+          <button id="continueBattleButton" type="button">继续上次战斗</button>
+          <button id="clearSaveButton" class="danger-button" type="button">清空存档</button>
+          <button data-show-view="round" type="button">Round 占位</button>
+          <button data-show-view="stress" type="button">Stress 占位</button>
+        </div>
+
+        <p class="home-note">
+          当前阶段实现首页、战斗页面框架、Battle Board Mapping Tool、单位快速录入与基础骰子辅助。完整战斗结算、压力系统与回合系统暂不开发。
+        </p>
+      </div>
+    </section>
+
+    <section id="view-battle" class="view battle-view" aria-labelledby="battle-title">
+      <header class="toolbar">
+        <button data-show-view="home" type="button">← 首页</button>
+        <button data-show-view="round" type="button">Round</button>
+        <button data-show-view="stress" type="button">Stress</button>
+        <span class="status-pill">模式 <strong id="battleModeStatus">完整战斗</strong></span>
+        <span class="status-pill">战场 <strong id="battleTypeStatus">陆战</strong></span>
+        <span id="inputModeStatus" class="status-pill input-status">输入模式：关闭</span>
+        <span class="toolbar-spacer"></span>
+        <button id="debugToggleButton" type="button">Mapping Tool: ON</button>
+        <button id="exitInputModeButton" type="button">退出输入模式</button>
+      </header>
+
+      <div id="battleControlPanel" class="battle-control-panel" aria-label="Battle Control Panel">
+        <div class="battle-control-header">
+          
+          <div class="battle-action-row" aria-label="战斗控制按钮">
+            <span class="battle-actions-title">控制面板</span>
+              <button id="restartBattleButton" class="battle-action-button secondary" type="button">重新本场战斗</button>
+              <button id="newBattleInBattleButton" class="battle-action-button danger" type="button">新战斗</button>
+          </div>
+          <button id="toggleBattleControlPanelButton" class="battle-action-button secondary battle-control-toggle" type="button" aria-expanded="true" aria-controls="battleControlPanelBody">收起</button>
+        </div>
+
+        <div id="battleControlPanelBody" class="battle-control-body">
+          <div class="battle-actions" aria-label="阶段掷骰按钮">
+            
+            <div class="battle-roll-row" aria-label="掷骰按钮">
+              <button class="dice-group-button" data-dice-roll-group="airBattle" type="button">空战</button>
+              <button class="dice-group-button" data-dice-roll-group="surfaceBattle" type="button">地面战</button>
+              <button id="strategicRollButton" class="dice-group-button" data-dice-roll-group="strategicBombing" type="button">战略轰炸</button>
+            </div>
+          </div>
+
+          <div class="roll-result-row" aria-label="实体骰子结果">
+            <section class="roll-result-panel" data-side="axis" aria-label="轴心国实体骰子结果">
+              <div class="advantage-control-row">
+                <div id="axisForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
+                <label class="port-advantage-toggle is-hidden">
+                  <input data-port-advantage-side="axis" type="checkbox">
+                  <span>港口优势</span>
+                </label>
+              </div>
+              <div id="axisRollResults" class="roll-result-grid" aria-live="polite"></div>
+              <div id="axisRollSummary" class="roll-summary" aria-label="Axis 最近掷骰统计"></div>
+            </section>
+
+            <section class="roll-result-panel" data-side="allied" aria-label="同盟国实体骰子结果">
+              <div class="advantage-control-row">
+                <div id="alliedForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
+                <label class="port-advantage-toggle is-hidden">
+                  <input data-port-advantage-side="allied" type="checkbox">
+                  <span>港口优势</span>
+                </label>
+              </div>
+              <div id="alliedRollResults" class="roll-result-grid" aria-live="polite"></div>
+              <div id="alliedRollSummary" class="roll-summary" aria-label="Allied 最近掷骰统计"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div class="battle-main-layout">
+        <aside class="dice-side-panel axis-panel" aria-label="Axis Dice Summary">
+          <h3>轴心国</h3>
+          <section class="dice-card" data-dice-area="axis_air" aria-labelledby="axis-air-dice-title">
+            <div id="axis-air-dice-title" class="dice-card-header">空战骰</div>
+            <div id="axis_airDiceCount" class="dice-count-large">0<small>骰</small></div>
+            <div id="axis_airDiceSummary" class="dice-summary"></div>
+          </section>
+          <section class="dice-card" data-dice-area="axis_surface" aria-labelledby="axis-surface-dice-title">
+            <div id="axis-surface-dice-title" class="dice-card-header"><span data-dice-title-text>地面战骰</span><span id="axisForceAdvantageCardBadge" class="dice-advantage-tag neutral"></span></div>
+            <div id="axis_surfaceDiceCount" class="dice-count-large">0<small>骰</small></div>
+            <div id="axis_surfaceDiceSummary" class="dice-summary"></div>
+          </section>
+          <section class="dice-card compact" data-dice-area="axis_strategic" aria-labelledby="axis-strategic-dice-title">
+            <div id="axis-strategic-dice-title" class="dice-card-header">战略轰炸</div>
+            <div id="axis_strategicDiceCount" class="dice-count-large">0<small>骰</small></div>
+            <div id="axis_strategicDiceSummary" class="dice-summary"></div>
+          </section>
+        </aside>
+
+        <div class="board-stage">
+          <div id="boardFrame" class="board-frame" aria-label="Battle Board">
+            <img id="boardImage" class="board-image" src="assets/land.jpg" alt="War Room Battle Board">
+            <div id="boardOverlay" class="board-overlay" aria-label="Battle Board Overlay"></div>
+            <aside id="battleInfo" class="battle-info">
+              <strong>Mapping Tool</strong><br>
+              <span id="hoverInfo">悬停热区可查看 id、X/Y/W/H、当前值。</span><br>
+              <span id="boardHint" class="warning">所有坐标均为 0-1 百分比坐标；当前为初始校准版。</span>
+            </aside>
+          </div>
+        </div>
+
+        <aside class="dice-side-panel allied-panel" aria-label="Allied Dice Summary">
+          <h3>同盟国</h3>
+          <section class="dice-card" data-dice-area="allied_air" aria-labelledby="allied-air-dice-title">
+            <div id="allied-air-dice-title" class="dice-card-header">空战骰</div>
+            <div id="allied_airDiceCount" class="dice-count-large">0<small>骰</small></div>
+            <div id="allied_airDiceSummary" class="dice-summary"></div>
+          </section>
+          <section class="dice-card" data-dice-area="allied_surface" aria-labelledby="allied-surface-dice-title">
+            <div id="allied-surface-dice-title" class="dice-card-header"><span data-dice-title-text>地面战骰</span><span id="alliedForceAdvantageCardBadge" class="dice-advantage-tag neutral"></span></div>
+            <div id="allied_surfaceDiceCount" class="dice-count-large">0<small>骰</small></div>
+            <div id="allied_surfaceDiceSummary" class="dice-summary"></div>
+          </section>
+          <section class="dice-card compact" data-dice-area="allied_strategic" aria-labelledby="allied-strategic-dice-title">
+            <div id="allied-strategic-dice-title" class="dice-card-header">战略轰炸</div>
+            <div id="allied_strategicDiceCount" class="dice-count-large">0<small>骰</small></div>
+            <div id="allied_strategicDiceSummary" class="dice-summary"></div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section id="view-round" class="view placeholder-view" aria-labelledby="round-title">
+      <div class="placeholder-card">
+        <h2 id="round-title">Round 回合系统</h2>
+        <p>Phase 1 暂不开发回合结算。这里保留页面结构，后续仍通过 <strong>showView()</strong> 切换。</p>
+        <div class="placeholder-actions">
+          <button data-show-view="home" type="button">返回首页</button>
+          <button data-show-view="battle" type="button">进入战斗页面</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-stress" class="view placeholder-view" aria-labelledby="stress-title">
+      <div class="placeholder-card">
+        <h2 id="stress-title">Stress 压力系统</h2>
+        <p>Phase 1 暂不开发压力与勋章管理。这里保留页面结构，后续仍通过 <strong>showView()</strong> 切换。</p>
+        <div class="placeholder-actions">
+          <button data-show-view="home" type="button">返回首页</button>
+          <button data-show-view="battle" type="button">进入战斗页面</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'warroomAssistantState.v1';
+
+    const DEFAULT_STATE = {
+      battleMode: 'normal',
+      battleType: 'land',
+      nations: {},
+      battleBoard: {},
+      dice: {
+        axis_air: { count: 0, results: [] },
+        axis_strategic: { count: 0, results: [] },
+        axis_surface: { count: 0, results: [] },
+        allied_air: { count: 0, results: [] },
+        allied_strategic: { count: 0, results: [] },
+        allied_surface: { count: 0, results: [] }
+      },
+      ui: {
+        currentView: 'home',
+        debugMode: true,
+        controlPanelCollapsed: false,
+        inputMode: null,
+        activeZoneId: null,
+        activeRollGroup: null,
+        portAdvantage: {
+          axis: false,
+          allied: false
+        },
+        completedRolls: {
+          airBattle: false,
+          surfaceBattle: false,
+          strategicBombing: false
+        }
+      }
+    };
+
+    // 所有 Battle Board 校准值集中在这里，数值均为 0-1 百分比。
+    const BOARD_LAYOUT_CONFIG = {
+      nationColumns: {
+        land: {
+          germany: 0.28,
+          japan: 0.336,
+          italy: 0.395,
+          uk: 0.59,
+          soviet: 0.645,
+          usa: 0.7,
+          china: 0.755
+        },
+        sea: {
+          germany: 0.277,
+          japan: 0.334,
+          italy: 0.393,
+          uk: 0.607,
+          soviet: 0.664,
+          usa: 0.723,
+          china: 1.2
+        }
+      },
+      zoneWidth: {
+        land: 0.055,
+        sea: 0.05
+      },
+      nationControl: {
+        widthScale: 1,
+        height: 0.1,
+        position: {
+          land: {
+            top: {
+              axis: 0.365,
+              allied: 0.365
+            }
+          },
+          sea: {
+            top: {
+              axis: 0.28,
+              allied: 0.28
+            }
+          }
+        }
+      },
+      stanceRows: {
+        land: {
+          bomberStrategic: { y: 0.03, h: 0.08 },
+          bomberAirGround: { y: 0.115, h: 0.08 },
+          fighterAir: { y: 0.2, h: 0.08 },
+          fighterGround: { y: 0.28, h: 0.08 },
+          armorDefensive: { y: 0.47, h: 0.08 },
+          armorOffensive: { y: 0.55, h: 0.08 },
+          artilleryAntiAir: { y: 0.635, h: 0.08 },
+          artilleryGround: { y: 0.715, h: 0.08 },
+          infantryDefensive: { y: 0.8, h: 0.085 },
+          infantryOffensive: { y: 0.885, h: 0.085 }
+        },
+        sea: {
+          bomberSea: { y: 0.025, h: 0.08 },
+          fighterAir: { y: 0.105, h: 0.085 },
+          fighterSurface: { y: 0.19, h: 0.085 },
+          battleshipAntiAir: { y: 0.383, h: 0.08 },
+          battleshipOffensive: { y: 0.462, h: 0.083 },
+          carrierAntiAir: { y: 0.545, h: 0.085 },
+          carrierOffensive: { y: 0.630, h: 0.08 },
+          cruiserEscort: { y: 0.715, h: 0.085 },
+          cruiserOffensive: { y: 0.8, h: 0.08 },
+          submarine: { y: 0.885, h: 0.08 }
+        }
+      }
+    };
+
+    const NATIONS = [
+      { id: 'germany', label: 'Germany', short: 'GER', side: 'axis' },
+      { id: 'japan', label: 'Imperial Japan', short: 'JPN', side: 'axis' },
+      { id: 'italy', label: 'Italy', short: 'ITA', side: 'axis' },
+      { id: 'uk', label: 'British Commonwealth', short: 'UK', side: 'allied' },
+      { id: 'soviet', label: 'Soviet Union', short: 'USSR', side: 'allied' },
+      { id: 'usa', label: 'United States', short: 'USA', side: 'allied' },
+      { id: 'china', label: 'China', short: 'CHN', side: 'allied' }
+    ];
+
+    const BOARD_CONFIGS = {
+      land: {
+        surfaceLabel: 'Land Dice',
+        surfaceModeLabel: 'LAND',
+        stances: [
+          { id: 'bomberStrategic', unit: 'Bomber', label: 'Bomber Strategic', group: 'air', airDice: 1, surfaceDice: 0, strategicDice: 4, ...BOARD_LAYOUT_CONFIG.stanceRows.land.bomberStrategic },
+          { id: 'bomberAirGround', unit: 'Bomber', label: 'Bomber Air/Ground', group: 'air', airDice: 1, surfaceDice: 4, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.bomberAirGround },
+          { id: 'fighterAir', unit: 'Fighter', label: 'Fighter Air', group: 'air', airDice: 3, surfaceDice: 0, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.fighterAir },
+          { id: 'fighterGround', unit: 'Fighter', label: 'Fighter Ground', group: 'air', airDice: 0, surfaceDice: 3, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.fighterGround },
+          { id: 'armorDefensive', unit: 'Armor', label: 'Armor Defensive', group: 'land', airDice: 1, surfaceDice: 2, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.armorDefensive },
+          { id: 'armorOffensive', unit: 'Armor', label: 'Armor Offensive', group: 'land', airDice: 0, surfaceDice: 4, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.armorOffensive },
+          { id: 'artilleryAntiAir', unit: 'Artillery', label: 'Artillery Anti-Air', group: 'land', airDice: 2, surfaceDice: 1, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.artilleryAntiAir },
+          { id: 'artilleryGround', unit: 'Artillery', label: 'Artillery Ground', group: 'land', airDice: 0, surfaceDice: 2, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.artilleryGround },
+          { id: 'infantryDefensive', unit: 'Infantry', label: 'Infantry Defensive', group: 'land', airDice: 0, surfaceDice: 1, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.infantryDefensive },
+          { id: 'infantryOffensive', unit: 'Infantry', label: 'Infantry Offensive', group: 'land', airDice: 0, surfaceDice: 2, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.land.infantryOffensive }
+        ]
+      },
+      sea: {
+        surfaceLabel: 'Sea Dice',
+        surfaceModeLabel: 'NAVAL',
+        stances: [
+          { id: 'bomberSea', unit: 'Bomber', label: 'Bomber', group: 'air', airDice: 1, surfaceDice: 3, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.bomberSea },
+          { id: 'fighterAir', unit: 'Fighter', label: 'Fighter Air', group: 'air', airDice: 3, surfaceDice: 0, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.fighterAir },
+          { id: 'fighterSurface', unit: 'Fighter', label: 'Fighter Surface', group: 'air', airDice: 0, surfaceDice: 3, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.fighterSurface },
+          { id: 'battleshipAntiAir', unit: 'Battleship', label: 'Battleship Anti-Air', group: 'land', airDice: 2, surfaceDice: 3, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.battleshipAntiAir },
+          { id: 'battleshipOffensive', unit: 'Battleship', label: 'Battleship Offensive', group: 'land', airDice: 1, surfaceDice: 4, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.battleshipOffensive },
+          { id: 'carrierAntiAir', unit: 'Carrier', label: 'Carrier Anti-Air', group: 'land', airDice: 2, surfaceDice: 1, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.carrierAntiAir },
+          { id: 'carrierOffensive', unit: 'Carrier', label: 'Carrier Offensive', group: 'land', airDice: 1, surfaceDice: 2, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.carrierOffensive },
+          { id: 'cruiserEscort', unit: 'Cruiser', label: 'Cruiser Escort', group: 'land', airDice: 2, surfaceDice: 2, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.cruiserEscort },
+          { id: 'cruiserOffensive', unit: 'Cruiser', label: 'Cruiser Offensive', group: 'land', airDice: 1, surfaceDice: 3, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.cruiserOffensive },
+          { id: 'submarine', unit: 'Submarine', label: 'Submarine', group: 'land', airDice: 0, surfaceDice: 2, strategicDice: 0, ...BOARD_LAYOUT_CONFIG.stanceRows.sea.submarine }
+        ]
+      }
+    };
+
+    const LEGACY_STANCE_MIGRATIONS = {
+      fighterOffensive: 'fighterAir',
+      fighterDefensive: 'fighterGround',
+      bomberSupport: 'bomberAirGround',
+      antiAir: 'artilleryAntiAir',
+      artilleryOffensive: 'artilleryGround'
+    };
+
+    const DICE_ORDER = ['red', 'green', 'blue', 'yellow', 'black', 'white'];
+    const DICE_FACES = ['white', 'black', 'red', 'green', 'green', 'blue', 'blue', 'blue', 'yellow', 'yellow', 'yellow', 'yellow'];
+    const DICE_LABELS = {
+      red: '红',
+      green: '绿',
+      blue: '蓝',
+      yellow: '黄',
+      black: '黑',
+      white: '白'
+    };
+    const DICE_ASSETS = {
+      red: 'assets/dice_red.png',
+      green: 'assets/dice_green.png',
+      blue: 'assets/dice_blue.png',
+      yellow: 'assets/dice_yellow.png',
+      black: 'assets/dice_black.png',
+      white: 'assets/dice_white.png'
+    };
+    const DICE_AREAS = ['axis_air', 'axis_strategic', 'axis_surface', 'allied_air', 'allied_strategic', 'allied_surface'];
+    const DICE_ROLL_GROUPS = {
+      airBattle: ['axis_air', 'allied_air'],
+      surfaceBattle: ['axis_surface', 'allied_surface'],
+      strategicBombing: ['axis_strategic', 'allied_strategic']
+    };
+    const DICE_STAGE_CAP = 30;
+    const PORT_ADVANTAGE_DICE = 2;
+    const diceAnimationTimers = Object.fromEntries(DICE_AREAS.map((area) => [area, []]));
+
+    const ZONES_BY_TYPE = {
+      land: buildZones('land'),
+      sea: buildZones('sea')
+    };
+
+    let gameState = clone(DEFAULT_STATE);
+
+    function clone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function getStancesForType(type) {
+      return (BOARD_CONFIGS[type] || BOARD_CONFIGS.land).stances;
+    }
+
+    function getLayoutType(type = gameState.battleType) {
+      return BOARD_LAYOUT_CONFIG.nationColumns[type] ? type : 'land';
+    }
+
+    function getNationColumnX(nationId, type = gameState.battleType) {
+      const layoutType = getLayoutType(type);
+      return BOARD_LAYOUT_CONFIG.nationColumns[layoutType][nationId] ?? BOARD_LAYOUT_CONFIG.nationColumns.land[nationId] ?? 0.5;
+    }
+
+    function getNationControlPosition(type = gameState.battleType) {
+      const layoutType = getLayoutType(type);
+      return BOARD_LAYOUT_CONFIG.nationControl.position[layoutType] || BOARD_LAYOUT_CONFIG.nationControl.position.land;
+    }
+
+    function buildZones(type) {
+      const zoneWidth = BOARD_LAYOUT_CONFIG.zoneWidth[type] || BOARD_LAYOUT_CONFIG.zoneWidth.land;
+      const stances = getStancesForType(type);
+
+      return NATIONS.flatMap((nation) => stances.map((stance) => ({
+        id: `${nation.id}_${stance.id}`,
+        nation: nation.id,
+        nationLabel: nation.label,
+        nationShort: nation.short,
+        side: nation.side,
+        stance: stance.id,
+        stanceLabel: stance.label,
+        unit: stance.unit,
+        group: stance.group,
+        airDice: stance.airDice || 0,
+        surfaceDice: stance.surfaceDice || 0,
+        strategicDice: stance.strategicDice || 0,
+        label: `${nation.label} · ${stance.label}`,
+        x: clamp01(getNationColumnX(nation.id, type) - zoneWidth / 2),
+        y: stance.y,
+        w: zoneWidth,
+        h: stance.h
+      })));
+    }
+
+    function clamp01(value) {
+      return Math.max(0, Math.min(1, value));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          gameState = clone(DEFAULT_STATE);
+          return;
+        }
+
+        const saved = JSON.parse(raw);
+        gameState = normalizeState(saved);
+      } catch (error) {
+        console.warn('Failed to load saved War Room state. Defaults will be used.', error);
+        gameState = clone(DEFAULT_STATE);
+      }
+    }
+
+    function normalizeState(saved) {
+      const base = clone(DEFAULT_STATE);
+      const next = Object.assign(base, saved || {});
+      next.ui = Object.assign(clone(DEFAULT_STATE.ui), saved && saved.ui ? saved.ui : {});
+      next.ui.completedRolls = Object.assign(clone(DEFAULT_STATE.ui.completedRolls), saved && saved.ui && saved.ui.completedRolls ? saved.ui.completedRolls : {});
+      next.ui.portAdvantage = Object.assign(clone(DEFAULT_STATE.ui.portAdvantage), saved && saved.ui && saved.ui.portAdvantage ? saved.ui.portAdvantage : {});
+      next.ui.portAdvantage.axis = Boolean(next.ui.portAdvantage.axis);
+      next.ui.portAdvantage.allied = Boolean(next.ui.portAdvantage.allied);
+      next.nations = saved && saved.nations && typeof saved.nations === 'object' ? saved.nations : {};
+      next.battleBoard = saved && saved.battleBoard && typeof saved.battleBoard === 'object' ? migrateLegacyBattleBoard(saved.battleBoard) : {};
+      next.dice = normalizeDiceState(saved && saved.dice ? saved.dice : {});
+
+      if (!['normal', 'quick'].includes(next.battleMode)) {
+        next.battleMode = 'normal';
+      }
+      if (!['land', 'sea'].includes(next.battleType)) {
+        next.battleType = 'land';
+      }
+      if (!['home', 'battle', 'round', 'stress'].includes(next.ui.currentView)) {
+        next.ui.currentView = 'home';
+      }
+      if (typeof next.ui.debugMode !== 'boolean') {
+        next.ui.debugMode = true;
+      }
+      if (typeof next.ui.controlPanelCollapsed !== 'boolean') {
+        next.ui.controlPanelCollapsed = false;
+      }
+      if (next.ui.activeRollGroup && !DICE_ROLL_GROUPS[next.ui.activeRollGroup]) {
+        next.ui.activeRollGroup = null;
+      }
+      if (next.ui.inputMode && !isValidInputMode(next.ui.inputMode)) {
+        next.ui.inputMode = null;
+        next.ui.activeZoneId = null;
+      }
+
+      return next;
+    }
+
+    function migrateLegacyBattleBoard(savedBoard) {
+      const migrated = clone(savedBoard || {});
+      Object.values(migrated).forEach((nationState) => {
+        if (!nationState || typeof nationState !== 'object') return;
+        Object.entries(LEGACY_STANCE_MIGRATIONS).forEach(([oldKey, newKey]) => {
+          if (nationState[oldKey] !== undefined && nationState[newKey] === undefined) {
+            nationState[newKey] = nationState[oldKey];
+          }
+        });
+      });
+      return migrated;
+    }
+
+    function normalizeDiceState(savedDice) {
+      const dice = clone(DEFAULT_STATE.dice);
+      DICE_AREAS.forEach((area) => {
+        const savedArea = savedDice && savedDice[area] && typeof savedDice[area] === 'object' ? savedDice[area] : {};
+        dice[area].count = clampDiceCount(savedArea.count ?? dice[area].count);
+        dice[area].results = Array.isArray(savedArea.results)
+          ? savedArea.results.filter((color) => DICE_ORDER.includes(color)).slice(0, 30)
+          : [];
+      });
+      return dice;
+    }
+
+    function clampDiceCount(value) {
+      const number = Math.floor(Number(value));
+      if (!Number.isFinite(number)) return 0;
+      return Math.max(0, Math.min(30, number));
+    }
+
+    function isValidInputMode(inputMode) {
+      return inputMode
+        && NATIONS.some((nation) => nation.id === inputMode.nation)
+        && ['all', 'air', 'land'].includes(inputMode.scope)
+        && Array.isArray(inputMode.zoneIds)
+        && Number.isInteger(inputMode.cursor);
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+    }
+
+    function resetBattleBoard() {
+      gameState.battleBoard = {};
+      resetDiceStateOnly();
+      gameState.ui.inputMode = null;
+      gameState.ui.activeZoneId = null;
+      gameState.ui.portAdvantage = clone(DEFAULT_STATE.ui.portAdvantage);
+      saveState();
+    }
+
+    function resetDiceStateOnly() {
+      gameState.dice = normalizeDiceState({});
+      gameState.ui.activeRollGroup = null;
+      gameState.ui.completedRolls = clone(DEFAULT_STATE.ui.completedRolls);
+      clearAllDiceAnimations();
+    }
+
+    function resetCurrentBattleDice() {
+      resetDiceStateOnly();
+      renderDiceUi();
+      saveState();
+    }
+
+    function clearAllDiceAnimations() {
+      DICE_AREAS.forEach((area) => clearDiceAnimation(area));
+    }
+
+    function clearSave() {
+      const shouldClear = window.confirm('确定清空 War Room Assistant 的本地存档吗？');
+      if (!shouldClear) {
+        return;
+      }
+      localStorage.removeItem(STORAGE_KEY);
+      gameState = clone(DEFAULT_STATE);
+      syncHomeControls();
+      showView('home');
+    }
+
+    function ensureBoardState(nationId) {
+      if (!gameState.battleBoard[nationId] || typeof gameState.battleBoard[nationId] !== 'object') {
+        gameState.battleBoard[nationId] = {};
+      }
+      return gameState.battleBoard[nationId];
+    }
+
+    function getUnitCount(nationId, stanceId) {
+      const nationState = gameState.battleBoard[nationId];
+      if (!nationState) {
+        return 0;
+      }
+      const value = Number(nationState[stanceId]);
+      return Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+    }
+
+    function setUnitCount(nationId, stanceId, value, options = {}) {
+      const nationState = ensureBoardState(nationId);
+      nationState[stanceId] = Math.max(0, Math.floor(Number(value) || 0));
+      if (options.save !== false) {
+        saveState();
+      }
+    }
+
+    function adjustUnitCount(nationId, stanceId, delta) {
+      const current = getUnitCount(nationId, stanceId);
+      setUnitCount(nationId, stanceId, current + delta);
+    }
+
+    function showView(viewName) {
+      const safeView = ['home', 'battle', 'round', 'stress'].includes(viewName) ? viewName : 'home';
+      document.querySelectorAll('.view').forEach((view) => {
+        view.classList.toggle('active', view.id === `view-${safeView}`);
+      });
+
+      gameState.ui.currentView = safeView;
+      if (safeView !== 'battle') {
+        gameState.ui.inputMode = null;
+        gameState.ui.activeZoneId = null;
+      }
+
+      syncHomeControls();
+      updateToolbar();
+
+      if (safeView === 'battle') {
+        updateBoardBackground();
+        renderDiceUi();
+        renderBattleBoard();
+      }
+
+      saveState();
+    }
+
+    function syncHomeControls() {
+      document.querySelectorAll('input[name="battleMode"]').forEach((input) => {
+        input.checked = input.value === gameState.battleMode;
+      });
+      document.querySelectorAll('input[name="battleType"]').forEach((input) => {
+        input.checked = input.value === gameState.battleType;
+      });
+    }
+
+    function updateToolbar() {
+      const modeLabel = gameState.battleMode === 'quick' ? '快速战斗' : '完整战斗';
+      const typeLabel = gameState.battleType === 'sea' ? '海战' : '陆战';
+      const battleModeStatus = document.getElementById('battleModeStatus');
+      const battleTypeStatus = document.getElementById('battleTypeStatus');
+      const inputModeStatus = document.getElementById('inputModeStatus');
+      const debugToggleButton = document.getElementById('debugToggleButton');
+
+      if (battleModeStatus) battleModeStatus.textContent = modeLabel;
+      if (battleTypeStatus) battleTypeStatus.textContent = typeLabel;
+      if (debugToggleButton) debugToggleButton.textContent = `Mapping Tool: ${gameState.ui.debugMode ? 'ON' : 'OFF'}`;
+      updateBattleControlPanelState();
+
+      if (!inputModeStatus) return;
+
+      const inputMode = gameState.ui.inputMode;
+      if (!inputMode) {
+        inputModeStatus.textContent = '输入模式：关闭';
+        return;
+      }
+
+      const nation = getNation(inputMode.nation);
+      const surfaceModeLabel = (BOARD_CONFIGS[gameState.battleType] || BOARD_CONFIGS.land).surfaceModeLabel;
+      const scopeLabel = inputMode.scope === 'air' ? 'AIR' : inputMode.scope === 'land' ? surfaceModeLabel : 'INPUT';
+      const currentZone = getZoneById(gameState.ui.activeZoneId);
+      const cursorText = `${Math.min(inputMode.cursor + 1, inputMode.zoneIds.length)}/${inputMode.zoneIds.length}`;
+      inputModeStatus.textContent = `${scopeLabel} MODE · ${nation ? nation.label : inputMode.nation} · ${cursorText}${currentZone ? ` · ${currentZone.stanceLabel}` : ''}`;
+    }
+
+    function updateBattleControlPanelState() {
+      const panel = document.getElementById('battleControlPanel');
+      const battleView = document.getElementById('view-battle');
+      const toggleButton = document.getElementById('toggleBattleControlPanelButton');
+      const collapsed = Boolean(gameState.ui.controlPanelCollapsed);
+
+      if (panel) panel.classList.toggle('collapsed', collapsed);
+      if (battleView) battleView.classList.toggle('control-panel-collapsed', collapsed);
+      if (toggleButton) {
+        toggleButton.textContent = collapsed ? '展开' : '收起';
+        toggleButton.setAttribute('aria-expanded', String(!collapsed));
+      }
+    }
+
+    function updateBoardBackground() {
+      const boardImage = document.getElementById('boardImage');
+      if (!boardImage) return;
+      boardImage.src = gameState.battleType === 'sea' ? 'assets/sea.png' : 'assets/land.jpg';
+      boardImage.alt = gameState.battleType === 'sea' ? 'War Room Sea Battle Board' : 'War Room Land Battle Board';
+    }
+
+    function getNation(nationId) {
+      return NATIONS.find((nation) => nation.id === nationId);
+    }
+
+    function getCurrentZones() {
+      return ZONES_BY_TYPE[gameState.battleType] || ZONES_BY_TYPE.land;
+    }
+
+    function getZoneById(zoneId) {
+      if (!zoneId) return null;
+      return getCurrentZones().find((zone) => zone.id === zoneId) || null;
+    }
+
+    function getZoneIdsForMode(nationId, scope) {
+      return getStancesForType(gameState.battleType)
+        .filter((stance) => scope === 'all' || stance.group === scope)
+        .map((stance) => `${nationId}_${stance.id}`);
+    }
+
+    function renderBattleBoard() {
+      const overlay = document.getElementById('boardOverlay');
+      if (!overlay) return;
+
+      overlay.innerHTML = '';
+      const fragment = document.createDocumentFragment();
+      const zones = getCurrentZones();
+
+      zones.forEach((zone) => {
+        const value = getUnitCount(zone.nation, zone.stance);
+        const zoneEl = document.createElement('div');
+        zoneEl.className = 'hot-zone';
+        if (gameState.ui.debugMode) zoneEl.classList.add('debug');
+        if (value > 0) zoneEl.classList.add('has-value');
+        if (zone.id === gameState.ui.activeZoneId) zoneEl.classList.add('active');
+        zoneEl.dataset.zoneId = zone.id;
+        zoneEl.style.left = `${zone.x * 100}%`;
+        zoneEl.style.top = `${zone.y * 100}%`;
+        zoneEl.style.width = `${zone.w * 100}%`;
+        zoneEl.style.height = `${zone.h * 100}%`;
+        zoneEl.title = `${zone.id}\n${zone.label}\nX:${formatCoord(zone.x)} Y:${formatCoord(zone.y)} W:${formatCoord(zone.w)} H:${formatCoord(zone.h)}\nValue:${value}`;
+
+        const count = document.createElement('div');
+        count.className = 'count-badge';
+        count.textContent = value > 0 || gameState.ui.debugMode ? `[${value}]` : '';
+        zoneEl.appendChild(count);
+
+        if (gameState.ui.debugMode) {
+          const debugLabel = document.createElement('div');
+          debugLabel.className = 'zone-debug-label';
+          debugLabel.innerHTML = `<span>${zone.nationShort} · ${zone.stanceLabel}</span><span class="coords">X ${formatCoord(zone.x)} Y ${formatCoord(zone.y)}<br>W ${formatCoord(zone.w)} H ${formatCoord(zone.h)}</span>`;
+          zoneEl.appendChild(debugLabel);
+        }
+
+        fragment.appendChild(zoneEl);
+      });
+
+      const surfaceModeLabel = (BOARD_CONFIGS[gameState.battleType] || BOARD_CONFIGS.land).surfaceModeLabel;
+      const nationControl = BOARD_LAYOUT_CONFIG.nationControl;
+      const nationControlPosition = getNationControlPosition();
+      const currentZoneWidth = BOARD_LAYOUT_CONFIG.zoneWidth[gameState.battleType] || BOARD_LAYOUT_CONFIG.zoneWidth.land;
+      const nationControlWidth = currentZoneWidth * (nationControl.widthScale || 1);
+
+      NATIONS.forEach((nation) => {
+        const control = document.createElement('div');
+        control.className = 'nation-control';
+        const currentMode = gameState.ui.inputMode;
+        if (currentMode && currentMode.nation === nation.id) {
+          control.classList.add('active');
+        }
+        control.dataset.nationId = nation.id;
+        const nationColumnX = getNationColumnX(nation.id);
+        control.style.left = `${(nationColumnX - nationControlWidth / 2) * 100}%`;
+        control.style.top = `${(nationControlPosition.top[nation.side] ?? nationControlPosition.top.axis) * 100}%`;
+        control.style.width = `${nationControlWidth * 100}%`;
+        control.style.height = `${nationControl.height * 100}%`;
+        control.title = `${nation.label}\n上半：AIR INPUT MODE\n中间：INPUT MODE\n下半：${surfaceModeLabel} INPUT MODE`;
+        control.innerHTML = `
+          <button class="mode-air" data-nation-id="${nation.id}" data-mode-scope="air" type="button">AIR</button>
+          <button class="mode-all" data-nation-id="${nation.id}" data-mode-scope="all" type="button">${nation.short}</button>
+          <button class="mode-land" data-nation-id="${nation.id}" data-mode-scope="land" type="button">${surfaceModeLabel}</button>
+        `;
+        fragment.appendChild(control);
+      });
+
+      overlay.appendChild(fragment);
+      updateToolbar();
+      updateHoverInfo(null);
+      updateBoardHint();
+      renderDiceSummary();
+    }
+
+    function formatCoord(value) {
+      return Number(value).toFixed(3);
+    }
+
+    function updateBoardHint() {
+      const hint = document.getElementById('boardHint');
+      if (!hint) return;
+      if (gameState.battleType === 'sea') {
+        hint.textContent = '海战当前使用 Phase 1 临时录入热区；后续将替换为舰船姿态坐标。';
+      } else {
+        hint.textContent = '所有坐标均为 0-1 百分比坐标；当前为初始校准版。';
+      }
+    }
+
+    function updateHoverInfo(zone) {
+      const hoverInfo = document.getElementById('hoverInfo');
+      if (!hoverInfo) return;
+
+      if (!zone) {
+        hoverInfo.textContent = '悬停热区可查看 id、X/Y/W/H、当前值。';
+        return;
+      }
+
+      const value = getUnitCount(zone.nation, zone.stance);
+      hoverInfo.innerHTML = `<strong>${zone.id}</strong><br>${zone.label}<br>X:${formatCoord(zone.x)} Y:${formatCoord(zone.y)} W:${formatCoord(zone.w)} H:${formatCoord(zone.h)} · Value:[${value}]`;
+    }
+
+    function renderDiceUi() {
+      updateDiceAreaTitles();
+      DICE_AREAS.forEach((area) => renderDiceArea(area));
+      renderDiceSummary();
+      renderActiveRollResults();
+      renderDiceControls();
+    }
+
+    function getDiceAreaState(area) {
+      if (!gameState.dice) {
+        gameState.dice = normalizeDiceState({});
+      }
+      if (!gameState.dice[area]) {
+        gameState.dice[area] = clone(DEFAULT_STATE.dice[area]);
+      }
+      gameState.dice[area].count = clampDiceCount(gameState.dice[area].count);
+      gameState.dice[area].results = Array.isArray(gameState.dice[area].results)
+        ? gameState.dice[area].results.filter((color) => DICE_ORDER.includes(color)).slice(0, 30)
+        : [];
+      return gameState.dice[area];
+    }
+
+    function getComputedDiceInfo(area) {
+      const totals = getBattleDiceTotals();
+      const raw = totals[area] || 0;
+      return {
+        raw,
+        roll: Math.min(raw, DICE_STAGE_CAP),
+        capped: raw > DICE_STAGE_CAP
+      };
+    }
+
+    function getBattleDiceTotals() {
+      const totals = Object.fromEntries(DICE_AREAS.map((area) => [area, 0]));
+      const stances = getStancesForType(gameState.battleType);
+      NATIONS.forEach((nation) => {
+        const sidePrefix = nation.side === 'axis' ? 'axis' : 'allied';
+        stances.forEach((stance) => {
+          const count = getUnitCount(nation.id, stance.id);
+          totals[`${sidePrefix}_air`] += count * (stance.airDice || 0);
+          totals[`${sidePrefix}_surface`] += count * (stance.surfaceDice || 0);
+          totals[`${sidePrefix}_strategic`] += count * (stance.strategicDice || 0);
+        });
+      });
+
+      if (gameState.battleType === 'sea') {
+        ['axis', 'allied'].forEach((side) => {
+          if (gameState.ui.portAdvantage && gameState.ui.portAdvantage[side] && sideHasSurfaceUnits(side)) {
+            totals[`${side}_surface`] += PORT_ADVANTAGE_DICE;
+          }
+        });
+      }
+
+      return totals;
+    }
+
+    function sideHasSurfaceUnits(side) {
+      return getStancesForType(gameState.battleType)
+        .filter((stance) => stance.group === 'land')
+        .some((stance) => NATIONS.some((nation) => nation.side === side && getUnitCount(nation.id, stance.id) > 0));
+    }
+
+    function formatDiceCount(info) {
+      return info.capped ? `${info.roll}/${info.raw}` : String(info.roll);
+    }
+
+    function updateDiceCount(area) {
+      if (!DICE_AREAS.includes(area)) return;
+      const areaState = getDiceAreaState(area);
+      const info = getComputedDiceInfo(area);
+      areaState.count = info.roll;
+      updateDiceCountDisplay(area, info);
+      renderDiceSummary();
+      saveState();
+    }
+
+    function rollDiceGroup(groupKey) {
+      const areas = DICE_ROLL_GROUPS[groupKey] || [];
+      if (areas.length === 0) return;
+      clearAllDiceAnimations();
+
+      areas.forEach((area) => {
+        const areaState = getDiceAreaState(area);
+        const info = getComputedDiceInfo(area);
+        areaState.count = info.roll;
+        areaState.results = Array.from({ length: areaState.count }, () => randomDiceColor());
+        updateDiceCountDisplay(area, info);
+      });
+
+      gameState.ui.activeRollGroup = groupKey;
+      gameState.ui.completedRolls = Object.assign(clone(DEFAULT_STATE.ui.completedRolls), gameState.ui.completedRolls || {});
+      gameState.ui.completedRolls[groupKey] = true;
+
+      const hasDice = areas.some((area) => getDiceAreaState(area).results.length > 0);
+      if (!hasDice) {
+        renderDiceUi();
+        saveState();
+        return;
+      }
+
+      runRollGroupFlash(groupKey);
+      renderDiceSummary();
+      renderDiceControls();
+      saveState();
+    }
+
+    function randomDiceColor() {
+      return DICE_FACES[Math.floor(Math.random() * DICE_FACES.length)];
+    }
+
+    function runRollGroupFlash(groupKey) {
+      const frameMs = 45;
+      const totalMs = 450;
+      const frames = Math.max(1, Math.floor(totalMs / frameMs));
+      const finalBySide = getRollDisplayResultsBySide(groupKey);
+      let frame = 0;
+
+      renderActiveRollResults({
+        groupKey,
+        rolling: true,
+        sorted: false,
+        resultsBySide: randomizeResultsBySide(finalBySide)
+      });
+
+      const intervalId = window.setInterval(() => {
+        frame += 1;
+        renderActiveRollResults({
+          groupKey,
+          rolling: true,
+          sorted: false,
+          resultsBySide: randomizeResultsBySide(finalBySide)
+        });
+
+        if (frame >= frames) {
+          window.clearInterval(intervalId);
+          renderActiveRollResults({ groupKey, rolling: false, sorted: false, resultsBySide: finalBySide });
+          const holdTimer = window.setTimeout(() => sortActiveRollResults(groupKey), 300);
+          DICE_AREAS.forEach((area) => diceAnimationTimers[area].push(holdTimer));
+        }
+      }, frameMs);
+
+      DICE_AREAS.forEach((area) => diceAnimationTimers[area].push(intervalId));
+    }
+
+    function randomizeResultsBySide(resultsBySide) {
+      return {
+        axis: Array.from({ length: resultsBySide.axis.length }, randomDiceColor),
+        allied: Array.from({ length: resultsBySide.allied.length }, randomDiceColor)
+      };
+    }
+
+    function clearDiceAnimation(area) {
+      (diceAnimationTimers[area] || []).forEach((timerId) => {
+        window.clearTimeout(timerId);
+        window.clearInterval(timerId);
+      });
+      diceAnimationTimers[area] = [];
+    }
+
+    function renderDiceArea(area) {
+      if (!DICE_AREAS.includes(area)) return;
+      const areaState = getDiceAreaState(area);
+      const info = getComputedDiceInfo(area);
+      areaState.count = info.roll;
+      updateDiceCountDisplay(area, info);
+      const summary = document.getElementById(`${area}DiceSummary`);
+      if (summary) summary.innerHTML = buildDiceSummaryHtml(countDiceResults(areaState.results));
+    }
+
+    function updateDiceCountDisplay(area, info = getComputedDiceInfo(area)) {
+      const countElement = document.getElementById(`${area}DiceCount`);
+      if (!countElement) return;
+      countElement.innerHTML = `${formatDiceCount(info)}<small>骰</small>`;
+      countElement.title = info.capped ? `单位合计 ${info.raw}，按规则单阶段最多掷 ${DICE_STAGE_CAP}` : `单位合计 ${info.raw}`;
+    }
+
+    function sortDiceResults(results) {
+      return [...results].sort((a, b) => DICE_ORDER.indexOf(a) - DICE_ORDER.indexOf(b));
+    }
+
+    function getRollDisplayResultsBySide(groupKey = gameState.ui.activeRollGroup) {
+      const areas = DICE_ROLL_GROUPS[groupKey] || [];
+      return {
+        axis: areas.filter((area) => area.startsWith('axis_')).flatMap((area) => getDiceAreaState(area).results),
+        allied: areas.filter((area) => area.startsWith('allied_')).flatMap((area) => getDiceAreaState(area).results)
+      };
+    }
+
+    function renderActiveRollResults(options = {}) {
+      const groupKey = options.groupKey || gameState.ui.activeRollGroup;
+      const resultsBySide = options.resultsBySide || getRollDisplayResultsBySide(groupKey);
+      ['axis', 'allied'].forEach((side) => {
+        const container = document.getElementById(`${side}RollResults`);
+        const summary = document.getElementById(`${side}RollSummary`);
+        if (!container) return;
+        const sourceResults = resultsBySide[side] || [];
+        const results = options.sorted === false ? [...sourceResults] : sortDiceResults(sourceResults).slice(0, DICE_STAGE_CAP);
+        container.innerHTML = '';
+
+        if (!groupKey || results.length === 0) {
+          const empty = document.createElement('span');
+          empty.className = 'dice-empty';
+          empty.textContent = '未掷骰';
+          container.appendChild(empty);
+        } else {
+          results.slice(0, DICE_STAGE_CAP).forEach((color, index) => {
+            const die = document.createElement('div');
+            die.className = `die-token${options.rolling ? ' rolling' : ''}`;
+            die.dataset.color = color;
+            die.dataset.originalIndex = String(index);
+            die.title = `${DICE_LABELS[color]} / ${color}`;
+            const image = document.createElement('img');
+            image.src = DICE_ASSETS[color];
+            image.alt = `${DICE_LABELS[color]} dice`;
+            die.appendChild(image);
+            container.appendChild(die);
+          });
+        }
+
+        if (summary) summary.innerHTML = buildDiceSummaryHtml(countDiceResults(sourceResults));
+      });
+    }
+
+    function sortActiveRollResults(groupKey = gameState.ui.activeRollGroup) {
+      ['axis', 'allied'].forEach((side) => {
+        const container = document.getElementById(`${side}RollResults`);
+        if (!container) return;
+        const dice = Array.from(container.querySelectorAll('.die-token'));
+        if (dice.length === 0) return;
+        const firstRects = new Map(dice.map((die) => [die, die.getBoundingClientRect()]));
+        const sortedDice = [...dice].sort((a, b) => {
+          const colorDiff = DICE_ORDER.indexOf(a.dataset.color) - DICE_ORDER.indexOf(b.dataset.color);
+          if (colorDiff !== 0) return colorDiff;
+          return Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex);
+        });
+        sortedDice.forEach((die) => container.appendChild(die));
+        sortedDice.forEach((die) => {
+          const first = firstRects.get(die);
+          const last = die.getBoundingClientRect();
+          die.style.transition = 'transform 0s';
+          die.style.transform = `translate(${first.left - last.left}px, ${first.top - last.top}px)`;
+        });
+        requestAnimationFrame(() => {
+          sortedDice.forEach((die, index) => {
+            const duration = 300 + (index % 6) * 42;
+            const delay = (index % 5) * 14;
+            die.style.transition = `transform ${duration}ms cubic-bezier(0.18, 0.84, 0.28, 1.08) ${delay}ms`;
+            die.style.transform = 'translate(0, 0)';
+          });
+        });
+      });
+
+      const cleanupTimer = window.setTimeout(() => {
+        ['axis', 'allied'].forEach((side) => {
+          const container = document.getElementById(`${side}RollResults`);
+          if (!container) return;
+          container.querySelectorAll('.die-token').forEach((die) => {
+            die.style.transition = '';
+            die.style.transform = '';
+          });
+        });
+        renderActiveRollResults({ groupKey, sorted: true });
+        renderDiceSummary();
+        saveState();
+        clearAllDiceAnimations();
+      }, 820);
+      DICE_AREAS.forEach((area) => diceAnimationTimers[area].push(cleanupTimer));
+    }
+
+    function countDiceResults(results) {
+      const counts = Object.fromEntries(DICE_ORDER.map((color) => [color, 0]));
+      (Array.isArray(results) ? results : []).forEach((color) => {
+        if (DICE_ORDER.includes(color)) counts[color] += 1;
+      });
+      return counts;
+    }
+
+    function getForceAdvantageInfo() {
+      const unitTypesBySide = {
+        axis: new Set(),
+        allied: new Set()
+      };
+
+      getStancesForType(gameState.battleType)
+        .filter((stance) => stance.group === 'land')
+        .forEach((stance) => {
+          NATIONS.forEach((nation) => {
+            if (getUnitCount(nation.id, stance.id) > 0) {
+              unitTypesBySide[nation.side].add(stance.unit);
+            }
+          });
+        });
+
+      const counts = {
+        axis: unitTypesBySide.axis.size,
+        allied: unitTypesBySide.allied.size
+      };
+      const advantagedSide = counts.axis > counts.allied
+        ? 'axis'
+        : counts.allied > counts.axis
+          ? 'allied'
+          : null;
+
+      return { counts, advantagedSide };
+    }
+
+    function renderForceAdvantageUi() {
+      const info = getForceAdvantageInfo();
+      const sideLabels = { axis: '轴心国', allied: '同盟国' };
+      ['axis', 'allied'].forEach((side) => {
+        const otherSide = side === 'axis' ? 'allied' : 'axis';
+        const hasAdvantage = info.advantagedSide === side;
+        const hasDisadvantage = info.advantagedSide === otherSide;
+        const comparisonText = `${info.counts.axis}:${info.counts.allied}`;
+        const badgeText = hasAdvantage
+          ? `兵种优势：${sideLabels[side]}（${comparisonText}）`
+          : hasDisadvantage
+            ? `对方兵种优势：黑/白失效（${comparisonText}）`
+            : `兵种优势：无（${comparisonText}）`;
+        const cardBadgeText = hasAdvantage ? '兵种优势' : hasDisadvantage ? '对方优势' : '无优势';
+        const title = 'Surface Battle 阶段：比较双方陆军/海军“单位类型”数量；姿态不影响，空军不计入；优势方会使对方黑/白结果视为未命中。';
+
+        const rollPanel = document.querySelector(`.roll-result-panel[data-side="${side}"]`);
+        if (rollPanel) {
+          rollPanel.classList.toggle('force-advantage', hasAdvantage);
+          rollPanel.title = title;
+        }
+
+        const badge = document.getElementById(`${side}ForceAdvantageBadge`);
+        if (badge) {
+          badge.textContent = badgeText;
+          badge.title = title;
+          badge.classList.toggle('active', hasAdvantage);
+          badge.classList.toggle('warning', hasDisadvantage);
+          badge.classList.toggle('neutral', !hasAdvantage && !hasDisadvantage);
+        }
+
+        const surfaceCard = document.querySelector(`[data-dice-area="${side}_surface"]`);
+        if (surfaceCard) {
+          surfaceCard.classList.toggle('force-advantage', hasAdvantage);
+          surfaceCard.title = title;
+        }
+
+        const cardBadge = document.getElementById(`${side}ForceAdvantageCardBadge`);
+        if (cardBadge) {
+          cardBadge.textContent = cardBadgeText;
+          cardBadge.title = title;
+          cardBadge.classList.toggle('active', hasAdvantage);
+          cardBadge.classList.toggle('warning', hasDisadvantage);
+          cardBadge.classList.toggle('neutral', !hasAdvantage && !hasDisadvantage);
+        }
+
+        const portToggle = document.querySelector(`[data-port-advantage-side="${side}"]`);
+        const portLabel = portToggle ? portToggle.closest('.port-advantage-toggle') : null;
+        const portVisible = gameState.battleType === 'sea';
+        const hasSurfaceUnits = sideHasSurfaceUnits(side);
+        if (portToggle) {
+          portToggle.checked = Boolean(gameState.ui.portAdvantage && gameState.ui.portAdvantage[side]);
+          portToggle.disabled = portVisible && !hasSurfaceUnits;
+          portToggle.title = `海战港口优势：有本方海军单位时，海面战阶段额外 +${PORT_ADVANTAGE_DICE} 骰，仍受 30 骰上限限制。`;
+        }
+        if (portLabel) {
+          portLabel.classList.toggle('is-hidden', !portVisible);
+          portLabel.classList.toggle('disabled', portVisible && !hasSurfaceUnits);
+          portLabel.title = portToggle ? portToggle.title : '';
+        }
+      });
+    }
+
+    function updateDiceAreaTitles() {
+      const surfaceName = gameState.battleType === 'sea' ? '海面战骰' : '地面战骰';
+      const labels = {
+        'axis-air-dice-title': '空战骰',
+        'axis-strategic-dice-title': '战略轰炸',
+        'axis-surface-dice-title': surfaceName,
+        'allied-air-dice-title': '空战骰',
+        'allied-strategic-dice-title': '战略轰炸',
+        'allied-surface-dice-title': surfaceName
+      };
+      Object.entries(labels).forEach(([id, text]) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+        const titleText = element.querySelector('[data-dice-title-text]');
+        if (titleText) {
+          titleText.textContent = text;
+        } else {
+          element.textContent = text;
+        }
+      });
+
+      const strategicVisible = gameState.battleType === 'land';
+      document.querySelectorAll('[data-dice-area$="_strategic"]').forEach((element) => {
+        element.classList.toggle('is-hidden', !strategicVisible);
+      });
+      const strategicButton = document.querySelector('[data-dice-roll-group="strategicBombing"]');
+      if (strategicButton) strategicButton.classList.toggle('is-hidden', !strategicVisible);
+      if (!strategicVisible && gameState.ui.activeRollGroup === 'strategicBombing') {
+        gameState.ui.activeRollGroup = null;
+      }
+    }
+
+    function renderDiceControls() {
+      const labels = {
+        airBattle: '空战',
+        surfaceBattle: gameState.battleType === 'sea' ? '海面战' : '地面战',
+        strategicBombing: '战略轰炸'
+      };
+      document.querySelectorAll('[data-dice-roll-group]').forEach((button) => {
+        const group = button.dataset.diceRollGroup;
+        const completed = Boolean(gameState.ui.completedRolls && gameState.ui.completedRolls[group]);
+        button.textContent = `${completed ? '√ ' : ''}${labels[group] || group}`;
+        button.classList.toggle('completed', completed);
+      });
+    }
+
+    function renderDiceSummary() {
+      updateDiceAreaTitles();
+      const computedInfos = {};
+      DICE_AREAS.forEach((area) => {
+        const summary = document.getElementById(`${area}DiceSummary`);
+        const areaState = getDiceAreaState(area);
+        const info = getComputedDiceInfo(area);
+        computedInfos[area] = info;
+        areaState.count = info.roll;
+        updateDiceCountDisplay(area, info);
+        if (summary) {
+          const counts = countDiceResults(areaState.results);
+          summary.innerHTML = buildDiceSummaryHtml(counts);
+        }
+      });
+      renderForceAdvantageUi();
+      renderDiceControls();
+    }
+
+    function buildDiceSummaryHtml(counts) {
+      return DICE_ORDER.map((color) => (
+        `<span class="dice-color-count ${color}" title="${DICE_LABELS[color]} / ${color}"><span class="dice-dot ${color}"></span><span class="dice-count-number ${color}">${counts[color] || 0}</span></span>`
+      )).join('');
+    }
+
+    function toggleInputMode(nationId, scope) {
+      const current = gameState.ui.inputMode;
+      if (current && current.nation === nationId && current.scope === scope) {
+        exitInputMode();
+        return;
+      }
+      enterInputMode(nationId, scope);
+    }
+
+    function enterInputMode(nationId, scope) {
+      const zoneIds = getZoneIdsForMode(nationId, scope);
+      gameState.ui.inputMode = {
+        nation: nationId,
+        scope,
+        zoneIds,
+        cursor: 0,
+        sequence: scope === 'air' ? 'airThenLand' : null
+      };
+      gameState.ui.activeZoneId = zoneIds[0] || null;
+      renderBattleBoard();
+      saveState();
+    }
+
+    function exitInputMode() {
+      gameState.ui.inputMode = null;
+      gameState.ui.activeZoneId = null;
+      renderBattleBoard();
+      saveState();
+    }
+
+    function handleDigitInput(digit) {
+      const inputMode = gameState.ui.inputMode;
+      if (!inputMode) return;
+
+      const zoneId = inputMode.zoneIds[inputMode.cursor];
+      const zone = getZoneById(zoneId);
+      if (!zone) {
+        exitInputMode();
+        return;
+      }
+
+      setUnitCount(zone.nation, zone.stance, digit, { save: false });
+      advanceInputCursor();
+      renderBattleBoard();
+      saveState();
+    }
+
+    function advanceInputCursor() {
+      const mode = gameState.ui.inputMode;
+      if (!mode) return;
+
+      mode.cursor += 1;
+      if (mode.cursor < mode.zoneIds.length) {
+        gameState.ui.activeZoneId = mode.zoneIds[mode.cursor];
+        return;
+      }
+
+      const sequence = mode.sequence || (mode.scope === 'air' ? 'airThenLand' : null);
+      if (sequence === 'airThenLand' && mode.scope === 'air') {
+        if (moveInputCursorTo(mode.nation, 'land', sequence)) {
+          return;
+        }
+      }
+
+      const currentNationIndex = NATIONS.findIndex((nation) => nation.id === mode.nation);
+      const nextNation = NATIONS[currentNationIndex + 1];
+      if (!nextNation) {
+        gameState.ui.inputMode = null;
+        gameState.ui.activeZoneId = null;
+        return;
+      }
+
+      const nextScope = sequence === 'airThenLand' ? 'air' : mode.scope;
+      if (!moveInputCursorTo(nextNation.id, nextScope, sequence)) {
+        gameState.ui.inputMode = null;
+        gameState.ui.activeZoneId = null;
+      }
+    }
+
+    function moveInputCursorTo(nationId, scope, sequence) {
+      const zoneIds = getZoneIdsForMode(nationId, scope);
+      if (zoneIds.length === 0) {
+        return false;
+      }
+
+      gameState.ui.inputMode = {
+        nation: nationId,
+        scope,
+        zoneIds,
+        cursor: 0,
+        sequence: sequence || null
+      };
+      gameState.ui.activeZoneId = zoneIds[0];
+      return true;
+    }
+
+    function handleOverlayClick(event) {
+      const modeButton = event.target.closest('[data-mode-scope]');
+      if (modeButton) {
+        event.preventDefault();
+        toggleInputMode(modeButton.dataset.nationId, modeButton.dataset.modeScope);
+        return;
+      }
+
+      const zoneEl = event.target.closest('.hot-zone');
+      if (!zoneEl) return;
+
+      const zone = getZoneById(zoneEl.dataset.zoneId);
+      if (!zone) return;
+
+      adjustUnitCount(zone.nation, zone.stance, 1);
+      renderBattleBoard();
+    }
+
+    function handleOverlayContextMenu(event) {
+      const zoneEl = event.target.closest('.hot-zone');
+      if (!zoneEl) return;
+
+      event.preventDefault();
+      const zone = getZoneById(zoneEl.dataset.zoneId);
+      if (!zone) return;
+
+      adjustUnitCount(zone.nation, zone.stance, -1);
+      renderBattleBoard();
+    }
+
+    function handleOverlayWheel(event) {
+      const zoneEl = event.target.closest('.hot-zone');
+      if (!zoneEl) return;
+
+      event.preventDefault();
+      const zone = getZoneById(zoneEl.dataset.zoneId);
+      if (!zone) return;
+
+      const delta = event.deltaY < 0 ? 1 : -1;
+      adjustUnitCount(zone.nation, zone.stance, delta);
+      renderBattleBoard();
+    }
+
+    function handleOverlayPointerMove(event) {
+      const zoneEl = event.target.closest('.hot-zone');
+      if (!zoneEl) {
+        updateHoverInfo(null);
+        return;
+      }
+      updateHoverInfo(getZoneById(zoneEl.dataset.zoneId));
+    }
+
+    function bindEvents() {
+      document.querySelectorAll('[data-show-view]').forEach((button) => {
+        button.addEventListener('click', () => showView(button.dataset.showView));
+      });
+
+      document.querySelectorAll('input[name="battleMode"]').forEach((input) => {
+        input.addEventListener('change', () => {
+          if (!input.checked) return;
+          gameState.battleMode = input.value;
+          saveState();
+          updateToolbar();
+        });
+      });
+
+      document.querySelectorAll('input[name="battleType"]').forEach((input) => {
+        input.addEventListener('change', () => {
+          if (!input.checked) return;
+          gameState.battleType = input.value;
+          gameState.ui.inputMode = null;
+          gameState.ui.activeZoneId = null;
+          saveState();
+          updateBoardBackground();
+          updateToolbar();
+          if (gameState.ui.currentView === 'battle') {
+            renderDiceUi();
+            renderBattleBoard();
+          }
+        });
+      });
+
+      document.getElementById('startBattleButton').addEventListener('click', () => {
+        resetBattleBoard();
+        showView('battle');
+      });
+
+      document.getElementById('continueBattleButton').addEventListener('click', () => {
+        showView('battle');
+      });
+
+      document.getElementById('clearSaveButton').addEventListener('click', clearSave);
+
+      document.getElementById('debugToggleButton').addEventListener('click', () => {
+        gameState.ui.debugMode = !gameState.ui.debugMode;
+        renderBattleBoard();
+        saveState();
+      });
+
+      document.getElementById('toggleBattleControlPanelButton').addEventListener('click', () => {
+        gameState.ui.controlPanelCollapsed = !gameState.ui.controlPanelCollapsed;
+        updateBattleControlPanelState();
+        saveState();
+      });
+
+      document.getElementById('exitInputModeButton').addEventListener('click', exitInputMode);
+
+      document.getElementById('newBattleInBattleButton').addEventListener('click', () => {
+        resetBattleBoard();
+        renderDiceUi();
+        renderBattleBoard();
+      });
+
+      document.getElementById('restartBattleButton').addEventListener('click', resetCurrentBattleDice);
+
+      document.querySelectorAll('.dice-count-input').forEach((input) => {
+        input.addEventListener('change', () => updateDiceCount(input.dataset.diceArea, input.value));
+        input.addEventListener('blur', () => updateDiceCount(input.dataset.diceArea, input.value));
+      });
+
+      document.querySelectorAll('[data-dice-step]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const area = button.dataset.diceArea;
+          const areaState = getDiceAreaState(area);
+          updateDiceCount(area, areaState.count + Number(button.dataset.diceStep));
+        });
+      });
+
+      document.querySelectorAll('[data-dice-roll]').forEach((button) => {
+        button.addEventListener('click', () => rollDice(button.dataset.diceRoll));
+      });
+
+      document.querySelectorAll('[data-dice-roll-group]').forEach((button) => {
+        button.addEventListener('click', () => rollDiceGroup(button.dataset.diceRollGroup));
+      });
+
+      document.querySelectorAll('[data-port-advantage-side]').forEach((input) => {
+        input.addEventListener('change', () => {
+          const side = input.dataset.portAdvantageSide;
+          gameState.ui.portAdvantage = Object.assign(clone(DEFAULT_STATE.ui.portAdvantage), gameState.ui.portAdvantage || {});
+          gameState.ui.portAdvantage[side] = input.checked;
+          renderDiceUi();
+          saveState();
+        });
+      });
+
+      const overlay = document.getElementById('boardOverlay');
+      overlay.addEventListener('click', handleOverlayClick);
+      overlay.addEventListener('contextmenu', handleOverlayContextMenu);
+      overlay.addEventListener('wheel', handleOverlayWheel, { passive: false });
+      overlay.addEventListener('pointermove', handleOverlayPointerMove);
+      overlay.addEventListener('pointerleave', () => updateHoverInfo(null));
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && gameState.ui.inputMode) {
+          event.preventDefault();
+          exitInputMode();
+          return;
+        }
+
+        if (!/^[0-9]$/.test(event.key) || !gameState.ui.inputMode) {
+          return;
+        }
+
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName)) {
+          return;
+        }
+
+        event.preventDefault();
+        handleDigitInput(Number(event.key));
+      });
+    }
+
+    function init() {
+      loadState();
+      window.gameState = gameState;
+      bindEvents();
+      syncHomeControls();
+      updateToolbar();
+      renderDiceUi();
+      showView(gameState.ui.currentView || 'home');
+    }
+
+    window.showView = showView;
+    window.gameState = gameState;
+
+    init();
+  </script>
+</body>
+</html>
