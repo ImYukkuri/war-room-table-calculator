@@ -1228,6 +1228,47 @@
       overflow: auto;
     }
 
+    .battle-info.collapsed {
+      width: auto;
+      min-width: 150px;
+      max-height: none;
+      overflow: hidden;
+    }
+
+    .battle-info-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .battle-info-title {
+      color: #fff;
+    }
+
+    .battle-info-toggle {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 3px 9px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .battle-info-toggle:hover {
+      border-color: rgba(244, 200, 74, 0.6);
+      color: #fff;
+    }
+
+    .battle-info-body {
+      margin-top: 6px;
+    }
+
+    .battle-info.collapsed .battle-info-body {
+      display: none;
+    }
+
     .battle-info strong {
       color: #fff;
     }
@@ -1545,10 +1586,15 @@
             <img id="boardImage" class="board-image" src="assets/land.jpg" alt="War Room Battle Board">
             <div id="boardOverlay" class="board-overlay" aria-label="Battle Board Overlay"></div>
             <aside id="battleInfo" class="battle-info">
-              <strong>Battle Log</strong><br>
-              <span id="hoverInfo">悬停热区可查看 id、X/Y/W/H、当前状态。</span><br>
-              <span id="boardHint" class="warning">所有坐标均为 0-1 百分比坐标；当前为初始校准版。</span>
-              <ol id="battleLogList" class="battle-log-list" aria-live="polite"></ol>
+              <div class="battle-info-header">
+                <strong class="battle-info-title">Battle Log</strong>
+                <button id="battleInfoToggleButton" class="battle-info-toggle" type="button" aria-expanded="true">缩小</button>
+              </div>
+              <div id="battleInfoBody" class="battle-info-body">
+                <span id="hoverInfo">悬停热区可查看 id、X/Y/W/H、当前状态。</span><br>
+                <span id="boardHint" class="warning">所有坐标均为 0-1 百分比坐标；当前为初始校准版。</span>
+                <ol id="battleLogList" class="battle-log-list" aria-live="polite"></ol>
+              </div>
             </aside>
             <div id="zoneTooltip" class="zone-tooltip is-hidden" role="dialog" aria-live="polite">
               <button id="closeZoneTooltipButton" class="tooltip-close-button" type="button" aria-label="关闭热区详情">×</button>
@@ -1661,6 +1707,7 @@
         currentView: 'home',
         debugMode: true,
         controlPanelCollapsed: false,
+        battleInfoCollapsed: false,
         inputMode: null,
         activeZoneId: null,
         activeRollGroup: null,
@@ -2170,6 +2217,9 @@
       }
       if (typeof next.ui.controlPanelCollapsed !== 'boolean') {
         next.ui.controlPanelCollapsed = false;
+      }
+      if (typeof next.ui.battleInfoCollapsed !== 'boolean') {
+        next.ui.battleInfoCollapsed = false;
       }
       if (next.ui.activeRollGroup && !DICE_ROLL_GROUPS[next.ui.activeRollGroup]) {
         next.ui.activeRollGroup = null;
@@ -2686,6 +2736,7 @@
       renderDiceSummary();
       renderBattleFlowUi();
       renderBattleLog();
+      updateBattleInfoCollapsedState();
       renderZoneTooltip();
     }
 
@@ -3504,6 +3555,18 @@
         return;
       }
       list.innerHTML = entries.map((entry) => `<li><strong>${entry.time || ''}</strong> ${entry.message}</li>`).join('');
+    }
+
+    function updateBattleInfoCollapsedState() {
+      const panel = document.getElementById('battleInfo');
+      const button = document.getElementById('battleInfoToggleButton');
+      const collapsed = Boolean(gameState.ui && gameState.ui.battleInfoCollapsed);
+      if (panel) panel.classList.toggle('collapsed', collapsed);
+      if (button) {
+        button.textContent = collapsed ? '展开' : '缩小';
+        button.setAttribute('aria-expanded', String(!collapsed));
+        button.title = collapsed ? '展开右下方日志' : '缩小右下方日志';
+      }
     }
 
     function ensureAutoAssignmentFlags() {
@@ -4397,6 +4460,12 @@
         saveState();
       });
 
+      document.getElementById('battleInfoToggleButton').addEventListener('click', () => {
+        gameState.ui.battleInfoCollapsed = !gameState.ui.battleInfoCollapsed;
+        updateBattleInfoCollapsedState();
+        saveState();
+      });
+
       document.getElementById('exitInputModeButton').addEventListener('click', exitInputMode);
 
       document.getElementById('newBattleInBattleButton').addEventListener('click', () => {
@@ -4471,6 +4540,7 @@
       bindEvents();
       syncHomeControls();
       updateToolbar();
+      updateBattleInfoCollapsedState();
       renderDiceUi();
       showView(gameState.ui.currentView || 'home');
     }
