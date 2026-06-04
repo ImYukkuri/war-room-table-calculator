@@ -250,6 +250,167 @@
       color: #fff5c6;
     }
 
+    .phase-nav,
+    .assignment-mode-panel,
+    .assignment-action-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .phase-nav {
+      justify-content: center;
+      padding: 3px 0 2px;
+    }
+
+    .phase-button {
+      min-height: 30px;
+      padding: 0 11px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.055);
+      box-shadow: none;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .phase-button.active {
+      border-color: rgba(244, 200, 74, 0.95);
+      color: #171103;
+      background: linear-gradient(180deg, #ffe18a, #f4b83f);
+    }
+
+    .phase-button.completed:not(.active) {
+      border-color: rgba(96, 204, 96, 0.7);
+      color: #c8ffd0;
+      background: rgba(46, 204, 113, 0.14);
+    }
+
+    .phase-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.42;
+      transform: none;
+      filter: none;
+    }
+
+    .assignment-mode-panel {
+      position: relative;
+      justify-content: center;
+      padding: 2px 0;
+    }
+
+    .mode-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 28px;
+      padding: 3px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.055);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .mode-control select {
+      min-height: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      background: #11172a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .mode-help-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      min-width: 22px;
+      min-height: 22px;
+      padding: 0;
+      border-radius: 50%;
+      color: #171103;
+      background: linear-gradient(180deg, #ffe18a, #f4b83f);
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .mode-help-button.is-hidden {
+      display: none;
+    }
+
+    .algorithm-tooltip,
+    .zone-tooltip {
+      position: absolute;
+      z-index: 60;
+      width: min(360px, calc(100vw - 32px));
+      padding: 12px;
+      border: 1px solid rgba(244, 200, 74, 0.46);
+      border-radius: 14px;
+      background: rgba(8, 11, 20, 0.96);
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.46);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.48;
+    }
+
+    .algorithm-tooltip {
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .algorithm-tooltip h4,
+    .zone-tooltip h4 {
+      margin: 0 0 6px;
+      color: #ffe08a;
+      font-size: 14px;
+    }
+
+    .algorithm-tooltip p,
+    .zone-tooltip p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .tooltip-close-button {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      min-width: 24px;
+      min-height: 24px;
+      padding: 0;
+      border-radius: 50%;
+      font-size: 12px;
+    }
+
+    .assignment-action-panel {
+      justify-content: center;
+      padding: 1px 0 3px;
+    }
+
+    .assignment-action-panel button {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .assignment-status-text {
+      color: #fff5c6;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
     .battle-view {
       --battle-board-height-offset: 400px;
     }
@@ -345,6 +506,7 @@
 
     .roll-result-row {
       display: flex;
+      align-items: stretch;
       gap: 6px;
       min-width: 0;
       overflow-x: auto;
@@ -352,16 +514,43 @@
 
     .roll-result-panel {
       display: grid;
-      grid-template-columns: minmax(260px, 1fr) minmax(330px, 1.15fr);
+      grid-template-columns: minmax(156px, 0.6fr) minmax(198px, 0.69fr);
       grid-template-rows: auto auto;
-      gap: 6px 12px;
-      flex: 1 0 610px;
-      min-width: 610px;
+      gap: 4px 7px;
+      flex: 1 1 410px;
+      min-width: 410px;
       align-items: stretch;
       border: 1px solid transparent;
       border-radius: 12px;
       padding: 4px 5px;
       transition: border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .stage-start-control {
+      display: flex;
+      flex: 0 0 132px;
+      align-items: center;
+      justify-content: center;
+      padding: 26px 4px 4px;
+    }
+
+    .stage-start-button {
+      width: 100%;
+      min-height: 54px;
+      padding: 0 12px;
+      border-radius: 15px;
+      color: #171103;
+      background: linear-gradient(180deg, #ffe18a, #f4b83f);
+      font-size: 15px;
+      font-weight: 950;
+      line-height: 1.1;
+    }
+
+    .stage-start-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.46;
+      transform: none;
+      filter: grayscale(0.8);
     }
 
     .roll-result-panel[data-side="allied"] .roll-result-grid {
@@ -511,11 +700,11 @@
 
     .roll-result-grid {
       display: grid;
-      grid-template-columns: repeat(10, minmax(0, 1fr));
-      grid-template-rows: repeat(3, minmax(34px, 1fr));
-      grid-auto-rows: minmax(34px, 1fr);
-      gap: 4px;
-      min-height: 110px;
+      grid-template-columns: repeat(15, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(26px, 1fr));
+      grid-auto-rows: minmax(26px, 1fr);
+      gap: 3px;
+      min-height: 58px;
       align-content: start;
       justify-content: stretch;
       padding: 0;
@@ -536,7 +725,7 @@
 
     .die-token {
       width: 100%;
-      max-width: clamp(26px, 2.4vw, 36px);
+      max-width: clamp(19px, 1.55vw, 25px);
       aspect-ratio: 1 / 1;
       height: auto;
       align-self: center;
@@ -555,6 +744,51 @@
 
     .die-token.rolling {
       animation: diceJitter 90ms linear infinite;
+    }
+
+    .die-token.assigned {
+      opacity: 0.34;
+      filter: grayscale(1);
+    }
+
+    .die-token.missed {
+      opacity: 0.22;
+      filter: grayscale(1) contrast(0.8);
+    }
+
+    .die-token.unavailable {
+      opacity: 0.2;
+      filter: grayscale(1) contrast(0.65);
+      position: relative;
+    }
+
+    .die-token.unavailable::after {
+      content: '';
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 50%;
+      border-top: 2px solid rgba(220, 71, 71, 0.9);
+      transform: rotate(-35deg);
+      pointer-events: none;
+    }
+
+    .die-token.manual-only {
+      border-radius: 8px;
+      outline: 2px dashed rgba(244, 200, 74, 0.7);
+      outline-offset: 1px;
+    }
+
+    .die-token.current {
+      border-radius: 8px;
+      outline: 3px solid rgba(244, 200, 74, 0.95);
+      outline-offset: 2px;
+      animation: currentDiePulse 760ms ease-in-out infinite;
+    }
+
+    @keyframes currentDiePulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(244, 200, 74, 0)); }
+      50% { transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(244, 200, 74, 0.8)); }
     }
 
     @keyframes diceJitter {
@@ -663,13 +897,14 @@
       align-content: center;
       align-self: center;
       justify-items: stretch;
-      gap: 10px 12px;
-      width: min(100%, 560px);
+      gap: 6px 7px;
+      width: min(100%, 336px);
       min-width: 0;
       margin-top: 0;
-      font-size: 42px;
+      font-size: 25px;
       font-weight: 950;
       line-height: 1;
+      transform-origin: center;
     }
 
     .roll-result-panel[data-side="axis"] .roll-summary {
@@ -788,30 +1023,30 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border: 1px solid rgba(78, 208, 255, 0.45);
+      border: 1px solid var(--zone-border-color, rgba(78, 208, 255, 0.55));
       border-radius: 4px;
-      background: rgba(10, 18, 36, 0.82);
+      background: var(--zone-fill-color, rgba(10, 18, 36, 0.82));
       color: #fff;
       cursor: pointer;
       touch-action: none;
     }
 
     .hot-zone.debug {
-      border-color: rgba(78, 208, 255, 0.55);
-      background: rgba(10, 18, 36, 0.82);
+      border-color: var(--zone-border-color, rgba(78, 208, 255, 0.55));
+      background: var(--zone-fill-color, rgba(10, 18, 36, 0.82));
     }
 
     .hot-zone.has-value {
-      border-color: rgba(46, 204, 113, 0.7);
-      background: rgba(14, 32, 24, 0.88);
+      border-color: var(--zone-border-color, rgba(46, 204, 113, 0.7));
+      background: var(--zone-value-fill-color, var(--zone-fill-color, rgba(14, 32, 24, 0.88)));
     }
 
-    .hot-zone.active,
-    .hot-zone.debug.active {
-      z-index: 3;
-      border-color: var(--yellow-border);
-      background: rgba(50, 42, 10, 0.92);
-      box-shadow: 0 0 14px rgba(244, 200, 74, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    .hot-zone.input-current,
+    .hot-zone.debug.input-current {
+      z-index: 4;
+      outline: 2px solid rgba(244, 200, 74, 0.95);
+      outline-offset: -2px;
+      box-shadow: 0 0 14px rgba(244, 200, 74, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.14);
     }
 
     .hot-zone.invalid,
@@ -824,16 +1059,17 @@
       position: relative;
       z-index: 2;
       display: flex;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
       width: 100%;
       height: 100%;
       min-width: 0;
-      padding: 0;
+      padding: 1px;
       border-radius: 0;
       background: transparent;
-      color: #fff;
-      font-size: clamp(12px, 2.8vw, 42px);
+      color: var(--zone-value-color, #fff);
+      font-size: clamp(15px, 2.45vw, 42px);
       font-weight: 950;
       line-height: 1;
       text-align: center;
@@ -841,15 +1077,63 @@
       pointer-events: none;
     }
 
-    .hot-zone.has-value .count-badge {
+    .count-badge.assignment-counts {
+      gap: 1px;
+      font-size: clamp(10px, 1.35vw, 24px);
+    }
+
+    .zone-stat {
+      display: flex;
+      flex: 1 1 0;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      height: 100%;
+      white-space: nowrap;
+    }
+
+    .zone-stat.single-count {
+      flex: 0 0 auto;
+      width: auto;
+      height: auto;
+    }
+
+    .zone-stat.alive,
+    .zone-stat.healthy {
       color: #b8ffd0;
     }
 
-    .hot-zone.active .count-badge {
-      color: #ffe08a;
+    .zone-stat.light {
+      color: #ffe070;
     }
 
-    .hot-zone:not(.has-value):not(.debug) .count-badge {
+    .zone-stat.damaged,
+    .zone-stat.heavy {
+      color: #ffb15d;
+    }
+
+    .zone-stat.destroyed {
+      color: #ff7168;
+    }
+
+    .hot-zone.has-value .count-badge {
+      color: var(--zone-value-color, #b8ffd0);
+    }
+
+    .hot-zone.input-current .count-badge {
+      filter: brightness(1.18);
+      text-shadow: 0 0 9px rgba(244, 200, 74, 0.56), 0 2px 6px rgba(0, 0, 0, 0.95);
+    }
+
+    .hot-zone.legal-target,
+    .hot-zone.debug.legal-target {
+      z-index: 3;
+      outline: 3px solid rgba(244, 200, 74, 0.92);
+      outline-offset: -3px;
+      box-shadow: 0 0 16px rgba(244, 200, 74, 0.48), inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    }
+
+    .hot-zone:not(.has-value):not(.debug):not(.input-current) .count-badge {
       display: none;
     }
 
@@ -930,16 +1214,18 @@
       right: 16px;
       bottom: 16px;
       z-index: 40;
-      width: min(420px, calc(100vw - 32px));
+      width: min(440px, calc(100vw - 32px));
+      max-height: min(46vh, 420px);
       padding: 12px 14px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 14px;
-      background: rgba(7, 10, 18, 0.82);
+      background: rgba(7, 10, 18, 0.88);
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.42);
       color: var(--muted);
       font-size: 13px;
       line-height: 1.45;
-      pointer-events: none;
+      pointer-events: auto;
+      overflow: auto;
     }
 
     .battle-info strong {
@@ -948,6 +1234,62 @@
 
     .battle-info .warning {
       color: #ffe08a;
+    }
+
+    .battle-log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin: 8px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .battle-log-list li {
+      padding: 6px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #dbe4f6;
+    }
+
+    .battle-log-empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .zone-tooltip {
+      position: fixed;
+      left: 12px;
+      bottom: 12px;
+      transform: none;
+    }
+
+    .zone-tooltip-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .zone-tooltip-actions button {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .tooltip-dice-log {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tooltip-dice-log .die-token {
+      flex: 0 0 28px;
+      width: 28px;
     }
 
     .placeholder-view {
@@ -1024,7 +1366,11 @@
 
       .roll-result-panel,
       .roll-summary-panel {
-        flex: 0 0 760px;
+        flex: 0 0 430px;
+      }
+
+      .stage-start-control {
+        flex: 0 0 118px;
       }
 
       .battle-main-layout {
@@ -1122,12 +1468,23 @@
         </div>
 
         <div id="battleControlPanelBody" class="battle-control-body">
-          <div class="battle-actions" aria-label="阶段掷骰按钮">
-            
-            <div class="battle-roll-row" aria-label="掷骰按钮">
-              <button class="dice-group-button" data-dice-roll-group="airBattle" type="button">空战</button>
-              <button class="dice-group-button" data-dice-roll-group="surfaceBattle" type="button">地面战</button>
-              <button id="strategicRollButton" class="dice-group-button" data-dice-roll-group="strategicBombing" type="button">战略轰炸</button>
+          <nav id="phaseNav" class="phase-nav" aria-label="战斗阶段导航"></nav>
+
+          <div class="assignment-mode-panel" aria-label="伤害分配模式">
+            <label class="mode-control">
+              <span>Axis</span>
+              <select id="axisDamageModeSelect" data-damage-mode-side="axis" aria-label="Axis 伤害分配模式"></select>
+              <button class="mode-help-button" data-mode-help-side="axis" type="button" aria-label="Axis 分配算法说明">?</button>
+            </label>
+            <label class="mode-control">
+              <span>Allies</span>
+              <select id="alliedDamageModeSelect" data-damage-mode-side="allied" aria-label="Allies 伤害分配模式"></select>
+              <button class="mode-help-button" data-mode-help-side="allied" type="button" aria-label="Allies 分配算法说明">?</button>
+            </label>
+            <div id="algorithmTooltip" class="algorithm-tooltip is-hidden" role="dialog" aria-live="polite">
+              <button id="closeAlgorithmTooltipButton" class="tooltip-close-button" type="button" aria-label="关闭算法说明">×</button>
+              <h4 id="algorithmTooltipTitle">分配算法</h4>
+              <p id="algorithmTooltipText"></p>
             </div>
           </div>
 
@@ -1141,8 +1498,12 @@
                 </label>
               </div>
               <div id="axisRollResults" class="roll-result-grid" aria-live="polite"></div>
-              <div id="axisRollSummary" class="roll-summary" aria-label="Axis 最近掷骰统计"></div>
+              <div id="axisRollSummary" class="roll-summary" aria-label="Axis 未分配骰子统计"></div>
             </section>
+
+            <div class="stage-start-control" aria-label="当前阶段操作">
+              <button id="stageStartButton" class="stage-start-button" type="button">开始空战</button>
+            </div>
 
             <section class="roll-result-panel" data-side="allied" aria-label="同盟国实体骰子结果">
               <div class="advantage-control-row">
@@ -1153,7 +1514,7 @@
                 </label>
               </div>
               <div id="alliedRollResults" class="roll-result-grid" aria-live="polite"></div>
-              <div id="alliedRollSummary" class="roll-summary" aria-label="Allied 最近掷骰统计"></div>
+              <div id="alliedRollSummary" class="roll-summary" aria-label="Allied 未分配骰子统计"></div>
             </section>
           </div>
         </div>
@@ -1184,10 +1545,21 @@
             <img id="boardImage" class="board-image" src="assets/land.jpg" alt="War Room Battle Board">
             <div id="boardOverlay" class="board-overlay" aria-label="Battle Board Overlay"></div>
             <aside id="battleInfo" class="battle-info">
-              <strong>Mapping Tool</strong><br>
-              <span id="hoverInfo">悬停热区可查看 id、X/Y/W/H、当前值。</span><br>
+              <strong>Battle Log</strong><br>
+              <span id="hoverInfo">悬停热区可查看 id、X/Y/W/H、当前状态。</span><br>
               <span id="boardHint" class="warning">所有坐标均为 0-1 百分比坐标；当前为初始校准版。</span>
+              <ol id="battleLogList" class="battle-log-list" aria-live="polite"></ol>
             </aside>
+            <div id="zoneTooltip" class="zone-tooltip is-hidden" role="dialog" aria-live="polite">
+              <button id="closeZoneTooltipButton" class="tooltip-close-button" type="button" aria-label="关闭热区详情">×</button>
+              <h4 id="zoneTooltipTitle">热区详情</h4>
+              <p id="zoneTooltipSummary"></p>
+              <div id="zoneTooltipDiceLog" class="tooltip-dice-log"></div>
+              <div class="zone-tooltip-actions">
+                <button id="undoZoneDamageButton" class="battle-action-button secondary" type="button">撤销最近一次</button>
+                <button id="clearZoneLogButton" class="battle-action-button danger" type="button">清空日志</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1251,6 +1623,40 @@
         allied_strategic: { count: 0, results: [] },
         allied_surface: { count: 0, results: [] }
       },
+      battleFlow: {
+        currentStage: 'airBattle',
+        completed: {
+          airBattle: false,
+          airDamage: false,
+          surfaceBattle: false,
+          surfaceDamage: false,
+          repair: false
+        }
+      },
+      damage: {
+        modes: {
+          axis: 'auto',
+          allied: 'auto'
+        },
+        assignments: {
+          airDamage: null,
+          surfaceDamage: null
+        },
+        autoAssignmentExecuted: {
+          airDamage: false,
+          surfaceDamage: false
+        },
+        forceAdvantageSnapshot: null,
+        tooltip: {
+          zoneId: null
+        },
+        algorithmTooltip: {
+          side: null,
+          mode: null
+        },
+        nextActionId: 1
+      },
+      battleLog: [],
       ui: {
         currentView: 'home',
         debugMode: true,
@@ -1270,9 +1676,52 @@
       }
     };
 
-    // 所有 Battle Board 校准值集中在这里，数值均为 0-1 百分比。
+    // 所有 Battle Board 坐标校准值集中在这里，数值均为 0-1 百分比。
     const BOARD_LAYOUT_CONFIG = {
+      // 旧热区横向数据备份（2026-06-03），用于回滚或对照 Mapping Tool 校准结果。
+      // nationColumns.land = { germany: 0.28, japan: 0.336, italy: 0.395, uk: 0.59, soviet: 0.645, usa: 0.7, china: 0.755 }
+      // nationColumns.sea = { germany: 0.277, japan: 0.334, italy: 0.393, uk: 0.607, soviet: 0.664, usa: 0.723, china: 1.2 }
+      // zoneWidth.land = 0.055, zoneWidth.sea = 0.05
+
+      // 热区横向分格时参与平分的国家；海战没有中国格，所以 sea.allied 不包含 china。
+      hotZoneSideNations: {
+        // 陆战：轴心 3 格，同盟 4 格。
+        land: {
+          // 陆战轴心国从左到右的热区列顺序。
+          axis: ['germany', 'japan', 'italy'],
+          // 陆战同盟国从左到右的热区列顺序。
+          allied: ['uk', 'soviet', 'usa', 'china']
+        },
+        // 海战：轴心 3 格，同盟 3 格；中国无海战列。
+        sea: {
+          // 海战轴心国从左到右的热区列顺序。
+          axis: ['germany', 'japan', 'italy'],
+          // 海战同盟国从左到右的热区列顺序。
+          allied: ['uk', 'soviet', 'usa']
+        }
+      },
+
+      // 热区横向可用区域；每个阵营会在本区域内按 hotZoneSideNations 平均分配 x 和 w。
+      hotZoneRegions: {
+        // 陆战中央预留区域保持 0.4225 → 0.5625；左右外边距均为 0.15。
+        land: {
+          // 陆战轴心热区：从战斗面板左边距到中央预留区左边界。
+          axis: { left: 0.15, right: 0.4225 },
+          // 陆战同盟热区：从中央预留区右边界到战斗面板右边距。
+          allied: { left: 0.5625, right: 0.85 }
+        },
+        // 海战中央预留区域保持 0.418 → 0.582；左右外边距均为 0.15。
+        sea: {
+          // 海战轴心热区：从战斗面板左边距到中央预留区左边界。
+          axis: { left: 0.15, right: 0.418 },
+          // 海战同盟热区：从中央预留区右边界到战斗面板右边距。
+          allied: { left: 0.582, right: 0.85 }
+        }
+      },
+
+      // 旧版国家列中心点；当前主要作为 nation control 或未配置热区时的回退坐标。
       nationColumns: {
+        // 陆战旧版国家中心 x 坐标。
         land: {
           germany: 0.28,
           japan: 0.336,
@@ -1282,6 +1731,7 @@
           usa: 0.7,
           china: 0.755
         },
+        // 海战旧版国家中心 x 坐标；china=1.2 表示海战中国列在板外，不参与热区。
         sea: {
           germany: 0.277,
           japan: 0.334,
@@ -1292,52 +1742,161 @@
           china: 1.2
         }
       },
+
+      // 旧版固定热区宽度；当前仅在 hotZoneRegions 未覆盖时作为回退宽度。
       zoneWidth: {
+        // 陆战旧版单列热区宽度。
         land: 0.055,
+        // 海战旧版单列热区宽度。
         sea: 0.05
       },
+
+      // 国家输入按钮区域配置。
       nationControl: {
+        // 输入按钮宽度相对于该国家热区宽度的比例。
         widthScale: 1,
+        // 输入按钮高度，占整张 Battle Board 高度的比例。
         height: 0.1,
+        // 输入按钮纵向位置；按战场类型和阵营分别控制 top。
         position: {
+          // 陆战国家输入按钮 top 坐标。
           land: {
             top: {
+              // 陆战轴心输入按钮 top 坐标。
               axis: 0.365,
+              // 陆战同盟输入按钮 top 坐标。
               allied: 0.365
             }
           },
+          // 海战国家输入按钮 top 坐标。
           sea: {
             top: {
+              // 海战轴心输入按钮 top 坐标。
               axis: 0.28,
+              // 海战同盟输入按钮 top 坐标。
               allied: 0.28
             }
           }
         }
       },
+
+      // 各姿态行的纵向坐标；y 是行顶端位置，h 是行高度。
       stanceRows: {
+        // 陆战姿态行坐标。
         land: {
+          // 轰炸机战略轰炸行。
           bomberStrategic: { y: 0.03, h: 0.08 },
+          // 轰炸机对空/对地支援行。
           bomberAirGround: { y: 0.115, h: 0.08 },
+          // 战斗机空战行。
           fighterAir: { y: 0.2, h: 0.08 },
+          // 战斗机对地行。
           fighterGround: { y: 0.28, h: 0.08 },
+          // 坦克防御行。
           armorDefensive: { y: 0.47, h: 0.08 },
+          // 坦克进攻行。
           armorOffensive: { y: 0.55, h: 0.08 },
+          // 火炮防空行。
           artilleryAntiAir: { y: 0.635, h: 0.08 },
+          // 火炮对地行。
           artilleryGround: { y: 0.715, h: 0.08 },
+          // 步兵防御行。
           infantryDefensive: { y: 0.8, h: 0.085 },
+          // 步兵进攻行。
           infantryOffensive: { y: 0.885, h: 0.085 }
         },
+        // 海战姿态行坐标。
         sea: {
+          // 轰炸机海战行。
           bomberSea: { y: 0.025, h: 0.08 },
+          // 战斗机空战行。
           fighterAir: { y: 0.105, h: 0.085 },
+          // 战斗机对海行。
           fighterSurface: { y: 0.19, h: 0.085 },
+          // 战列舰防空行。
           battleshipAntiAir: { y: 0.383, h: 0.08 },
+          // 战列舰进攻行。
           battleshipOffensive: { y: 0.462, h: 0.083 },
+          // 航母防空行。
           carrierAntiAir: { y: 0.545, h: 0.085 },
+          // 航母进攻行。
           carrierOffensive: { y: 0.630, h: 0.08 },
+          // 巡洋舰护航行。
           cruiserEscort: { y: 0.715, h: 0.085 },
+          // 巡洋舰进攻行。
           cruiserOffensive: { y: 0.8, h: 0.08 },
+          // 潜艇行。
           submarine: { y: 0.885, h: 0.08 }
+        }
+      }
+    };
+
+    // 热区兵种配色集中配置；CSS 通过 JS 写入的 --zone-* 变量读取这些颜色。
+    const HOT_ZONE_UNIT_STYLE_CONFIG = {
+      // 未匹配到兵种时使用的默认热区视觉。
+      fallback: {
+        // 默认边框颜色。
+        border: 'rgba(78, 208, 255, 0.72)',
+        // 默认无值底色。
+        fill: 'rgba(10, 18, 36, 0.82)',
+        // 默认有值底色。
+        valueFill: 'rgba(12, 28, 42, 0.90)',
+        // 默认当前输入格底色。
+        activeFill: 'rgba(34, 40, 48, 0.94)',
+        // 默认数字颜色。
+        value: '#ffffff'
+      },
+
+      // 兵种到颜色组的映射；新增兵种时优先改这里。
+      unitColorMap: {
+        // 红：轰炸机 / 战列舰。
+        Bomber: 'red',
+        Battleship: 'red',
+        // 绿：战斗机 / 坦克 / 航母。
+        Fighter: 'green',
+        Armor: 'green',
+        Carrier: 'green',
+        // 蓝：火炮 / 巡洋舰。
+        Artillery: 'blue',
+        Cruiser: 'blue',
+        // 黄：步兵 / 潜艇。
+        Infantry: 'yellow',
+        Submarine: 'yellow'
+      },
+
+      // 颜色组的具体视觉值；如需换主题，只改这里的 rgba/hex。
+      colors: {
+        // 红色组：轰炸机、战列舰。
+        red: {
+          border: 'rgba(255, 92, 80, 0.96)',
+          fill: 'rgba(50, 18, 18, 0.92)',
+          valueFill: 'rgba(66, 22, 20, 0.92)',
+          activeFill: 'rgba(74, 36, 20, 0.95)',
+          value: '#ffd1cc'
+        },
+        // 绿色组：战斗机、坦克、航母。
+        green: {
+          border: 'rgba(78, 220, 126, 0.96)',
+          fill: 'rgba(14, 38, 26, 0.92)',
+          valueFill: 'rgba(18, 52, 34, 0.92)',
+          activeFill: 'rgba(38, 58, 28, 0.95)',
+          value: '#c6ffd8'
+        },
+        // 蓝色组：火炮、巡洋舰。
+        blue: {
+          border: 'rgba(92, 174, 255, 0.96)',
+          fill: 'rgba(14, 28, 48, 0.92)',
+          valueFill: 'rgba(18, 38, 64, 0.92)',
+          activeFill: 'rgba(32, 48, 70, 0.95)',
+          value: '#cbe6ff'
+        },
+        // 黄色组：步兵、潜艇。
+        yellow: {
+          border: 'rgba(255, 218, 92, 0.98)',
+          fill: 'rgba(48, 40, 12, 0.92)',
+          valueFill: 'rgba(64, 52, 16, 0.92)',
+          activeFill: 'rgba(76, 60, 20, 0.95)',
+          value: '#fff0b8'
         }
       }
     };
@@ -1352,6 +1911,8 @@
       { id: 'china', label: 'China', short: 'CHN', side: 'allied' }
     ];
 
+    // 战斗类型与骰子规则配置：控制陆战/海战显示名称、姿态顺序、兵种、热区所属分组以及每单位产出的骰子数。
+    // stances[].id 是存档键和热区 id 后缀；unit 用于热区配色和兵力优势类型判断；group 决定 AIR/LAND 输入模式；airDice/surfaceDice/strategicDice 是对应阶段每单位骰子数。
     const BOARD_CONFIGS = {
       land: {
         surfaceLabel: 'Land Dice',
@@ -1423,6 +1984,56 @@
     const PORT_ADVANTAGE_DICE = 2;
     const diceAnimationTimers = Object.fromEntries(DICE_AREAS.map((area) => [area, []]));
 
+    const BATTLE_STAGES = [
+      { id: 'airBattle', rollGroup: 'airBattle', label: '空战' },
+      { id: 'airDamage', assignmentFor: 'airBattle', label: '空战伤害分配' },
+      { id: 'surfaceBattle', rollGroup: 'surfaceBattle', label: '陆战' },
+      { id: 'surfaceDamage', assignmentFor: 'surfaceBattle', label: '陆战伤害分配' },
+      { id: 'repair', label: '修复单位' }
+    ];
+    const ASSIGNMENT_STAGE_BY_ROLL_GROUP = {
+      airBattle: 'airDamage',
+      surfaceBattle: 'surfaceDamage'
+    };
+    const DAMAGE_MODE_ORDER = ['auto', 'random', 'sameNation', 'largestStack', 'manual'];
+    const DAMAGE_MODES = {
+      auto: {
+        label: '自动分配',
+        tooltip: '自动分配：仅在进入/重新进入伤害分配阶段时处理一次；黑/白骰保留手动；彩色骰先校验颜色与阶段合法目标，再套用受伤优先、坦克进攻姿态优先、战斗机对地/对海姿态优先、对地轰炸机优先，最后执行全歼/小堆叠/最大堆叠逻辑。'
+      },
+      random: {
+        label: '随机分配',
+        tooltip: '随机分配：仅在进入/重新进入伤害分配阶段时处理一次；黑/白骰保留手动；彩色骰先通过通用合法性与第二段优先级，再在剩余合法目标中随机选择。'
+      },
+      sameNation: {
+        label: '优先同国',
+        tooltip: '优先同国：仅在进入/重新进入伤害分配阶段时处理一次；先执行通用校验与优先级，如果某个国家已承担当前颜色伤害，则同色骰优先继续打击该国家。'
+      },
+      largestStack: {
+        label: '优先最大堆叠',
+        tooltip: '优先最大堆叠：仅在进入/重新进入伤害分配阶段时处理一次；先执行通用校验与优先级，再优先命中剩余合法目标中的最大存活堆叠。'
+      },
+      manual: {
+        label: '手动分配',
+        tooltip: ''
+      }
+    };
+    const DAMAGE_COLOR_PRIORITY = ['yellow', 'blue', 'green', 'red', 'black', 'white'];
+    const UNDO_COLOR_PRIORITY = ['black', 'white', 'yellow', 'blue', 'green', 'red'];
+    const ASSIGNMENT_DIE_STATUSES = ['pending', 'assigned', 'missed', 'unavailable'];
+    const MANUAL_ONLY_DICE_COLORS = ['black', 'white'];
+    const DAMAGE_COLOR_TARGET_UNITS = {
+      yellow: ['Infantry', 'Submarine'],
+      blue: ['Artillery', 'Cruiser'],
+      green: ['Fighter', 'Armor', 'Carrier'],
+      red: ['Bomber', 'Battleship']
+    };
+    // 空战伤害分配时，战斗机内部优先打对地 / 对海姿态，再打空战姿态。
+    const AIR_DAMAGE_FIGHTER_PRIORITY_STANCES = ['fighterGround', 'fighterSurface'];
+    const MULTI_LIFE_UNITS = ['Armor', 'Carrier', 'Battleship'];
+    const SIDE_LABELS = { axis: '轴心国', allied: '同盟国' };
+    const SOURCE_TO_TARGET_SIDE = { axis: 'allied', allied: 'axis' };
+
     const ZONES_BY_TYPE = {
       land: buildZones('land'),
       sea: buildZones('sea')
@@ -1447,34 +2058,67 @@
       return BOARD_LAYOUT_CONFIG.nationColumns[layoutType][nationId] ?? BOARD_LAYOUT_CONFIG.nationColumns.land[nationId] ?? 0.5;
     }
 
+    function getNationZoneBounds(nationId, type = gameState.battleType) {
+      const layoutType = getLayoutType(type);
+      const nation = NATIONS.find((item) => item.id === nationId);
+      const sideRegion = nation && BOARD_LAYOUT_CONFIG.hotZoneRegions
+        && BOARD_LAYOUT_CONFIG.hotZoneRegions[layoutType]
+        && BOARD_LAYOUT_CONFIG.hotZoneRegions[layoutType][nation.side];
+
+      if (sideRegion) {
+        const configuredSideNations = BOARD_LAYOUT_CONFIG.hotZoneSideNations
+          && BOARD_LAYOUT_CONFIG.hotZoneSideNations[layoutType]
+          && BOARD_LAYOUT_CONFIG.hotZoneSideNations[layoutType][nation.side];
+        const sideNationIds = configuredSideNations || NATIONS.filter((item) => item.side === nation.side).map((item) => item.id);
+        const nationIndex = sideNationIds.indexOf(nationId);
+
+        if (nationIndex >= 0) {
+          const regionWidth = Math.max(0, sideRegion.right - sideRegion.left);
+          const zoneWidth = regionWidth / sideNationIds.length;
+          return {
+            x: sideRegion.left + nationIndex * zoneWidth,
+            w: zoneWidth
+          };
+        }
+      }
+
+      const zoneWidth = BOARD_LAYOUT_CONFIG.zoneWidth[layoutType] || BOARD_LAYOUT_CONFIG.zoneWidth.land;
+      return {
+        x: clamp01(getNationColumnX(nationId, type) - zoneWidth / 2),
+        w: zoneWidth
+      };
+    }
+
     function getNationControlPosition(type = gameState.battleType) {
       const layoutType = getLayoutType(type);
       return BOARD_LAYOUT_CONFIG.nationControl.position[layoutType] || BOARD_LAYOUT_CONFIG.nationControl.position.land;
     }
 
     function buildZones(type) {
-      const zoneWidth = BOARD_LAYOUT_CONFIG.zoneWidth[type] || BOARD_LAYOUT_CONFIG.zoneWidth.land;
       const stances = getStancesForType(type);
 
-      return NATIONS.flatMap((nation) => stances.map((stance) => ({
-        id: `${nation.id}_${stance.id}`,
-        nation: nation.id,
-        nationLabel: nation.label,
-        nationShort: nation.short,
-        side: nation.side,
-        stance: stance.id,
-        stanceLabel: stance.label,
-        unit: stance.unit,
-        group: stance.group,
-        airDice: stance.airDice || 0,
-        surfaceDice: stance.surfaceDice || 0,
-        strategicDice: stance.strategicDice || 0,
-        label: `${nation.label} · ${stance.label}`,
-        x: clamp01(getNationColumnX(nation.id, type) - zoneWidth / 2),
-        y: stance.y,
-        w: zoneWidth,
-        h: stance.h
-      })));
+      return NATIONS.flatMap((nation) => stances.map((stance) => {
+        const zoneBounds = getNationZoneBounds(nation.id, type);
+        return {
+          id: `${nation.id}_${stance.id}`,
+          nation: nation.id,
+          nationLabel: nation.label,
+          nationShort: nation.short,
+          side: nation.side,
+          stance: stance.id,
+          stanceLabel: stance.label,
+          unit: stance.unit,
+          group: stance.group,
+          airDice: stance.airDice || 0,
+          surfaceDice: stance.surfaceDice || 0,
+          strategicDice: stance.strategicDice || 0,
+          label: `${nation.label} · ${stance.label}`,
+          x: zoneBounds.x,
+          y: stance.y,
+          w: zoneBounds.w,
+          h: stance.h
+        };
+      }));
     }
 
     function clamp01(value) {
@@ -1506,8 +2150,11 @@
       next.ui.portAdvantage.axis = Boolean(next.ui.portAdvantage.axis);
       next.ui.portAdvantage.allied = Boolean(next.ui.portAdvantage.allied);
       next.nations = saved && saved.nations && typeof saved.nations === 'object' ? saved.nations : {};
-      next.battleBoard = saved && saved.battleBoard && typeof saved.battleBoard === 'object' ? migrateLegacyBattleBoard(saved.battleBoard) : {};
+      next.battleBoard = normalizeBattleBoardState(saved && saved.battleBoard && typeof saved.battleBoard === 'object' ? migrateLegacyBattleBoard(saved.battleBoard) : {});
       next.dice = normalizeDiceState(saved && saved.dice ? saved.dice : {});
+      next.battleFlow = normalizeBattleFlow(saved && saved.battleFlow ? saved.battleFlow : {});
+      next.damage = normalizeDamageState(saved && saved.damage ? saved.damage : {});
+      next.battleLog = Array.isArray(saved && saved.battleLog) ? saved.battleLog.slice(-80) : [];
 
       if (!['normal', 'quick'].includes(next.battleMode)) {
         next.battleMode = 'normal';
@@ -1548,6 +2195,115 @@
       return migrated;
     }
 
+    function normalizeBattleBoardState(savedBoard) {
+      const board = {};
+      Object.entries(savedBoard || {}).forEach(([nationId, nationState]) => {
+        if (!nationState || typeof nationState !== 'object') return;
+        board[nationId] = {};
+        Object.entries(nationState).forEach(([stanceId, rawCell]) => {
+          board[nationId][stanceId] = normalizeCellState(rawCell);
+        });
+      });
+      return board;
+    }
+
+    function createEmptyCellState() {
+      return {
+        alive: 0,
+        damaged: 0,
+        light: 0,
+        heavy: 0,
+        destroyed: 0,
+        assignedDiceLog: []
+      };
+    }
+
+    function normalizeCellState(rawCell) {
+      if (typeof rawCell === 'number') {
+        const cell = createEmptyCellState();
+        cell.alive = Math.max(0, Math.floor(rawCell));
+        return cell;
+      }
+
+      if (!rawCell || typeof rawCell !== 'object') {
+        return createEmptyCellState();
+      }
+
+      const cell = createEmptyCellState();
+      ['alive', 'damaged', 'light', 'heavy', 'destroyed'].forEach((key) => {
+        const value = Math.floor(Number(rawCell[key]));
+        cell[key] = Number.isFinite(value) ? Math.max(0, value) : 0;
+      });
+      cell.assignedDiceLog = Array.isArray(rawCell.assignedDiceLog)
+        ? rawCell.assignedDiceLog.slice(-80)
+        : [];
+      return cell;
+    }
+
+    function normalizeBattleFlow(savedFlow) {
+      const flow = clone(DEFAULT_STATE.battleFlow);
+      if (savedFlow && typeof savedFlow === 'object') {
+        if (BATTLE_STAGES.some((stage) => stage.id === savedFlow.currentStage)) {
+          flow.currentStage = savedFlow.currentStage;
+        }
+        flow.completed = Object.assign(flow.completed, savedFlow.completed || {});
+      }
+      BATTLE_STAGES.forEach((stage) => {
+        flow.completed[stage.id] = Boolean(flow.completed[stage.id]);
+      });
+      return flow;
+    }
+
+    function normalizeDamageState(savedDamage) {
+      const damage = clone(DEFAULT_STATE.damage);
+      if (savedDamage && typeof savedDamage === 'object') {
+        // 分配方式选择器每次初始化都使用 DEFAULT_STATE.damage.modes，确保 Axis / Allies 默认都是“自动分配”。
+        damage.assignments = Object.assign(damage.assignments, savedDamage.assignments || {});
+        damage.autoAssignmentExecuted = Object.assign(damage.autoAssignmentExecuted, savedDamage.autoAssignmentExecuted || {});
+        damage.forceAdvantageSnapshot = savedDamage.forceAdvantageSnapshot || null;
+        // 热区 tooltip 现在由悬浮实时触发，不从 LocalStorage 恢复旧悬浮目标。
+        damage.algorithmTooltip = Object.assign(damage.algorithmTooltip, savedDamage.algorithmTooltip || {});
+        damage.nextActionId = Math.max(1, Math.floor(Number(savedDamage.nextActionId)) || 1);
+      }
+      ['axis', 'allied'].forEach((side) => {
+        if (!DAMAGE_MODE_ORDER.includes(damage.modes[side])) {
+          damage.modes[side] = DEFAULT_STATE.damage.modes[side];
+        }
+      });
+      ['airDamage', 'surfaceDamage'].forEach((stageKey) => {
+        damage.assignments[stageKey] = normalizeAssignmentPackage(damage.assignments[stageKey], stageKey);
+        damage.autoAssignmentExecuted[stageKey] = Boolean(damage.autoAssignmentExecuted[stageKey]);
+      });
+      return damage;
+    }
+
+    function normalizeAssignmentPackage(packageState, stageKey) {
+      if (!packageState || typeof packageState !== 'object') return null;
+      const packageClone = Object.assign({ stageKey, activeSide: 'axis', dice: { axis: [], allied: [] } }, packageState);
+      packageClone.stageKey = stageKey;
+      packageClone.groupKey = stageKey === 'airDamage' ? 'airBattle' : 'surfaceBattle';
+      packageClone.activeSide = ['axis', 'allied'].includes(packageClone.activeSide) ? packageClone.activeSide : 'axis';
+      packageClone.dice = packageClone.dice && typeof packageClone.dice === 'object' ? packageClone.dice : { axis: [], allied: [] };
+      ['axis', 'allied'].forEach((side) => {
+        packageClone.dice[side] = Array.isArray(packageClone.dice[side])
+          ? packageClone.dice[side]
+            .filter((die) => die && DICE_ORDER.includes(die.color))
+            .map((die, index) => Object.assign({}, die, {
+              id: die.id || `${stageKey}_${side}_${index}_${die.color}`,
+              color: die.color,
+              sourceSide: side,
+              status: ASSIGNMENT_DIE_STATUSES.includes(die.status) ? die.status : 'pending',
+              targetZoneId: die.targetZoneId || null,
+              logId: die.logId || null,
+              assignedOrder: Math.max(0, Math.floor(Number(die.assignedOrder)) || 0),
+              beforeCell: die.beforeCell || null,
+              afterCell: die.afterCell || null
+            }))
+          : [];
+      });
+      return packageClone;
+    }
+
     function normalizeDiceState(savedDice) {
       const dice = clone(DEFAULT_STATE.dice);
       DICE_AREAS.forEach((area) => {
@@ -1581,9 +2337,13 @@
     function resetBattleBoard() {
       gameState.battleBoard = {};
       resetDiceStateOnly();
+      gameState.battleFlow = normalizeBattleFlow({});
+      gameState.damage = normalizeDamageState({});
+      gameState.battleLog = [];
       gameState.ui.inputMode = null;
       gameState.ui.activeZoneId = null;
       gameState.ui.portAdvantage = clone(DEFAULT_STATE.ui.portAdvantage);
+      addBattleLog('开始新战斗，已清空战斗板。', { save: false });
       saveState();
     }
 
@@ -1591,12 +2351,35 @@
       gameState.dice = normalizeDiceState({});
       gameState.ui.activeRollGroup = null;
       gameState.ui.completedRolls = clone(DEFAULT_STATE.ui.completedRolls);
+      if (gameState.damage && gameState.damage.assignments) {
+        gameState.damage.assignments.airDamage = null;
+        gameState.damage.assignments.surfaceDamage = null;
+        gameState.damage.forceAdvantageSnapshot = null;
+        resetAllAutoAssignmentFlags();
+      }
       clearAllDiceAnimations();
     }
 
-    function resetCurrentBattleDice() {
+    function resetCurrentBattle() {
+      getCurrentZones().forEach((zone) => {
+        const cell = getBattleCellState(zone.nation, zone.stance);
+        const returned = cell.damaged + cell.light + cell.heavy + cell.destroyed;
+        cell.alive += returned;
+        cell.damaged = 0;
+        cell.light = 0;
+        cell.heavy = 0;
+        cell.destroyed = 0;
+        cell.assignedDiceLog = [];
+      });
       resetDiceStateOnly();
+      gameState.battleFlow = normalizeBattleFlow({});
+      gameState.damage.assignments.airDamage = null;
+      gameState.damage.assignments.surfaceDamage = null;
+      gameState.damage.forceAdvantageSnapshot = null;
+      gameState.damage.tooltip.zoneId = null;
+      addBattleLog('重新本场战斗：受损与摧毁单位已全部加回存活。', { save: false });
       renderDiceUi();
+      renderBattleBoard();
       saveState();
     }
 
@@ -1622,18 +2405,44 @@
       return gameState.battleBoard[nationId];
     }
 
-    function getUnitCount(nationId, stanceId) {
-      const nationState = gameState.battleBoard[nationId];
-      if (!nationState) {
-        return 0;
+    function getBattleCellState(nationId, stanceId) {
+      const nationState = ensureBoardState(nationId);
+      nationState[stanceId] = normalizeCellState(nationState[stanceId]);
+      return nationState[stanceId];
+    }
+
+    function setBattleCellState(nationId, stanceId, cellState, options = {}) {
+      const nationState = ensureBoardState(nationId);
+      nationState[stanceId] = normalizeCellState(cellState);
+      if (options.save !== false) {
+        saveState();
       }
-      const value = Number(nationState[stanceId]);
-      return Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+    }
+
+    function getSurvivingCountFromCell(cell) {
+      const normalized = normalizeCellState(cell);
+      return normalized.alive + normalized.damaged + normalized.light + normalized.heavy;
+    }
+
+    function getDamagedCountFromCell(cell) {
+      const normalized = normalizeCellState(cell);
+      return normalized.damaged + normalized.light + normalized.heavy;
+    }
+
+    function getUnitCount(nationId, stanceId) {
+      return getSurvivingCountFromCell(getBattleCellState(nationId, stanceId));
+    }
+
+    function getDiceEligibleUnitCount(nationId, stanceId) {
+      // 掷骰只统计仍存活/受损的单位；destroyed 已被排除，不能参与后续阶段。
+      return getUnitCount(nationId, stanceId);
     }
 
     function setUnitCount(nationId, stanceId, value, options = {}) {
-      const nationState = ensureBoardState(nationId);
-      nationState[stanceId] = Math.max(0, Math.floor(Number(value) || 0));
+      const cell = getBattleCellState(nationId, stanceId);
+      const targetTotal = Math.max(0, Math.floor(Number(value) || 0));
+      const damagedTotal = getDamagedCountFromCell(cell);
+      cell.alive = Math.max(0, targetTotal - damagedTotal);
       if (options.save !== false) {
         saveState();
       }
@@ -1658,6 +2467,9 @@
 
       syncHomeControls();
       updateToolbar();
+      renderBattleFlowUi();
+      renderBattleLog();
+      renderZoneTooltip();
 
       if (safeView === 'battle') {
         updateBoardBackground();
@@ -1740,10 +2552,63 @@
       return getCurrentZones().find((zone) => zone.id === zoneId) || null;
     }
 
+    function getHotZoneStyle(zone) {
+      const colorKey = HOT_ZONE_UNIT_STYLE_CONFIG.unitColorMap[zone.unit];
+      return HOT_ZONE_UNIT_STYLE_CONFIG.colors[colorKey] || HOT_ZONE_UNIT_STYLE_CONFIG.fallback;
+    }
+
+    function applyHotZoneStyle(zoneEl, zone) {
+      const style = getHotZoneStyle(zone);
+      zoneEl.style.setProperty('--zone-border-color', style.border);
+      zoneEl.style.setProperty('--zone-fill-color', style.fill);
+      zoneEl.style.setProperty('--zone-value-fill-color', style.valueFill);
+      zoneEl.style.setProperty('--zone-active-fill-color', style.activeFill);
+      zoneEl.style.setProperty('--zone-value-color', style.value);
+    }
+
     function getZoneIdsForMode(nationId, scope) {
       return getStancesForType(gameState.battleType)
         .filter((stance) => scope === 'all' || stance.group === scope)
         .map((stance) => `${nationId}_${stance.id}`);
+    }
+
+    function isInputCurrentZone(zoneId) {
+      return Boolean(gameState.ui.inputMode && zoneId && gameState.ui.activeZoneId === zoneId);
+    }
+
+    function selectInputZone(zoneId) {
+      const zone = getZoneById(zoneId);
+      const mode = gameState.ui.inputMode;
+      if (!zone || !mode) return false;
+
+      let zoneIds = Array.isArray(mode.zoneIds) ? mode.zoneIds : [];
+      let cursor = zoneIds.indexOf(zoneId);
+      if (cursor < 0) {
+        const scope = mode.scope === 'all' ? 'all' : zone.group;
+        zoneIds = getZoneIdsForMode(zone.nation, scope);
+        cursor = zoneIds.indexOf(zoneId);
+        if (cursor < 0) return false;
+        gameState.ui.inputMode = {
+          nation: zone.nation,
+          scope,
+          zoneIds,
+          cursor,
+          sequence: mode.sequence || (scope === 'air' ? 'airThenLand' : null)
+        };
+      } else {
+        mode.cursor = cursor;
+      }
+
+      const changed = gameState.ui.activeZoneId !== zoneId;
+      gameState.ui.activeZoneId = zoneId;
+      return changed;
+    }
+
+    function syncInputCurrentZoneUi() {
+      document.querySelectorAll('.hot-zone').forEach((element) => {
+        element.classList.toggle('input-current', isInputCurrentZone(element.dataset.zoneId));
+      });
+      updateToolbar();
     }
 
     function renderBattleBoard() {
@@ -1754,31 +2619,34 @@
       const fragment = document.createDocumentFragment();
       const zones = getCurrentZones();
 
+      const assignmentContext = getCurrentAssignmentContext();
+      const assignableZoneIds = assignmentContext ? new Set(zones.filter((zone) => Boolean(choosePendingDieForZone(zone, assignmentContext.stageKey))).map((zone) => zone.id)) : new Set();
+
       zones.forEach((zone) => {
-        const value = getUnitCount(zone.nation, zone.stance);
+        const cell = getBattleCellState(zone.nation, zone.stance);
+        const value = getSurvivingCountFromCell(cell);
         const zoneEl = document.createElement('div');
         zoneEl.className = 'hot-zone';
         if (gameState.ui.debugMode) zoneEl.classList.add('debug');
-        if (value > 0) zoneEl.classList.add('has-value');
-        if (zone.id === gameState.ui.activeZoneId) zoneEl.classList.add('active');
+        if (value > 0 || (shouldShowZoneDamageBreakdown() && cell.destroyed > 0)) zoneEl.classList.add('has-value');
+        if (isInputCurrentZone(zone.id)) zoneEl.classList.add('input-current');
+        if (assignmentContext && assignableZoneIds.has(zone.id)) {
+          zoneEl.classList.add('legal-target');
+        }
+        applyHotZoneStyle(zoneEl, zone);
         zoneEl.dataset.zoneId = zone.id;
         zoneEl.style.left = `${zone.x * 100}%`;
         zoneEl.style.top = `${zone.y * 100}%`;
         zoneEl.style.width = `${zone.w * 100}%`;
         zoneEl.style.height = `${zone.h * 100}%`;
-        zoneEl.title = `${zone.id}\n${zone.label}\nX:${formatCoord(zone.x)} Y:${formatCoord(zone.y)} W:${formatCoord(zone.w)} H:${formatCoord(zone.h)}\nValue:${value}`;
+        zoneEl.title = `${zone.id}\n${zone.label}\nX:${formatCoord(zone.x)} Y:${formatCoord(zone.y)} W:${formatCoord(zone.w)} H:${formatCoord(zone.h)}\n${formatCellSummary(cell, zone)}`;
 
         const count = document.createElement('div');
-        count.className = 'count-badge';
-        count.textContent = value > 0 || gameState.ui.debugMode ? `[${value}]` : '';
+        count.className = `count-badge${shouldShowZoneDamageBreakdown() ? ' assignment-counts' : ''}`;
+        count.innerHTML = buildZoneStatusHtml(cell, zone, gameState.ui.debugMode);
         zoneEl.appendChild(count);
 
-        if (gameState.ui.debugMode) {
-          const debugLabel = document.createElement('div');
-          debugLabel.className = 'zone-debug-label';
-          debugLabel.innerHTML = `<span>${zone.nationShort} · ${zone.stanceLabel}</span><span class="coords">X ${formatCoord(zone.x)} Y ${formatCoord(zone.y)}<br>W ${formatCoord(zone.w)} H ${formatCoord(zone.h)}</span>`;
-          zoneEl.appendChild(debugLabel);
-        }
+        // 热区内部仅显示数字；id/坐标/名称保留在 hover 与 title 中。
 
         fragment.appendChild(zoneEl);
       });
@@ -1786,8 +2654,6 @@
       const surfaceModeLabel = (BOARD_CONFIGS[gameState.battleType] || BOARD_CONFIGS.land).surfaceModeLabel;
       const nationControl = BOARD_LAYOUT_CONFIG.nationControl;
       const nationControlPosition = getNationControlPosition();
-      const currentZoneWidth = BOARD_LAYOUT_CONFIG.zoneWidth[gameState.battleType] || BOARD_LAYOUT_CONFIG.zoneWidth.land;
-      const nationControlWidth = currentZoneWidth * (nationControl.widthScale || 1);
 
       NATIONS.forEach((nation) => {
         const control = document.createElement('div');
@@ -1797,8 +2663,10 @@
           control.classList.add('active');
         }
         control.dataset.nationId = nation.id;
-        const nationColumnX = getNationColumnX(nation.id);
-        control.style.left = `${(nationColumnX - nationControlWidth / 2) * 100}%`;
+        const zoneBounds = getNationZoneBounds(nation.id);
+        const nationControlWidth = zoneBounds.w * (nationControl.widthScale || 1);
+        const nationControlLeft = zoneBounds.x + (zoneBounds.w - nationControlWidth) / 2;
+        control.style.left = `${nationControlLeft * 100}%`;
         control.style.top = `${(nationControlPosition.top[nation.side] ?? nationControlPosition.top.axis) * 100}%`;
         control.style.width = `${nationControlWidth * 100}%`;
         control.style.height = `${nationControl.height * 100}%`;
@@ -1816,10 +2684,67 @@
       updateHoverInfo(null);
       updateBoardHint();
       renderDiceSummary();
+      renderBattleFlowUi();
+      renderBattleLog();
+      renderZoneTooltip();
     }
 
     function formatCoord(value) {
       return Number(value).toFixed(3);
+    }
+
+    function isMultiLifeZone(zone) {
+      return zone && MULTI_LIFE_UNITS.includes(zone.unit);
+    }
+
+    function shouldShowZoneDamageBreakdown() {
+      return isDamageAssignmentStage() || isRepairStage() || gameState.battleFlow.currentStage === 'surfaceBattle';
+    }
+
+    function buildZoneStatusHtml(cell, zone, forceVisible = false) {
+      const normalized = normalizeCellState(cell);
+      const surviving = getSurvivingCountFromCell(normalized);
+      const hasAny = surviving > 0 || normalized.destroyed > 0;
+      if (!hasAny && !forceVisible) return '';
+
+      if (!shouldShowZoneDamageBreakdown()) {
+        return surviving > 0 ? `<span class="zone-stat single-count alive">${surviving}</span>` : '';
+      }
+
+      const parts = [];
+      if (isMultiLifeZone(zone)) {
+        if (normalized.alive > 0) parts.push(`<span class="zone-stat healthy">${normalized.alive}</span>`);
+        if (normalized.light > 0) parts.push(`<span class="zone-stat light">${normalized.light}</span>`);
+        if (normalized.heavy > 0) parts.push(`<span class="zone-stat heavy">${normalized.heavy}</span>`);
+        if (normalized.destroyed > 0) parts.push(`<span class="zone-stat destroyed">${normalized.destroyed}</span>`);
+        return parts.join('');
+      }
+
+      if (normalized.alive > 0) parts.push(`<span class="zone-stat alive">${normalized.alive}</span>`);
+      if (normalized.damaged > 0) parts.push(`<span class="zone-stat damaged">${normalized.damaged}</span>`);
+      if (normalized.destroyed > 0) parts.push(`<span class="zone-stat destroyed">${normalized.destroyed}</span>`);
+      return parts.join('');
+    }
+
+    function formatCellSummary(cell, zone) {
+      const normalized = normalizeCellState(cell);
+      if (isMultiLifeZone(zone)) {
+        return `Healthy:${normalized.alive} Light:${normalized.light} Heavy:${normalized.heavy} Destroyed:${normalized.destroyed}`;
+      }
+      return `Alive:${normalized.alive} Damaged:${normalized.damaged} Destroyed:${normalized.destroyed}`;
+    }
+
+    function formatZoneDiceSummary(zone) {
+      const count = getUnitCount(zone.nation, zone.stance);
+      const surfaceLabel = gameState.battleType === 'sea' ? '海面战' : '地面战';
+      const parts = [
+        `空战 ${count * (zone.airDice || 0)}`,
+        `${surfaceLabel} ${count * (zone.surfaceDice || 0)}`
+      ];
+      if (gameState.battleType === 'land') {
+        parts.push(`战略 ${count * (zone.strategicDice || 0)}`);
+      }
+      return `骰子计数：${parts.join(' · ')}`;
     }
 
     function updateBoardHint() {
@@ -1837,12 +2762,12 @@
       if (!hoverInfo) return;
 
       if (!zone) {
-        hoverInfo.textContent = '悬停热区可查看 id、X/Y/W/H、当前值。';
+        hoverInfo.textContent = '悬停热区可查看 id、X/Y/W/H、当前状态。';
         return;
       }
 
-      const value = getUnitCount(zone.nation, zone.stance);
-      hoverInfo.innerHTML = `<strong>${zone.id}</strong><br>${zone.label}<br>X:${formatCoord(zone.x)} Y:${formatCoord(zone.y)} W:${formatCoord(zone.w)} H:${formatCoord(zone.h)} · Value:[${value}]`;
+      const cell = getBattleCellState(zone.nation, zone.stance);
+      hoverInfo.innerHTML = `<strong>${zone.id}</strong><br>${zone.label}<br>X:${formatCoord(zone.x)} Y:${formatCoord(zone.y)} W:${formatCoord(zone.w)} H:${formatCoord(zone.h)}<br>${formatCellSummary(cell, zone)}`;
     }
 
     function renderDiceUi() {
@@ -1851,6 +2776,7 @@
       renderDiceSummary();
       renderActiveRollResults();
       renderDiceControls();
+      renderBattleFlowUi();
     }
 
     function getDiceAreaState(area) {
@@ -1883,7 +2809,7 @@
       NATIONS.forEach((nation) => {
         const sidePrefix = nation.side === 'axis' ? 'axis' : 'allied';
         stances.forEach((stance) => {
-          const count = getUnitCount(nation.id, stance.id);
+          const count = getDiceEligibleUnitCount(nation.id, stance.id);
           totals[`${sidePrefix}_air`] += count * (stance.airDice || 0);
           totals[`${sidePrefix}_surface`] += count * (stance.surfaceDice || 0);
           totals[`${sidePrefix}_strategic`] += count * (stance.strategicDice || 0);
@@ -1921,8 +2847,16 @@
       saveState();
     }
 
+    function getRollExecutionAreas(groupKey) {
+      const areas = [...(DICE_ROLL_GROUPS[groupKey] || [])];
+      if (groupKey === 'surfaceBattle' && gameState.battleType === 'land') {
+        areas.push('axis_strategic', 'allied_strategic');
+      }
+      return areas;
+    }
+
     function rollDiceGroup(groupKey) {
-      const areas = DICE_ROLL_GROUPS[groupKey] || [];
+      const areas = getRollExecutionAreas(groupKey);
       if (areas.length === 0) return;
       clearAllDiceAnimations();
 
@@ -1937,6 +2871,26 @@
       gameState.ui.activeRollGroup = groupKey;
       gameState.ui.completedRolls = Object.assign(clone(DEFAULT_STATE.ui.completedRolls), gameState.ui.completedRolls || {});
       gameState.ui.completedRolls[groupKey] = true;
+      if (groupKey === 'airBattle') {
+        gameState.damage.assignments.airDamage = null;
+        resetAutoAssignmentFlag('airDamage');
+        completeStage('airBattle');
+        addBattleLog(`空战掷骰完成：Axis ${getDiceAreaState('axis_air').results.length} 骰，Allies ${getDiceAreaState('allied_air').results.length} 骰。`, { save: false });
+      }
+      if (groupKey === 'surfaceBattle') {
+        gameState.damage.assignments.surfaceDamage = null;
+        resetAutoAssignmentFlag('surfaceDamage');
+        gameState.damage.forceAdvantageSnapshot = null;
+        if (gameState.battleType === 'land') {
+          gameState.ui.completedRolls.strategicBombing = true;
+        }
+        captureForceAdvantageSnapshot();
+        completeStage('surfaceBattle');
+        const strategicText = gameState.battleType === 'land'
+          ? `；战略轰炸记录：Axis ${getDiceAreaState('axis_strategic').results.length} 骰，Allies ${getDiceAreaState('allied_strategic').results.length} 骰`
+          : '';
+        addBattleLog(`${getSurfaceStageName()}掷骰完成：Axis ${getDiceAreaState('axis_surface').results.length} 骰，Allies ${getDiceAreaState('allied_surface').results.length} 骰${strategicText}。`, { save: false });
+      }
 
       const hasDice = areas.some((area) => getDiceAreaState(area).results.length > 0);
       if (!hasDice) {
@@ -2035,13 +2989,19 @@
 
     function renderActiveRollResults(options = {}) {
       const groupKey = options.groupKey || gameState.ui.activeRollGroup;
+      const assignmentPackage = options.rolling ? null : getAssignmentPackageForGroup(groupKey);
+      const currentContext = getCurrentAssignmentContext();
       const resultsBySide = options.resultsBySide || getRollDisplayResultsBySide(groupKey);
       ['axis', 'allied'].forEach((side) => {
         const container = document.getElementById(`${side}RollResults`);
         const summary = document.getElementById(`${side}RollSummary`);
         if (!container) return;
-        const sourceResults = resultsBySide[side] || [];
-        const results = options.sorted === false ? [...sourceResults] : sortDiceResults(sourceResults).slice(0, DICE_STAGE_CAP);
+        const assignmentDice = assignmentPackage && assignmentPackage.dice ? assignmentPackage.dice[side] : null;
+        const sourceResults = assignmentDice ? assignmentDice.map((die) => die.color) : (resultsBySide[side] || []);
+        const summaryResults = assignmentDice ? assignmentDice.filter((die) => die.status === 'pending').map((die) => die.color) : sourceResults;
+        const results = assignmentDice
+          ? assignmentDice.slice(0, DICE_STAGE_CAP)
+          : (options.sorted === false ? [...sourceResults] : sortDiceResults(sourceResults).slice(0, DICE_STAGE_CAP)).map((color, index) => ({ color, originalIndex: index, status: 'plain' }));
         container.innerHTML = '';
 
         if (!groupKey || results.length === 0) {
@@ -2050,12 +3010,26 @@
           empty.textContent = '未掷骰';
           container.appendChild(empty);
         } else {
-          results.slice(0, DICE_STAGE_CAP).forEach((color, index) => {
+          results.slice(0, DICE_STAGE_CAP).forEach((dieInfo, index) => {
+            const color = dieInfo.color || dieInfo;
+            const isCurrent = currentContext && currentContext.die && currentContext.die.id === dieInfo.id;
+            const isManualOnly = dieInfo.status === 'pending' && MANUAL_ONLY_DICE_COLORS.includes(color);
             const die = document.createElement('div');
-            die.className = `die-token${options.rolling ? ' rolling' : ''}`;
+            die.className = `die-token${options.rolling ? ' rolling' : ''}${dieInfo.status === 'assigned' ? ' assigned' : ''}${dieInfo.status === 'missed' ? ' missed' : ''}${dieInfo.status === 'unavailable' ? ' unavailable' : ''}${isManualOnly ? ' manual-only' : ''}${isCurrent ? ' current' : ''}`;
             die.dataset.color = color;
-            die.dataset.originalIndex = String(index);
-            die.title = `${DICE_LABELS[color]} / ${color}`;
+            die.dataset.originalIndex = String(dieInfo.originalIndex ?? index);
+            const statusTitle = dieInfo.status === 'assigned'
+              ? ' · Assigned'
+              : dieInfo.status === 'missed'
+                ? ' · Missed'
+                : dieInfo.status === 'unavailable'
+                  ? ' · 不可用：无对应颜色合法目标'
+                  : isManualOnly
+                    ? ' · 需手动分配'
+                    : isCurrent
+                      ? ' · 当前待分配'
+                      : '';
+            die.title = `${DICE_LABELS[color]} / ${color}${statusTitle}`;
             const image = document.createElement('img');
             image.src = DICE_ASSETS[color];
             image.alt = `${DICE_LABELS[color]} dice`;
@@ -2064,7 +3038,7 @@
           });
         }
 
-        if (summary) summary.innerHTML = buildDiceSummaryHtml(countDiceResults(sourceResults));
+        if (summary) summary.innerHTML = buildDiceSummaryHtml(countDiceResults(summaryResults));
       });
     }
 
@@ -2238,6 +3212,7 @@
       const strategicVisible = gameState.battleType === 'land';
       document.querySelectorAll('[data-dice-area$="_strategic"]').forEach((element) => {
         element.classList.toggle('is-hidden', !strategicVisible);
+        element.title = strategicVisible ? '战略姿态轰炸机随地面战掷骰记录在此卡片，不参与伤害分配。' : '';
       });
       const strategicButton = document.querySelector('[data-dice-roll-group="strategicBombing"]');
       if (strategicButton) strategicButton.classList.toggle('is-hidden', !strategicVisible);
@@ -2283,6 +3258,836 @@
       return DICE_ORDER.map((color) => (
         `<span class="dice-color-count ${color}" title="${DICE_LABELS[color]} / ${color}"><span class="dice-dot ${color}"></span><span class="dice-count-number ${color}">${counts[color] || 0}</span></span>`
       )).join('');
+    }
+
+    function getSurfaceStageName() {
+      return gameState.battleType === 'sea' ? '海面战' : '陆战';
+    }
+
+    function getStageLabel(stageId) {
+      if (stageId === 'surfaceBattle') return getSurfaceStageName();
+      if (stageId === 'surfaceDamage') return `${getSurfaceStageName()}伤害分配`;
+      const stage = BATTLE_STAGES.find((item) => item.id === stageId);
+      return stage ? stage.label : stageId;
+    }
+
+    function getStageIndex(stageId) {
+      return BATTLE_STAGES.findIndex((stage) => stage.id === stageId);
+    }
+
+    function getNextStageId(stageId) {
+      const index = getStageIndex(stageId);
+      return index >= 0 && index < BATTLE_STAGES.length - 1 ? BATTLE_STAGES[index + 1].id : null;
+    }
+
+    function getNextStageActionLabel(stageId) {
+      if (!stageId) return '';
+      if (stageId === 'surfaceBattle') return `${getStageLabel(stageId)}部署`;
+      return getStageLabel(stageId);
+    }
+
+    function isDamageAssignmentStage(stageId = gameState.battleFlow.currentStage) {
+      return stageId === 'airDamage' || stageId === 'surfaceDamage';
+    }
+
+    function isRepairStage(stageId = gameState.battleFlow.currentStage) {
+      return stageId === 'repair';
+    }
+
+    function canEnterStage(stageId) {
+      const completed = gameState.battleFlow.completed || {};
+      if (stageId === 'airBattle') return true;
+      if (stageId === 'airDamage') return completed.airBattle || Boolean(getAssignmentPackage('airDamage'));
+      if (stageId === 'surfaceBattle') return completed.airDamage;
+      if (stageId === 'surfaceDamage') return completed.surfaceBattle || Boolean(getAssignmentPackage('surfaceDamage'));
+      if (stageId === 'repair') return completed.surfaceDamage;
+      return false;
+    }
+
+    function setBattleStage(stageId, options = {}) {
+      if (!BATTLE_STAGES.some((stage) => stage.id === stageId) || (!options.force && !canEnterStage(stageId))) {
+        return false;
+      }
+
+      const previousStage = gameState.battleFlow.currentStage;
+      const isReenteringDamageStage = previousStage === stageId && isDamageAssignmentStage(stageId);
+      gameState.battleFlow.currentStage = stageId;
+      gameState.ui.inputMode = null;
+      gameState.ui.activeZoneId = null;
+
+      if (stageId === 'airDamage' || stageId === 'surfaceDamage') {
+        prepareAssignmentStage(stageId);
+        if (previousStage !== stageId || isReenteringDamageStage) {
+          resetAutoAssignmentFlag(stageId);
+          if (isReenteringDamageStage) {
+            addBattleLog(`重新进入${getStageLabel(stageId)}：再次处理未分配彩色骰。`, { save: false });
+          }
+        }
+        runOneTimeAutoAssignments(stageId, { silentRender: true });
+      }
+      if (stageId === 'surfaceBattle') {
+        captureForceAdvantageSnapshot();
+      }
+      if (previousStage !== stageId) {
+        addBattleLog(`阶段切换：${getStageLabel(stageId)}`, { save: false });
+      }
+      renderDiceUi();
+      renderBattleBoard();
+      saveState();
+      return true;
+    }
+
+    function completeStage(stageId) {
+      gameState.battleFlow.completed[stageId] = true;
+      renderBattleFlowUi();
+    }
+
+    function renderBattleFlowUi() {
+      renderPhaseNav();
+      renderDamageModeControls();
+      renderStageStartButton();
+      renderAlgorithmTooltip();
+    }
+
+    function renderPhaseNav() {
+      const nav = document.getElementById('phaseNav');
+      if (!nav) return;
+      nav.innerHTML = '';
+      BATTLE_STAGES.forEach((stage, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'phase-button';
+        button.dataset.battleStage = stage.id;
+        button.textContent = `${index + 1}. ${getStageLabel(stage.id)}`;
+        button.disabled = !canEnterStage(stage.id);
+        button.classList.toggle('active', gameState.battleFlow.currentStage === stage.id);
+        button.classList.toggle('completed', Boolean(gameState.battleFlow.completed && gameState.battleFlow.completed[stage.id]));
+        nav.appendChild(button);
+      });
+    }
+
+    function renderDamageModeControls() {
+      ['axis', 'allied'].forEach((side) => {
+        const select = document.querySelector(`[data-damage-mode-side="${side}"]`);
+        if (select) {
+          select.innerHTML = DAMAGE_MODE_ORDER.map((mode) => `<option value="${mode}">${DAMAGE_MODES[mode].label}</option>`).join('');
+          select.value = gameState.damage.modes[side];
+        }
+        const helpButton = document.querySelector(`[data-mode-help-side="${side}"]`);
+        if (helpButton) {
+          helpButton.classList.toggle('is-hidden', gameState.damage.modes[side] === 'manual');
+          helpButton.title = gameState.damage.modes[side] === 'manual' ? '手动分配不需要算法说明' : '点击查看分配算法说明';
+        }
+      });
+    }
+
+    function renderAlgorithmTooltip() {
+      const tooltip = document.getElementById('algorithmTooltip');
+      if (!tooltip) return;
+      const tooltipState = gameState.damage.algorithmTooltip || {};
+      const mode = tooltipState.mode;
+      const isVisible = mode && mode !== 'manual' && DAMAGE_MODES[mode];
+      tooltip.classList.toggle('is-hidden', !isVisible);
+      if (!isVisible) return;
+      const title = document.getElementById('algorithmTooltipTitle');
+      const text = document.getElementById('algorithmTooltipText');
+      if (title) title.textContent = `${tooltipState.side === 'axis' ? 'Axis' : 'Allies'} · ${DAMAGE_MODES[mode].label}`;
+      if (text) text.textContent = DAMAGE_MODES[mode].tooltip;
+    }
+
+    function renderStageStartButton() {
+      const button = document.getElementById('stageStartButton');
+      if (!button) return;
+      const stageId = gameState.battleFlow.currentStage;
+      const rollGroup = getRollGroupForStage(stageId);
+
+      if (rollGroup) {
+        button.textContent = getStartButtonLabel(stageId);
+        button.disabled = false;
+        button.title = '点击后自动掷骰，并进入对应伤害分配阶段。';
+        return;
+      }
+
+      if (stageId === 'repair') {
+        button.textContent = '修复全部';
+        button.disabled = false;
+        button.title = '点击后修复所有受损单位，并完成修复阶段。';
+        return;
+      }
+
+      if (isDamageAssignmentStage(stageId)) {
+        const context = getCurrentAssignmentContext();
+        const nextStageId = getNextStageId(stageId);
+        if (context) {
+          button.textContent = `跳过当前：${DICE_LABELS[context.die.color]}骰`;
+          button.disabled = false;
+          button.title = '点击将当前待分配骰标记为未命中；黑/白骰与手动模式骰可用此按钮跳过。';
+        } else if (nextStageId) {
+          const nextStageLabel = getNextStageActionLabel(nextStageId);
+          button.textContent = `进入下一阶段：${nextStageLabel}`;
+          button.disabled = false;
+          button.title = `当前伤害分配已完成，点击进入${nextStageLabel}。`;
+        } else {
+          button.textContent = '伤害分配完成';
+          button.disabled = true;
+          button.title = '当前阶段所有骰子已处理。';
+        }
+        return;
+      }
+
+      button.textContent = '战斗完成';
+      button.disabled = true;
+      button.title = '';
+    }
+
+    function getRollGroupForStage(stageId) {
+      if (stageId === 'airBattle') return 'airBattle';
+      if (stageId === 'surfaceBattle') return 'surfaceBattle';
+      return null;
+    }
+
+    function getStartButtonLabel(stageId) {
+      if (stageId === 'airBattle') return '开始空战';
+      if (stageId === 'surfaceBattle') return gameState.battleType === 'sea' ? '开始海战' : '开始陆战';
+      return '开始';
+    }
+
+    function handleStageStartButton() {
+      const stageId = gameState.battleFlow.currentStage;
+      const rollGroup = getRollGroupForStage(stageId);
+      if (rollGroup) {
+        rollDiceGroup(rollGroup);
+        const nextStage = ASSIGNMENT_STAGE_BY_ROLL_GROUP[rollGroup];
+        if (nextStage) setBattleStage(nextStage, { force: true });
+        return;
+      }
+      if (isDamageAssignmentStage(stageId)) {
+        const context = getCurrentAssignmentContext();
+        if (context) {
+          markCurrentDieMiss({ reason: '手动跳过' });
+          return;
+        }
+        updateAssignmentStageCompletion(stageId);
+        const nextStageId = getNextStageId(stageId);
+        if (nextStageId) setBattleStage(nextStageId);
+        return;
+      }
+      if (stageId === 'repair') {
+        repairAllZones();
+        completeRepairStage();
+      }
+    }
+
+    function addBattleLog(message, options = {}) {
+      if (!gameState.battleLog) gameState.battleLog = [];
+      const actionId = getNextActionId();
+      gameState.battleLog.push({ id: actionId, message, time: new Date().toLocaleTimeString('zh-CN', { hour12: false }) });
+      gameState.battleLog = gameState.battleLog.slice(-80);
+      renderBattleLog();
+      if (options.save !== false) saveState();
+      return actionId;
+    }
+
+    function getNextActionId() {
+      if (!gameState.damage) gameState.damage = normalizeDamageState({});
+      const id = Math.max(1, Math.floor(Number(gameState.damage.nextActionId)) || 1);
+      gameState.damage.nextActionId = id + 1;
+      return id;
+    }
+
+    function renderBattleLog() {
+      const list = document.getElementById('battleLogList');
+      if (!list) return;
+      const entries = Array.isArray(gameState.battleLog) ? gameState.battleLog.slice(-12).reverse() : [];
+      if (entries.length === 0) {
+        list.innerHTML = '<li class="battle-log-empty">暂无记录。</li>';
+        return;
+      }
+      list.innerHTML = entries.map((entry) => `<li><strong>${entry.time || ''}</strong> ${entry.message}</li>`).join('');
+    }
+
+    function ensureAutoAssignmentFlags() {
+      if (!gameState.damage) gameState.damage = normalizeDamageState({});
+      if (!gameState.damage.autoAssignmentExecuted || typeof gameState.damage.autoAssignmentExecuted !== 'object') {
+        gameState.damage.autoAssignmentExecuted = clone(DEFAULT_STATE.damage.autoAssignmentExecuted);
+      }
+      ['airDamage', 'surfaceDamage'].forEach((stageKey) => {
+        gameState.damage.autoAssignmentExecuted[stageKey] = Boolean(gameState.damage.autoAssignmentExecuted[stageKey]);
+      });
+      return gameState.damage.autoAssignmentExecuted;
+    }
+
+    function resetAutoAssignmentFlag(stageKey) {
+      const flags = ensureAutoAssignmentFlags();
+      if (flags[stageKey] !== undefined) flags[stageKey] = false;
+    }
+
+    function resetAllAutoAssignmentFlags() {
+      const flags = ensureAutoAssignmentFlags();
+      ['airDamage', 'surfaceDamage'].forEach((stageKey) => {
+        flags[stageKey] = false;
+      });
+    }
+
+    function getAssignmentPackage(stageKey = gameState.battleFlow.currentStage) {
+      if (!gameState.damage || !gameState.damage.assignments) return null;
+      return gameState.damage.assignments[stageKey] || null;
+    }
+
+    function getAssignmentPackageForGroup(groupKey) {
+      const stageKey = ASSIGNMENT_STAGE_BY_ROLL_GROUP[groupKey];
+      return stageKey ? getAssignmentPackage(stageKey) : null;
+    }
+
+    function prepareAssignmentStage(stageKey) {
+      const groupKey = stageKey === 'airDamage' ? 'airBattle' : 'surfaceBattle';
+      if (stageKey === 'surfaceDamage') captureForceAdvantageSnapshot();
+      if (getAssignmentPackage(stageKey)) {
+        refreshAssignmentActiveSide(stageKey);
+        return;
+      }
+      const resultsBySide = getRollDisplayResultsBySide(groupKey);
+      const packageState = {
+        stageKey,
+        groupKey,
+        activeSide: 'axis',
+        dice: {
+          axis: buildAssignmentDice(stageKey, 'axis', resultsBySide.axis),
+          allied: buildAssignmentDice(stageKey, 'allied', resultsBySide.allied)
+        }
+      };
+      gameState.damage.assignments[stageKey] = packageState;
+      resetAutoAssignmentFlag(stageKey);
+      refreshAssignmentActiveSide(stageKey);
+      addBattleLog(`${getStageLabel(stageKey)}开始：Axis ${packageState.dice.axis.length} 骰，Allies ${packageState.dice.allied.length} 骰。`, { save: false });
+      updateAssignmentStageCompletion(stageKey);
+    }
+
+    function buildAssignmentDice(stageKey, side, colors) {
+      return (colors || [])
+        .map((color, index) => ({
+          id: `${stageKey}_${side}_${index}_${color}`,
+          color,
+          sourceSide: side,
+          originalIndex: index,
+          status: 'pending',
+          targetZoneId: null,
+          logId: null,
+          assignedOrder: 0,
+          beforeCell: null,
+          afterCell: null
+        }))
+        .sort((a, b) => {
+          const colorDiff = DAMAGE_COLOR_PRIORITY.indexOf(a.color) - DAMAGE_COLOR_PRIORITY.indexOf(b.color);
+          return colorDiff !== 0 ? colorDiff : a.originalIndex - b.originalIndex;
+        });
+    }
+
+    function refreshAssignmentActiveSide(stageKey = gameState.battleFlow.currentStage) {
+      const packageState = getAssignmentPackage(stageKey);
+      if (!packageState) return null;
+      const nextSide = ['axis', 'allied'].find((side) => getFirstPendingDie(packageState, side)) || packageState.activeSide;
+      packageState.activeSide = nextSide;
+      return getFirstPendingDie(packageState, nextSide) ? nextSide : null;
+    }
+
+    function hasPendingDice(packageState, side) {
+      return Boolean(packageState && packageState.dice && Array.isArray(packageState.dice[side]) && packageState.dice[side].some((die) => die.status === 'pending'));
+    }
+
+    function getFirstPendingDie(packageState, side) {
+      return packageState && packageState.dice && Array.isArray(packageState.dice[side])
+        ? packageState.dice[side].find((die) => die.status === 'pending') || null
+        : null;
+    }
+
+    function skipUnassignableLeadingDice(stageKey = gameState.battleFlow.currentStage) {
+      // 保留旧函数名以兼容后续引用；新规则禁止在读取当前骰时自动跳过。
+      return getAssignmentPackage(stageKey);
+    }
+
+    function getCurrentAssignmentContext() {
+      const stageKey = gameState.battleFlow.currentStage;
+      if (!isDamageAssignmentStage(stageKey)) return null;
+      const packageState = getAssignmentPackage(stageKey);
+      if (!packageState) return null;
+      const activeSide = refreshAssignmentActiveSide(stageKey);
+      const die = activeSide ? packageState.dice[activeSide].find((item) => item.status === 'pending') : null;
+      return die ? { stageKey, packageState, side: activeSide, die } : null;
+    }
+
+    function updateAssignmentStageCompletion(stageKey = gameState.battleFlow.currentStage) {
+      const packageState = getAssignmentPackage(stageKey);
+      if (!packageState) return false;
+      const wasComplete = Boolean(gameState.battleFlow.completed[stageKey]);
+      const complete = ['axis', 'allied'].every((side) => !hasPendingDice(packageState, side));
+      gameState.battleFlow.completed[stageKey] = complete;
+      if (complete && !wasComplete) {
+        addBattleLog(`${getStageLabel(stageKey)}完成。`, { save: false });
+      }
+      renderBattleFlowUi();
+      return complete;
+    }
+
+    function captureForceAdvantageSnapshot() {
+      if (gameState.damage.forceAdvantageSnapshot) return;
+      const info = getForceAdvantageInfo();
+      gameState.damage.forceAdvantageSnapshot = clone(info);
+      const label = info.advantagedSide ? SIDE_LABELS[info.advantagedSide] : '无';
+      addBattleLog(`Force Advantage：${label}（${info.counts.axis}:${info.counts.allied}）。`, { save: false });
+    }
+
+    function getForceAdvantageForAssignment() {
+      return gameState.damage.forceAdvantageSnapshot || getForceAdvantageInfo();
+    }
+
+    function getLegalTargetsForDie(sourceSide, die, stageKey = gameState.battleFlow.currentStage) {
+      if (!die) return [];
+      const targetSide = SOURCE_TO_TARGET_SIDE[sourceSide];
+      const requiredGroup = stageKey === 'airDamage' ? 'air' : 'land';
+      const forceInfo = stageKey === 'surfaceDamage' ? getForceAdvantageForAssignment() : null;
+      const blackWhiteBlocked = ['black', 'white'].includes(die.color) && forceInfo && forceInfo.advantagedSide === targetSide;
+      if (blackWhiteBlocked) return [];
+
+      return getCurrentZones().filter((zone) => {
+        if (zone.side !== targetSide || zone.group !== requiredGroup) return false;
+        const cell = getBattleCellState(zone.nation, zone.stance);
+        if (getSurvivingCountFromCell(cell) <= 0) return false;
+        if (die.color === 'black') return true;
+        if (die.color === 'white') return getDamagedCountFromCell(cell) > 0;
+        const targetUnits = DAMAGE_COLOR_TARGET_UNITS[die.color] || [];
+        return targetUnits.includes(zone.unit);
+      });
+    }
+
+    function assignCurrentDieToZone(zoneId, options = {}) {
+      const context = getCurrentAssignmentContext();
+      if (!context) return false;
+      return assignSpecificDieToZone(context.side, context.die, zoneId, options);
+    }
+
+    function assignBestDieToZone(zoneId, options = {}) {
+      const stageKey = gameState.battleFlow.currentStage;
+      const zone = getZoneById(zoneId);
+      if (!zone || !isDamageAssignmentStage(stageKey)) return false;
+      const candidate = choosePendingDieForZone(zone, stageKey);
+      if (!candidate) {
+        addBattleLog(`没有可分配到 ${zone.nationShort} ${zone.stanceLabel} 的未分配骰子。`, { save: false });
+        renderBattleBoard();
+        saveState();
+        return false;
+      }
+      return assignSpecificDieToZone(candidate.side, candidate.die, zoneId, options);
+    }
+
+    function choosePendingDieForZone(zone, stageKey = gameState.battleFlow.currentStage) {
+      const packageState = getAssignmentPackage(stageKey);
+      if (!packageState) return null;
+      const context = getCurrentAssignmentContext();
+      const sourceSide = context && context.stageKey === stageKey ? context.side : refreshAssignmentActiveSide(stageKey);
+      if (!sourceSide) return null;
+      const dice = packageState.dice[sourceSide] || [];
+      const candidates = dice
+        .filter((die) => die.status === 'pending')
+        .filter((die) => getLegalTargetsForDie(sourceSide, die, stageKey).some((target) => target.id === zone.id));
+      if (candidates.length === 0) return null;
+      candidates.sort((a, b) => getDiePreferenceForZone(a, zone) - getDiePreferenceForZone(b, zone)
+        || DAMAGE_COLOR_PRIORITY.indexOf(a.color) - DAMAGE_COLOR_PRIORITY.indexOf(b.color)
+        || a.originalIndex - b.originalIndex);
+      return { side: sourceSide, die: candidates[0] };
+    }
+
+    function getDiePreferenceForZone(die, zone) {
+      const colorUnits = DAMAGE_COLOR_TARGET_UNITS[die.color] || [];
+      if (colorUnits.includes(zone.unit)) return 0;
+      if (die.color === 'white') return 1;
+      if (die.color === 'black') return 2;
+      return 9;
+    }
+
+    function assignSpecificDieToZone(sourceSide, die, zoneId, options = {}) {
+      const stageKey = gameState.battleFlow.currentStage;
+      const zone = getZoneById(zoneId);
+      if (!die || !zone) return false;
+      const legalTargets = getLegalTargetsForDie(sourceSide, die, stageKey);
+      if (!legalTargets.some((target) => target.id === zoneId)) {
+        addBattleLog(`非法目标：${DICE_LABELS[die.color]}骰不能命中 ${zone.label}。`, { save: false });
+        renderBattleBoard();
+        saveState();
+        return false;
+      }
+
+      const cell = getBattleCellState(zone.nation, zone.stance);
+      const beforeCell = clone(cell);
+      if (!applyDamageToCell(cell, zone)) {
+        die.status = 'missed';
+        die.assignedOrder = getNextActionId();
+        addBattleLog(`${SIDE_LABELS[sourceSide]} ${DICE_LABELS[die.color]}骰未命中：无可承受伤害的单位。`, { save: false });
+        return false;
+      }
+      const afterCell = clone(cell);
+      const logId = getNextActionId();
+      const logEntry = {
+        id: logId,
+        diceColor: die.color,
+        sourcePhase: stageKey,
+        sourceSide,
+        targetZoneId: zoneId,
+        assignmentTime: new Date().toLocaleTimeString('zh-CN', { hour12: false })
+      };
+      cell.assignedDiceLog.push(logEntry);
+      die.status = 'assigned';
+      die.targetZoneId = zoneId;
+      die.logId = logId;
+      die.assignedOrder = logId;
+      die.beforeCell = beforeCell;
+      die.afterCell = afterCell;
+      addBattleLog(`${SIDE_LABELS[sourceSide]} ${DICE_LABELS[die.color]}骰 → ${zone.nationShort} ${zone.stanceLabel}${options.automatic ? '（自动）' : ''}`, { save: false });
+      refreshAssignmentActiveSide(stageKey);
+      updateAssignmentStageCompletion(stageKey);
+      if (!options.silentRender) {
+        renderDiceUi();
+        renderBattleBoard();
+        saveState();
+      }
+      return true;
+    }
+
+    function applyDamageToCell(cell, zone) {
+      if (isMultiLifeZone(zone)) {
+        if (cell.heavy > 0) {
+          cell.heavy -= 1;
+          cell.destroyed += 1;
+          return true;
+        }
+        if (cell.light > 0) {
+          cell.light -= 1;
+          cell.heavy += 1;
+          return true;
+        }
+        if (cell.alive > 0) {
+          cell.alive -= 1;
+          cell.light += 1;
+          return true;
+        }
+        if (cell.damaged > 0) {
+          cell.damaged -= 1;
+          cell.destroyed += 1;
+          return true;
+        }
+        return false;
+      }
+
+      if (cell.damaged > 0) {
+        cell.damaged -= 1;
+        cell.destroyed += 1;
+        return true;
+      }
+      if (cell.alive > 0) {
+        cell.alive -= 1;
+        cell.damaged += 1;
+        return true;
+      }
+      return false;
+    }
+
+    function markCurrentDieMiss(options = {}) {
+      const context = getCurrentAssignmentContext();
+      if (!context) return false;
+      context.die.status = 'missed';
+      context.die.assignedOrder = getNextActionId();
+      context.die.targetZoneId = null;
+      addBattleLog(`${SIDE_LABELS[context.side]} ${DICE_LABELS[context.die.color]}骰未命中${options.reason ? `：${options.reason}` : ''}。`, { save: false });
+      refreshAssignmentActiveSide(context.stageKey);
+      updateAssignmentStageCompletion(context.stageKey);
+      if (!options.silentRender) {
+        renderDiceUi();
+        renderBattleBoard();
+        saveState();
+      }
+      return true;
+    }
+
+    function runConfiguredAutoAssignments(options = {}) {
+      if (!isDamageAssignmentStage()) return;
+      runOneTimeAutoAssignments(gameState.battleFlow.currentStage, options);
+    }
+
+    function runOneTimeAutoAssignments(stageKey = gameState.battleFlow.currentStage, options = {}) {
+      if (!isDamageAssignmentStage(stageKey)) return false;
+      const flags = ensureAutoAssignmentFlags();
+      if (flags[stageKey]) return false;
+      flags[stageKey] = true;
+      const changed = runLayeredAutoAssignments(stageKey);
+      refreshAssignmentActiveSide(stageKey);
+      updateAssignmentStageCompletion(stageKey);
+      if (!options.silentRender) {
+        renderDiceUi();
+        renderBattleBoard();
+        saveState();
+      }
+      return changed;
+    }
+
+    function runLayeredAutoAssignments(stageKey = gameState.battleFlow.currentStage) {
+      const packageState = getAssignmentPackage(stageKey);
+      if (!packageState) return false;
+      let changed = false;
+
+      ['axis', 'allied'].forEach((sourceSide) => {
+        const mode = gameState.damage.modes[sourceSide];
+        if (mode === 'manual') return;
+        const dice = packageState.dice[sourceSide] || [];
+        dice.forEach((die) => {
+          if (!die || die.status !== 'pending') return;
+          if (isManualOnlyDie(die)) return;
+
+          const legalTargets = getLegalTargetsForDie(sourceSide, die, stageKey);
+          if (legalTargets.length === 0) {
+            markDieUnavailable(sourceSide, die, '无对应颜色合法目标');
+            changed = true;
+            return;
+          }
+
+          const target = chooseTargetForDie(sourceSide, die, mode, stageKey, legalTargets);
+          if (!target) {
+            markDieUnavailable(sourceSide, die, '无对应颜色合法目标');
+            changed = true;
+            return;
+          }
+
+          if (assignSpecificDieToZone(sourceSide, die, target.id, { automatic: true, silentRender: true })) {
+            changed = true;
+          }
+        });
+      });
+
+      return changed;
+    }
+
+    function autoAssignCurrentStage() {
+      if (!isDamageAssignmentStage()) return;
+      resetAutoAssignmentFlag(gameState.battleFlow.currentStage);
+      runOneTimeAutoAssignments(gameState.battleFlow.currentStage);
+    }
+
+    function isManualOnlyDie(die) {
+      return Boolean(die && MANUAL_ONLY_DICE_COLORS.includes(die.color));
+    }
+
+    function markDieUnavailable(sourceSide, die, reason) {
+      die.status = 'unavailable';
+      die.targetZoneId = null;
+      die.logId = null;
+      die.beforeCell = null;
+      die.afterCell = null;
+      die.assignedOrder = getNextActionId();
+      addBattleLog(`${SIDE_LABELS[sourceSide]} ${DICE_LABELS[die.color]}骰不可用：${reason}。`, { save: false });
+    }
+
+    function chooseTargetForDie(sourceSide, die, mode, stageKey, candidateTargets = null) {
+      let targets = Array.isArray(candidateTargets) ? [...candidateTargets] : getLegalTargetsForDie(sourceSide, die, stageKey);
+      if (targets.length === 0) return null;
+      targets = applyLayerTwoTargetPriorities(targets, sourceSide, die, stageKey);
+
+      if (mode === 'random') {
+        return targets[Math.floor(Math.random() * targets.length)];
+      }
+
+      if (mode === 'sameNation') {
+        const sameNationTargets = targets.filter((zone) => hasSameColorDamageLog(zone, die.color));
+        if (sameNationTargets.length > 0) targets = sameNationTargets;
+      }
+
+      if (mode === 'largestStack') {
+        return sortTargetsByLargestStack(targets)[0];
+      }
+
+      const remainingHits = countRemainingHitsForColor(sourceSide, die.color, stageKey);
+      const wipeable = targets.filter((zone) => getSurvivingCountFromCell(getBattleCellState(zone.nation, zone.stance)) <= remainingHits);
+      if (wipeable.length > 0) {
+        return sortTargetsBySmallestStack(wipeable)[0];
+      }
+      return sortTargetsByLargestStack(targets)[0];
+    }
+
+    function applyLayerTwoTargetPriorities(targets, sourceSide, die, stageKey) {
+      let prioritized = filterPriorityTargets(targets, (zone) => getDamagedCountFromCell(getBattleCellState(zone.nation, zone.stance)) > 0);
+      prioritized = filterPriorityTargets(prioritized, (zone) => zone.unit === 'Armor' && zone.stance === 'armorOffensive');
+      prioritized = filterPriorityTargets(prioritized, isPreferredFighterTarget);
+      if (stageKey === 'surfaceDamage' && gameState.battleType === 'land' && sideHasGroundTroops(sourceSide)) {
+        prioritized = filterPriorityTargets(prioritized, isGroundAttackBomberTarget);
+      }
+      return prioritized;
+    }
+
+    function filterPriorityTargets(targets, predicate) {
+      const preferred = targets.filter(predicate);
+      return preferred.length > 0 ? preferred : targets;
+    }
+
+    function isPreferredFighterTarget(zone) {
+      return zone.unit === 'Fighter' && AIR_DAMAGE_FIGHTER_PRIORITY_STANCES.includes(zone.stance);
+    }
+
+    function isGroundAttackBomberTarget(zone) {
+      return zone.unit === 'Bomber' && zone.stance === 'bomberAirGround';
+    }
+
+    function sideHasGroundTroops(side) {
+      if (gameState.battleType !== 'land') return false;
+      const groundUnits = ['Infantry', 'Artillery', 'Armor'];
+      return getCurrentZones().some((zone) => {
+        if (zone.side !== side || !groundUnits.includes(zone.unit)) return false;
+        return getSurvivingCountFromCell(getBattleCellState(zone.nation, zone.stance)) > 0;
+      });
+    }
+
+    function sortTargetsByLargestStack(targets) {
+      return [...targets].sort((a, b) => {
+        const countDiff = getSurvivingCountFromCell(getBattleCellState(b.nation, b.stance)) - getSurvivingCountFromCell(getBattleCellState(a.nation, a.stance));
+        return countDiff !== 0 ? countDiff : getZoneDisplayIndex(a.id) - getZoneDisplayIndex(b.id);
+      });
+    }
+
+    function sortTargetsBySmallestStack(targets) {
+      return [...targets].sort((a, b) => {
+        const countDiff = getSurvivingCountFromCell(getBattleCellState(a.nation, a.stance)) - getSurvivingCountFromCell(getBattleCellState(b.nation, b.stance));
+        return countDiff !== 0 ? countDiff : getZoneDisplayIndex(a.id) - getZoneDisplayIndex(b.id);
+      });
+    }
+
+    function getZoneDisplayIndex(zoneId) {
+      return getCurrentZones().findIndex((zone) => zone.id === zoneId);
+    }
+
+    function countRemainingHitsForColor(sourceSide, color, stageKey) {
+      const packageState = getAssignmentPackage(stageKey);
+      if (!packageState || !packageState.dice[sourceSide]) return 1;
+      return packageState.dice[sourceSide].filter((die) => die.status === 'pending' && die.color === color).length || 1;
+    }
+
+    function hasSameColorDamageLog(zone, color) {
+      const cell = getBattleCellState(zone.nation, zone.stance);
+      return (cell.assignedDiceLog || []).some((entry) => entry.diceColor === color);
+    }
+
+    function undoDamageForZone(zoneId) {
+      const candidates = [];
+      ['airDamage', 'surfaceDamage'].forEach((stageKey) => {
+        const packageState = getAssignmentPackage(stageKey);
+        if (!packageState) return;
+        ['axis', 'allied'].forEach((side) => {
+          packageState.dice[side].forEach((die) => {
+            if (die.status === 'assigned' && die.targetZoneId === zoneId && die.beforeCell) {
+              candidates.push({ stageKey, packageState, side, die });
+            }
+          });
+        });
+      });
+      if (candidates.length === 0) return false;
+      candidates.sort((a, b) => {
+        const colorDiff = UNDO_COLOR_PRIORITY.indexOf(a.die.color) - UNDO_COLOR_PRIORITY.indexOf(b.die.color);
+        if (colorDiff !== 0) return colorDiff;
+        return (b.die.assignedOrder || 0) - (a.die.assignedOrder || 0);
+      });
+      const target = candidates[0];
+      const zone = getZoneById(zoneId);
+      if (!zone) return false;
+      setBattleCellState(zone.nation, zone.stance, target.die.beforeCell, { save: false });
+      const cell = getBattleCellState(zone.nation, zone.stance);
+      cell.assignedDiceLog = (cell.assignedDiceLog || []).filter((entry) => entry.id !== target.die.logId);
+      target.die.status = 'pending';
+      target.die.targetZoneId = null;
+      target.die.logId = null;
+      target.die.beforeCell = null;
+      target.die.afterCell = null;
+      target.packageState.activeSide = target.side;
+      gameState.battleFlow.completed[target.stageKey] = false;
+      addBattleLog(`撤销 ${zone.nationShort} ${zone.stanceLabel} 的 ${DICE_LABELS[target.die.color]}骰伤害。`, { save: false });
+      renderDiceUi();
+      renderBattleBoard();
+      saveState();
+      return true;
+    }
+
+    function clearZoneAssignedDiceLog(zoneId) {
+      const zone = getZoneById(zoneId);
+      if (!zone) return;
+      const cell = getBattleCellState(zone.nation, zone.stance);
+      cell.assignedDiceLog = [];
+      addBattleLog(`清空 ${zone.nationShort} ${zone.stanceLabel} 的骰子日志。`, { save: false });
+      renderZoneTooltip();
+      saveState();
+    }
+
+    function repairZone(zoneId, options = {}) {
+      const zone = getZoneById(zoneId);
+      if (!zone) return false;
+      const cell = getBattleCellState(zone.nation, zone.stance);
+      const repaired = cell.damaged + cell.light + cell.heavy;
+      if (repaired <= 0) return false;
+      cell.alive += repaired;
+      cell.damaged = 0;
+      cell.light = 0;
+      cell.heavy = 0;
+      addBattleLog(`修复 ${zone.nationShort} ${zone.stanceLabel}：${repaired} 个单位恢复。`, { save: false });
+      if (!options.silentRender) {
+        renderBattleBoard();
+        saveState();
+      }
+      return true;
+    }
+
+    function repairAllZones() {
+      let repairedZones = 0;
+      getCurrentZones().forEach((zone) => {
+        if (repairZone(zone.id, { silentRender: true })) repairedZones += 1;
+      });
+      addBattleLog(`一键修复完成：${repairedZones} 个热区发生恢复。`, { save: false });
+      renderBattleBoard();
+      saveState();
+    }
+
+    function completeRepairStage() {
+      completeStage('repair');
+      addBattleLog('修复阶段完成。', { save: false });
+      renderBattleFlowUi();
+      saveState();
+    }
+
+    function openZoneTooltip(zoneId, options = {}) {
+      gameState.damage.tooltip.zoneId = zoneId;
+      renderZoneTooltip();
+      if (options.save !== false) saveState();
+    }
+
+    function closeZoneTooltip(options = {}) {
+      gameState.damage.tooltip.zoneId = null;
+      renderZoneTooltip();
+      if (options.save !== false) saveState();
+    }
+
+    function renderZoneTooltip() {
+      const tooltip = document.getElementById('zoneTooltip');
+      if (!tooltip || !gameState.damage || !gameState.damage.tooltip) return;
+      const zone = getZoneById(gameState.damage.tooltip.zoneId);
+      tooltip.classList.toggle('is-hidden', !zone);
+      if (!zone) return;
+      const cell = getBattleCellState(zone.nation, zone.stance);
+      const title = document.getElementById('zoneTooltipTitle');
+      const summary = document.getElementById('zoneTooltipSummary');
+      const diceLog = document.getElementById('zoneTooltipDiceLog');
+      if (title) title.textContent = `${zone.nationShort} · ${zone.stanceLabel}`;
+      if (summary) summary.textContent = formatZoneDiceSummary(zone);
+      if (diceLog) {
+        const entries = cell.assignedDiceLog || [];
+        if (entries.length === 0) {
+          diceLog.innerHTML = '<span class="battle-log-empty">暂无已分配骰子。</span>';
+        } else {
+          diceLog.innerHTML = entries.map((entry) => `<span class="die-token" title="${DICE_LABELS[entry.diceColor]} · ${entry.assignmentTime}"><img src="${DICE_ASSETS[entry.diceColor]}" alt="${DICE_LABELS[entry.diceColor]} dice"></span>`).join('');
+        }
+      }
     }
 
     function toggleInputMode(nationId, scope) {
@@ -2394,7 +4199,22 @@
 
       const zone = getZoneById(zoneEl.dataset.zoneId);
       if (!zone) return;
+      selectInputZone(zone.id);
 
+      if (isDamageAssignmentStage()) {
+        event.preventDefault();
+        assignBestDieToZone(zone.id);
+        return;
+      }
+
+      if (isRepairStage()) {
+        event.preventDefault();
+        openZoneTooltip(zone.id);
+        repairZone(zone.id);
+        return;
+      }
+
+      openZoneTooltip(zone.id);
       adjustUnitCount(zone.nation, zone.stance, 1);
       renderBattleBoard();
     }
@@ -2406,6 +4226,18 @@
       event.preventDefault();
       const zone = getZoneById(zoneEl.dataset.zoneId);
       if (!zone) return;
+      selectInputZone(zone.id);
+
+      if (isDamageAssignmentStage()) {
+        undoDamageForZone(zone.id);
+        return;
+      }
+
+      if (isRepairStage()) {
+        openZoneTooltip(zone.id);
+        repairZone(zone.id);
+        return;
+      }
 
       adjustUnitCount(zone.nation, zone.stance, -1);
       renderBattleBoard();
@@ -2418,6 +4250,22 @@
       event.preventDefault();
       const zone = getZoneById(zoneEl.dataset.zoneId);
       if (!zone) return;
+      selectInputZone(zone.id);
+
+      if (isDamageAssignmentStage()) {
+        if (event.deltaY < 0) {
+          assignBestDieToZone(zone.id);
+        } else {
+          undoDamageForZone(zone.id);
+        }
+        return;
+      }
+
+      if (isRepairStage()) {
+        openZoneTooltip(zone.id);
+        repairZone(zone.id);
+        return;
+      }
 
       const delta = event.deltaY < 0 ? 1 : -1;
       adjustUnitCount(zone.nation, zone.stance, delta);
@@ -2430,7 +4278,17 @@
         updateHoverInfo(null);
         return;
       }
-      updateHoverInfo(getZoneById(zoneEl.dataset.zoneId));
+
+      const zone = getZoneById(zoneEl.dataset.zoneId);
+      updateHoverInfo(zone);
+      if (!zone) return;
+
+      if (selectInputZone(zone.id)) {
+        syncInputCurrentZoneUi();
+      }
+      if (isDamageAssignmentStage()) {
+        openZoneTooltip(zone.id, { save: false });
+      }
     }
 
     function bindEvents() {
@@ -2453,6 +4311,11 @@
           gameState.battleType = input.value;
           gameState.ui.inputMode = null;
           gameState.ui.activeZoneId = null;
+          gameState.damage.tooltip.zoneId = null;
+          gameState.damage.assignments.airDamage = null;
+          gameState.damage.assignments.surfaceDamage = null;
+          gameState.damage.forceAdvantageSnapshot = null;
+          resetAllAutoAssignmentFlags();
           saveState();
           updateBoardBackground();
           updateToolbar();
@@ -2480,6 +4343,54 @@
         saveState();
       });
 
+      document.getElementById('phaseNav').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-battle-stage]');
+        if (!button || button.disabled) return;
+        setBattleStage(button.dataset.battleStage);
+      });
+
+      document.querySelectorAll('[data-damage-mode-side]').forEach((select) => {
+        select.addEventListener('change', () => {
+          const side = select.dataset.damageModeSide;
+          gameState.damage.modes[side] = select.value;
+          gameState.damage.algorithmTooltip = { side: null, mode: null };
+          addBattleLog(`${side === 'axis' ? 'Axis' : 'Allies'} 分配模式：${DAMAGE_MODES[select.value].label}（下次进入/重新进入分配阶段生效）。`, { save: false });
+          renderDiceUi();
+          renderBattleBoard();
+          saveState();
+        });
+      });
+
+      document.querySelectorAll('[data-mode-help-side]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const side = button.dataset.modeHelpSide;
+          const mode = gameState.damage.modes[side];
+          if (mode === 'manual') return;
+          const current = gameState.damage.algorithmTooltip || {};
+          const sameTooltip = current.side === side && current.mode === mode;
+          gameState.damage.algorithmTooltip = sameTooltip ? { side: null, mode: null } : { side, mode };
+          renderAlgorithmTooltip();
+          saveState();
+        });
+      });
+
+      document.getElementById('closeAlgorithmTooltipButton').addEventListener('click', () => {
+        gameState.damage.algorithmTooltip = { side: null, mode: null };
+        renderAlgorithmTooltip();
+        saveState();
+      });
+
+      document.getElementById('stageStartButton').addEventListener('click', handleStageStartButton);
+      document.getElementById('closeZoneTooltipButton').addEventListener('click', closeZoneTooltip);
+      document.getElementById('undoZoneDamageButton').addEventListener('click', () => {
+        const zoneId = gameState.damage && gameState.damage.tooltip ? gameState.damage.tooltip.zoneId : null;
+        if (zoneId) undoDamageForZone(zoneId);
+      });
+      document.getElementById('clearZoneLogButton').addEventListener('click', () => {
+        const zoneId = gameState.damage && gameState.damage.tooltip ? gameState.damage.tooltip.zoneId : null;
+        if (zoneId) clearZoneAssignedDiceLog(zoneId);
+      });
+
       document.getElementById('toggleBattleControlPanelButton').addEventListener('click', () => {
         gameState.ui.controlPanelCollapsed = !gameState.ui.controlPanelCollapsed;
         updateBattleControlPanelState();
@@ -2494,7 +4405,7 @@
         renderBattleBoard();
       });
 
-      document.getElementById('restartBattleButton').addEventListener('click', resetCurrentBattleDice);
+      document.getElementById('restartBattleButton').addEventListener('click', resetCurrentBattle);
 
       document.querySelectorAll('.dice-count-input').forEach((input) => {
         input.addEventListener('change', () => updateDiceCount(input.dataset.diceArea, input.value));
