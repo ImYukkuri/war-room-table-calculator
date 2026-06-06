@@ -437,7 +437,7 @@
     }
 
     .battle-view {
-      --battle-board-height-offset: 400px;
+      --battle-board-height-offset: 260px;
     }
 
     .battle-view.control-panel-collapsed {
@@ -449,7 +449,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin: 0 8px 6px;
+      /* margin: 0 8px 6px; */
       padding: 5px 8px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-top: 0;
@@ -632,9 +632,23 @@
     .control-status-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
       min-width: 0;
+    }
+
+    .control-status-row-axis,
+    .control-status-row-allied {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .control-status-row-axis {
+      justify-content: flex-end;
+    }
+
+    .control-status-row-allied {
+      justify-content: flex-start;
     }
 
     .assignment-group {
@@ -650,10 +664,12 @@
 
     .control-status-row .advantage-control-row.advantage-axis {
       justify-content: flex-end;
+        margin-right: 12px;
     }
 
     .control-status-row .advantage-control-row.advantage-allied {
       justify-content: flex-start;
+      margin-left: 12px;
     }
 
     .port-advantage-toggle {
@@ -1565,7 +1581,7 @@
     .battle-summary-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
+      font-size: 24px;
       white-space: nowrap;
     }
 
@@ -1579,46 +1595,114 @@
       background: var(--panel-strong);
       color: var(--muted);
       font-weight: 600;
-      padding: 10px 8px;
+      padding: 12px 10px;
       text-align: center;
       border-bottom: 2px solid rgba(255, 255, 255, 0.12);
-      font-size: 12px;
+      font-size: 14px;
       letter-spacing: 0.02em;
     }
 
     .battle-summary-table th.col-nation {
       text-align: left;
-      min-width: 90px;
+      min-width: 130px;
       position: sticky;
       left: 0;
       z-index: 3;
       background: var(--panel-strong);
     }
 
+    .battle-summary-table th.col-threshold,
+    .battle-summary-table td.col-threshold {
+      min-width: 60px;
+      font-weight: 600;
+    }
+
     .battle-summary-table th.col-group-label {
-      font-size: 11px;
+      font-size: 13px;
       color: var(--accent);
     }
 
+    .battle-summary-table th.col-unit-sub {
+      font-size: 12px;
+      line-height: 1.3;
+      white-space: pre-line;
+    }
+
     .battle-summary-table td {
-      padding: 8px 8px;
+      padding: 14px 10px;
       text-align: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       color: var(--text);
       font-variant-numeric: tabular-nums;
       font-family: "SF Mono", "Cascadia Code", "Consolas", monospace, Inter, sans-serif;
-      font-size: 12px;
+      font-size: 24px;
     }
 
     .battle-summary-table td.col-nation {
       text-align: left;
       font-weight: 600;
       font-family: Inter, sans-serif;
-      font-size: 13px;
+      font-size: 22px;
       position: sticky;
       left: 0;
       z-index: 1;
       background: var(--panel);
+    }
+
+    .nation-flag-icon {
+      height: 24px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    .loss-breakdown-trigger {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      margin-left: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 22px;
+      text-align: center;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: background 0.14s;
+    }
+
+    .loss-breakdown-trigger:hover {
+      background: rgba(244,200,74,0.3);
+      color: #fff;
+    }
+
+    .loss-breakdown-popup {
+      position: fixed;
+      z-index: 100;
+      padding: 12px 16px;
+      border: 1px solid rgba(244,200,74,0.5);
+      border-radius: 10px;
+      background: rgba(8,11,20,0.96);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      font-family: Inter, sans-serif;
+      white-space: pre-line;
+      pointer-events: none;
+    }
+
+    .round-editable-cell {
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s;
+      border-radius: 3px;
+    }
+
+    .round-editable-cell:hover {
+      background: rgba(244,200,74,0.12);
+      outline: 1px dashed rgba(244,200,74,0.4);
+      outline-offset: -2px;
     }
 
     .battle-summary-table tbody tr:nth-child(even) td {
@@ -1783,6 +1867,124 @@
       padding: 4px 0;
     }
 
+    .dice-view {
+      flex-direction: column;
+      background: #080b14;
+      overflow-y: auto;
+    }
+
+    .dice-view .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .dice-container {
+      flex: 1;
+      padding: 24px 28px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .dice-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .dice-header h2 {
+      margin: 0 0 16px;
+      font-size: 28px;
+    }
+
+    .dice-input-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .dice-input-row label {
+      font-size: 18px;
+      color: var(--muted);
+    }
+
+    .dice-count-input-field {
+      width: 80px;
+      min-height: 40px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      background: #11172a;
+      color: #fff;
+      font-size: 20px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .dice-result-area {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      min-height: 80px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.2);
+      margin-bottom: 32px;
+    }
+
+    .dice-result-area .die-token {
+      width: 48px;
+      height: 48px;
+    }
+
+    .dice-result-area .dice-empty {
+      color: var(--muted);
+      font-size: 16px;
+      align-self: center;
+    }
+
+    .dice-ref-table-wrapper {
+      margin-top: 24px;
+    }
+
+    .dice-ref-table-wrapper h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .dice-ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .dice-ref-table th {
+      background: var(--panel-strong);
+      color: var(--muted);
+      font-weight: 600;
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 2px solid rgba(255,255,255,0.12);
+    }
+
+    .dice-ref-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .dice-ref-table .dice-dot {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      vertical-align: middle;
+      margin-right: 2px;
+    }
+
     @media (max-width: 760px) {
       body {
         overflow: auto;
@@ -1902,6 +2104,7 @@
           <button data-show-view="battle-summary" type="button">战斗结算</button>
           <button data-show-view="round" type="button">回合结算</button>
           <button data-show-view="stress" type="button">Stress</button>
+          <button data-show-view="dice" type="button">掷骰</button>
           <button id="clearSaveButton" class="danger-button" type="button">清空存档</button>
         </div>
 
@@ -1917,6 +2120,7 @@
         <button data-show-view="battle-summary" type="button">战斗结算</button>
         <button data-show-view="round" type="button">回合结算</button>
         <button data-show-view="stress" type="button">Stress</button>
+        <button data-show-view="dice" type="button">掷骰</button>
         <span class="status-pill">模式 <strong id="battleModeStatus">完整战斗</strong></span>
         <span class="status-pill">战场 <strong id="battleTypeStatus">陆战</strong></span>
         <span id="inputModeStatus" class="status-pill input-status">输入模式：关闭</span>
@@ -1932,6 +2136,7 @@
             <span class="battle-actions-title">控制面板</span>
               <button id="restartBattleButton" class="battle-action-button secondary" type="button">重新本场战斗</button>
               <button id="newBattleInBattleButton" class="battle-action-button danger" type="button">新战斗</button>
+              <button id="toggleBattleTypeButton" class="battle-action-button secondary" type="button">切换海战</button>
           </div>
           <nav id="phaseNav" class="phase-nav" aria-label="战斗阶段导航"></nav>
           <div style="flex: 1; display: flex; justify-content: flex-end;">
@@ -1942,33 +2147,38 @@
         <div id="battleControlPanelBody" class="battle-control-body">
 
           <div class="control-status-row" aria-label="控制状态行">
-            <div class="assignment-group" data-assignment-side="axis">
-              <label class="mode-control">
-                <span>Axis</span>
-                <select id="axisDamageModeSelect" data-damage-mode-side="axis" aria-label="Axis 伤害分配模式"></select>
-                <button class="mode-help-button" data-mode-help-side="axis" type="button" aria-label="Axis 分配算法说明">?</button>
-              </label>
+            <div class="control-status-row-axis" aria-label="axis控制状态行">
+              <div class="assignment-group" data-assignment-side="axis">
+                <label class="mode-control">
+                  <span>轴心伤害分配</span>
+                  <select id="axisDamageModeSelect" data-damage-mode-side="axis" aria-label="Axis 伤害分配模式"></select>
+                  <button class="mode-help-button" data-mode-help-side="axis" type="button" aria-label="Axis 分配算法说明">?</button>
+                </label>
+              </div>
+              <div class="advantage-control-row advantage-axis" data-advantage-side="axis">
+                
+                <label class="port-advantage-toggle is-hidden">
+                  <input data-port-advantage-side="axis" type="checkbox">
+                  <span>港口优势</span>
+                </label>
+                <div id="axisForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
+              </div>
             </div>
-            <div class="advantage-control-row advantage-axis" data-advantage-side="axis">
-              <div id="axisForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
-              <label class="port-advantage-toggle is-hidden">
-                <input data-port-advantage-side="axis" type="checkbox">
-                <span>港口优势</span>
-              </label>
-            </div>
-            <div class="advantage-control-row advantage-allied" data-advantage-side="allied">
-              <div id="alliedForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
-              <label class="port-advantage-toggle is-hidden">
-                <input data-port-advantage-side="allied" type="checkbox">
-                <span>港口优势</span>
-              </label>
-            </div>
-            <div class="assignment-group" data-assignment-side="allied">
-              <label class="mode-control">
-                <span>Allies</span>
-                <select id="alliedDamageModeSelect" data-damage-mode-side="allied" aria-label="Allies 伤害分配模式"></select>
-                <button class="mode-help-button" data-mode-help-side="allied" type="button" aria-label="Allies 分配算法说明">?</button>
-              </label>
+            <div class="control-status-row-allied" aria-label="控制状态行">
+              <div class="advantage-control-row advantage-allied" data-advantage-side="allied">
+                <div id="alliedForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
+                <label class="port-advantage-toggle is-hidden">
+                  <input data-port-advantage-side="allied" type="checkbox">
+                  <span>港口优势</span>
+                </label>
+              </div>
+              <div class="assignment-group" data-assignment-side="allied">
+                <label class="mode-control">
+                  <span>同盟伤害分配</span>
+                  <select id="alliedDamageModeSelect" data-damage-mode-side="allied" aria-label="Allies 伤害分配模式"></select>
+                  <button class="mode-help-button" data-mode-help-side="allied" type="button" aria-label="Allies 分配算法说明">?</button>
+                </label>
+              </div>
             </div>
           </div>
 
@@ -2091,6 +2301,7 @@
         <button data-show-view="home" type="button">← 首页</button>
         <button data-show-view="battle" type="button">战斗</button>
         <button data-show-view="round" type="button">回合结算</button>
+        <button data-show-view="dice" type="button">掷骰</button>
         <span class="status-pill">模式 <strong id="battleSummaryModeStatus">完整战斗</strong></span>
         <span class="status-pill">战场 <strong id="battleSummaryTypeStatus">陆战</strong></span>
         <span class="status-pill">回合 <strong id="battleSummaryRoundNumber">1</strong></span>
@@ -2100,7 +2311,7 @@
       <div class="battle-summary-container">
         <div class="battle-summary-header">
           <h2 id="battle-summary-title">战斗结算</h2>
-          <p class="battle-summary-subtitle">格式：X + Y — X = 本回合累计，Y = 本场战斗新增</p>
+          <p class="battle-summary-subtitle">格式：X + Y — X = 本场战斗前回合已有数据，Y = 本场战斗带来的变更值</p>
         </div>
 
         <div class="battle-summary-table-wrapper">
@@ -2143,6 +2354,7 @@
         <button data-show-view="home" type="button">← 首页</button>
         <button data-show-view="battle" type="button">战斗</button>
         <button data-show-view="battle-summary" type="button">战斗结算</button>
+        <button data-show-view="dice" type="button">掷骰</button>
         <span class="status-pill">回合 <strong id="roundViewRoundNumber">1</strong></span>
         <span class="status-pill">已完成 <strong id="roundViewBattleCount">0</strong> 场战斗</span>
       </header>
@@ -2150,7 +2362,7 @@
       <div class="battle-summary-container">
         <div class="battle-summary-header">
           <h2 id="round-title">回合结算</h2>
-          <p class="battle-summary-subtitle">格式：X + Y — X = 系统自动统计，Y = 玩家手动修正（左键+1 / 右键-1 / 滚轮调整）</p>
+          <p class="battle-summary-subtitle">显示全部7国。民用物资/奖章使用与损失领土列可左键+1 / 右键-1 / 滚轮调整。总压力跨回合累积。</p>
         </div>
 
         <div class="battle-summary-table-wrapper">
@@ -2212,6 +2424,44 @@
         <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:8px">
           提示：压力点数 = 损失单位 × 兵种伤亡系数 → 查 Conversion Chart 转换表。勋章/民用物资按 1:1 抵消压力点（规则 §12 Step 1）。当前 Zone 由压力点 ÷ 阈值迭代计算（规则 §12 Step 2）。
         </p>
+      </div>
+    </section>
+
+    <section id="view-dice" class="view dice-view" aria-labelledby="dice-title">
+      <header class="toolbar">
+        <button data-show-view="home" type="button">← 首页</button>
+        <span class="toolbar-spacer"></span>
+      </header>
+
+      <div class="dice-container">
+        <div class="dice-header">
+          <h2 id="dice-title">实体骰子掷骰</h2>
+          <div class="dice-input-row">
+            <label>骰子数量：<input id="diceCountInput" type="number" min="1" value="10" class="dice-count-input-field"></label>
+            <button id="rollDiceButton" class="primary-button" type="button">掷骰</button>
+          </div>
+        </div>
+
+        <div id="diceResultArea" class="dice-result-area" aria-live="polite">
+          <span class="dice-empty">输入数量后点击掷骰</span>
+        </div>
+
+        <div class="dice-ref-table-wrapper">
+          <h3>Strategic Bombing / Raid 效果参考</h3>
+          <table class="dice-ref-table">
+            <thead>
+              <tr><th>颜色</th><th>效果</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="dice-dot yellow"></span> 黄</td><td>摧毁1个在建Infantry或Submarine，或消耗敌方1点OSR</td></tr>
+              <tr><td><span class="dice-dot blue"></span> 蓝</td><td>摧毁1个在建Artillery或Cruiser，或消耗敌方1点Iron</td></tr>
+              <tr><td><span class="dice-dot green"></span> 绿</td><td>摧毁1个在建Armor、Carrier或Fighter</td></tr>
+              <tr><td><span class="dice-dot red"></span> 红</td><td>摧毁1个在建Bomber或Battleship，或消耗敌方1点Oil</td></tr>
+              <tr><td><span class="dice-dot white"></span> 白</td><td>破坏所有Infrastructure（含Ports和Rails），添加1个Bomb Token</td></tr>
+              <tr><td><span class="dice-dot black"></span> 黑</td><td>任选以上1种结果（即使不造成任何伤害）</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   </main>
@@ -2299,6 +2549,9 @@
           manualAdjustments: {},
           battles: []
         },
+        totalStress: {},
+        territoryLosses: {},
+        medalUsage: {},
         history: []
       },
       ui: {
@@ -2547,13 +2800,13 @@
     };
 
     const NATIONS = [
-      { id: 'germany', label: 'Germany', short: 'GER', side: 'axis' },
-      { id: 'japan', label: 'Imperial Japan', short: 'JPN', side: 'axis' },
-      { id: 'italy', label: 'Italy', short: 'ITA', side: 'axis' },
-      { id: 'uk', label: 'British Commonwealth', short: 'UK', side: 'allied' },
-      { id: 'soviet', label: 'Soviet Union', short: 'USSR', side: 'allied' },
-      { id: 'usa', label: 'United States', short: 'USA', side: 'allied' },
-      { id: 'china', label: 'China', short: 'CHN', side: 'allied' }
+      { id: 'germany', label: 'Germany', labelCN: '德国', short: 'GER', side: 'axis' },
+      { id: 'japan', label: 'Imperial Japan', labelCN: '日本', short: 'JPN', side: 'axis' },
+      { id: 'italy', label: 'Italy', labelCN: '意大利', short: 'ITA', side: 'axis' },
+      { id: 'uk', label: 'British Commonwealth', labelCN: '英国', short: 'UK', side: 'allied' },
+      { id: 'soviet', label: 'Soviet Union', labelCN: '苏联', short: 'USSR', side: 'allied' },
+      { id: 'usa', label: 'United States', labelCN: '美国', short: 'USA', side: 'allied' },
+      { id: 'china', label: 'China', labelCN: '中国', short: 'CHN', side: 'allied' }
     ];
 
     const NATION_FLAG_IMAGES = {
@@ -2685,7 +2938,7 @@
     };
     // 空战伤害分配时，战斗机内部优先打对地 / 对海姿态，再打空战姿态。
     const AIR_DAMAGE_FIGHTER_PRIORITY_STANCES = ['fighterGround', 'fighterSurface'];
-    const MULTI_LIFE_UNITS = ['Armor', 'Carrier', 'Battleship'];
+    const MULTI_LIFE_UNITS = ['Carrier', 'Battleship'];
     const SIDE_LABELS = { axis: '轴心国', allied: '同盟国' };
     const SOURCE_TO_TARGET_SIDE = { axis: 'allied', allied: 'axis' };
     const STRATEGIC_BOMBING_EFFECTS = {
@@ -2740,12 +2993,12 @@
     // 同时 Stress Points 减去 Threshold（保留余数），可在一回合内连续前进多个 Zone。
     const NATION_STRESS_THRESHOLDS = {
       germany: 6,
-      japan: 5,
-      italy: 4,    // 规则确认: "ITALY's Stress Threshold is 4"
-      uk: 5,
+      japan: 7,
+      italy: 4,
+      uk: 6,
       soviet: 6,
-      usa: 7,
-      china: 3
+      usa: 5,
+      china: 4
     };
 
     function getStressZone(stressPoints, nationId) {
@@ -3062,6 +3315,9 @@
         campaign.currentRound.battles = Array.isArray(sr.battles) ? sr.battles.slice(-40) : [];
       }
       campaign.history = Array.isArray(savedCampaign.history) ? savedCampaign.history.slice(-50) : [];
+      campaign.totalStress = normalizeNationNumberMap(savedCampaign.totalStress);
+      campaign.territoryLosses = normalizeNationNumberMap(savedCampaign.territoryLosses);
+      campaign.medalUsage = normalizeNationNumberMap(savedCampaign.medalUsage);
       return campaign;
     }
 
@@ -3375,17 +3631,33 @@
 
     function confirmEndRound() {
       const cr = gameState.campaign.currentRound;
+      const campaign = gameState.campaign;
+      // 将本回合压力累加到跨回合总压力
+      NATIONS.forEach((nation) => {
+        const roundStress = (cr.accumulatedStress[nation.id] || 0)
+          + (campaign.territoryLosses[nation.id] || 0)
+          - (campaign.medalUsage[nation.id] || 0);
+        if (roundStress > 0) {
+          campaign.totalStress[nation.id] = (campaign.totalStress[nation.id] || 0) + roundStress;
+        }
+      });
       gameState.campaign.history.push({
         roundNumber: cr.roundNumber,
         battleCount: cr.battleCount,
         accumulatedLosses: clone(cr.accumulatedLosses),
         accumulatedRepairs: clone(cr.accumulatedRepairs),
         accumulatedStress: clone(cr.accumulatedStress),
+        territoryLosses: clone(campaign.territoryLosses),
+        medalUsage: clone(campaign.medalUsage),
+        totalStress: clone(campaign.totalStress),
         battles: clone(cr.battles),
         timestamp: new Date().toISOString()
       });
       gameState.campaign.currentRound = normalizeCampaignState({}).currentRound;
       gameState.campaign.currentRound.roundNumber = (gameState.campaign.history.length || 0) + 1;
+      gameState.campaign.territoryLosses = {};
+      gameState.campaign.medalUsage = {};
+      gameState.campaign.currentRound.roundStartSnapshot = null;
       resetBattleBoard();
       addBattleLog(`第 ${gameState.campaign.history.length} 回合已确认结束，开始第 ${gameState.campaign.currentRound.roundNumber} 回合。`, { save: false });
       saveState();
@@ -3514,7 +3786,7 @@
     }
 
     function showView(viewName) {
-      const safeView = ['home', 'battle', 'battle-summary', 'round', 'stress'].includes(viewName) ? viewName : 'home';
+      const safeView = ['home', 'battle', 'battle-summary', 'round', 'stress', 'dice'].includes(viewName) ? viewName : 'home';
       document.querySelectorAll('.view').forEach((view) => {
         view.classList.toggle('active', view.id === `view-${safeView}`);
       });
@@ -3550,6 +3822,10 @@
 
       if (safeView === 'stress') {
         renderStressView();
+      }
+
+      if (safeView === 'dice') {
+        // Dice page needs no special init — roll logic is event-driven
       }
 
       saveState();
@@ -3816,7 +4092,11 @@
     }
 
     function isMultiLifeZone(zone) {
-      return zone && MULTI_LIFE_UNITS.includes(zone.unit);
+      if (!zone) return false;
+      if (MULTI_LIFE_UNITS.includes(zone.unit)) return true;
+      // 装甲防御姿态3血（多血），进攻姿态2血（普通）
+      if (zone.unit === 'Armor' && zone.stance === 'armorDefensive') return true;
+      return false;
     }
 
     function shouldShowZoneDamageBreakdown() {
@@ -5907,17 +6187,33 @@
 
     // ─── Battle Summary & Round Summary Rendering ──────────────────────────
 
-    const BATTLE_SUMMARY_UNIT_COLUMNS = [
-      { key: 'Infantry', label: '步兵' },
-      { key: 'Artillery', label: '炮兵' },
-      { key: 'Armor', label: '坦克' },
-      { key: 'Fighter', label: '战斗机' },
-      { key: 'Bomber', label: '轰炸机' },
-      { key: 'Submarine', label: '潜艇' },
-      { key: 'Cruiser', label: '巡洋舰' },
-      { key: 'Battleship', label: '战列舰' },
-      { key: 'Carrier', label: '航母' }
+    const LAND_UNIT_COLUMNS = [
+      { key: 'Bomber', label: '轰炸机', pt: 6 },
+      { key: 'Fighter', label: '战斗机', pt: 4 },
+      { key: 'Armor', label: '坦克', pt: 4 },
+      { key: 'Artillery', label: '火炮', pt: 2 },
+      { key: 'Infantry', label: '步兵', pt: 2 }
     ];
+
+    const SEA_UNIT_COLUMNS = [
+      { key: 'Bomber', label: '轰炸机', pt: 6 },
+      { key: 'Fighter', label: '战斗机', pt: 4 },
+      { key: 'Battleship', label: '战列', pt: 20 },
+      { key: 'Carrier', label: '航母', pt: 20 },
+      { key: 'Cruiser', label: '巡洋', pt: 10 },
+      { key: 'Submarine', label: '潜艇', pt: 6 }
+    ];
+
+    function getUnitColumnsForType(type) {
+      return type === 'sea' ? SEA_UNIT_COLUMNS : LAND_UNIT_COLUMNS;
+    }
+
+    // Helper: build nation cell HTML with flag + Chinese name
+    function buildNationCell(nation) {
+      const flagSrc = NATION_FLAG_IMAGES[nation.id] || '';
+      const cnName = nation.labelCN || nation.label;
+      return `<img src="${flagSrc}" class="nation-flag-icon" alt="">${cnName}`;
+    }
 
     function getBattleUnitLosses() {
       const losses = {};
@@ -6054,112 +6350,122 @@
       if (!hasData) {
         tbody.innerHTML = '';
         if (emptyEl) emptyEl.classList.remove('is-hidden');
-        // Still show battle log
         renderBattleSummaryLog();
         return;
       }
 
       if (emptyEl) emptyEl.classList.add('is-hidden');
 
+      const unitCols = getUnitColumnsForType(gameState.battleType);
       const battleLosses = getBattleUnitLosses();
-      const roundLosses = getRoundAccumulatedLosses();
-      const roundPaidRepairs = gameState.campaign.currentRound.accumulatedPaidRepairs || {};
-      const battlePaidRepairs = resolution.paidRepairsByNation || {};
+      const roundAccumulated = getRoundAccumulatedLosses();
+      const cr = gameState.campaign.currentRound;
+      const roundPaidRepairs = cr.accumulatedPaidRepairs || {};
+      const battleRepairs = resolution.paidRepairsByNation || {};
+      const roundAccumStress = cr.accumulatedStress || {};
+      const campaignTotal = gameState.campaign.totalStress || {};
+
+      // Compute round-before data: X = round accumulated excluding this battle
+      // Since accumulateBattleToRound has been called, round data INCLUDES this battle.
+      // X = round - battle, Y = battle
+      function roundBeforeLosses(nationId, unitKey) {
+        const roundVal = (roundAccumulated[nationId] && roundAccumulated[nationId][unitKey]) || 0;
+        const battleVal = (battleLosses[nationId] && battleLosses[nationId][unitKey]) || 0;
+        return Math.max(0, roundVal - battleVal);
+      }
+
+      function roundBeforeRepairs(nationId) {
+        const roundVal = roundPaidRepairs[nationId] || 0;
+        const battleVal = battleRepairs[nationId] || 0;
+        return Math.max(0, roundVal - battleVal);
+      }
+
+      function roundBeforeStress(nationId) {
+        const roundVal = roundAccumStress[nationId] || 0;
+        const battleStressEntries = (resolution.stressEntries || []).filter((e) => e.nationId === nationId);
+        const battleVal = battleStressEntries.reduce((sum, e) => sum + (e.stressPoints || 0), 0);
+        return Math.max(0, roundVal - battleVal);
+      }
 
       const rows = NATIONS.filter((nation) => {
-        // Only show nations that have any data
-        const hasLosses = battleLosses[nation.id] || roundLosses[nation.id];
-        const hasRepairs = (roundPaidRepairs[nation.id] || 0) > 0 || (battlePaidRepairs[nation.id] || 0) > 0;
-        return hasLosses || hasRepairs || resolution.performed;
+        const hasBattleLosses = battleLosses[nation.id] && Object.values(battleLosses[nation.id]).some((v) => v > 0);
+        const hasBattleRepairs = (battleRepairs[nation.id] || 0) > 0;
+        return hasBattleLosses || hasBattleRepairs;
       }).map((nation) => {
-        const nationBattleLosses = battleLosses[nation.id] || {};
-        const nationRoundLosses = roundLosses[nation.id] || {};
+        const nBattleLosses = battleLosses[nation.id] || {};
 
-        // Build unit loss columns
-        const unitCells = BATTLE_SUMMARY_UNIT_COLUMNS.map((col) => {
-          const roundVal = nationRoundLosses[col.key] || 0;
-          const battleVal = nationBattleLosses[col.key] || 0;
-          return `<td>${formatXY(roundVal, battleVal)}</td>`;
+        // Column 2: 损失单位 sub-columns (X+Y per unit type)
+        const unitCells = unitCols.map((col) => {
+          const x = roundBeforeLosses(nation.id, col.key);
+          const y = nBattleLosses[col.key] || 0;
+          return `<td>${formatXY(x, y)}</td>`;
         }).join('');
 
-        // Repair column
-        const roundRepairVal = roundPaidRepairs[nation.id] || 0;
-        const battleRepairVal = battlePaidRepairs[nation.id] || 0;
-        const repairCell = `<td>${formatXY(roundRepairVal, battleRepairVal)}</td>`;
+        // Column 3: 损失单位分数 (X+Y: X=roundBefore CP, Y=battle delta CP)
+        const roundBeforeLossMap = {};
+        unitCols.forEach((col) => { roundBeforeLossMap[col.key] = roundBeforeLosses(nation.id, col.key); });
+        const roundBeforeCp = getNationCasualtyPoints(roundBeforeLossMap);
+        const battleCp = getNationCasualtyPoints(nBattleLosses);
+        const lossPointsTooltip = buildLossPointsTooltip([
+          ...roundBeforeCp.breakdown.map((b) => ({ ...b, unit: b.unit + ' [X]' })),
+          ...battleCp.breakdown.map((b) => ({ ...b, unit: b.unit + ' [Y]' }))
+        ]);
+        const lossPointsCell = `<td title="${escapeHtml(lossPointsTooltip)}">${formatXY(roundBeforeCp.total, battleCp.total)}</td>`;
 
-        // ── Stress-related columns ─────────────────────────────────────────
-        // 损失单位分：本回合累计伤亡点数 + 本场战斗新增伤亡点数
-        const roundLossCp = getNationCasualtyPoints(nationRoundLosses);
-        const battleLossCp = getNationCasualtyPoints(nationBattleLosses);
-        // 合并 tooltip 显示回合累计 + 本场新增的详细计算过程
-        const combinedTooltipItems = [
-          ...roundLossCp.breakdown.map((b) => `${b.unit} ×${b.count} (系数${b.factor}) = ${b.points} [回合累计]`),
-          ...battleLossCp.breakdown.map((b) => `${b.unit} ×${b.count} (系数${b.factor}) = ${b.points} [本场新增]`)
-        ];
-        const lossPointsTooltip = combinedTooltipItems.length > 0
-          ? `伤亡点数计算：\n${combinedTooltipItems.join('\n')}\n回合累计总计 = ${roundLossCp.total}；本场新增总计 = ${battleLossCp.total}`
-          : '';
-        const lossPointsCell = `<td title="${escapeHtml(lossPointsTooltip)}">${formatXY(roundLossCp.total, battleLossCp.total)}</td>`;
+        // Column 4: 击杀压力分 (X+Y: X=roundBefore CP→stress, Y=battle CP→stress delta)
+        const xStress = convertCasualtyPointsToStress(roundBeforeCp.total);
+        const xyTotalCp = roundBeforeCp.total + battleCp.total;
+        const xyTotalStress = convertCasualtyPointsToStress(xyTotalCp);
+        const yStress = xyTotalStress - xStress;
+        const stressTooltip = `X=战斗前回合CP ${roundBeforeCp.total}→压力 ${xStress}\nX+Y=当前回合CP ${xyTotalCp}→压力 ${xyTotalStress}\nY=${xyTotalStress} - ${xStress} = ${yStress}`;
+        const killStressCell = `<td title="${escapeHtml(stressTooltip)}">${formatXY(xStress, yStress)}</td>`;
 
-        // 击杀压力分：本场战斗对敌方造成的压力（友方所有国家击杀合计 → 暂简化为本场压力分）
-        const battleStress = getNationBattleStress(nation.id, resolution.lossEntries || []);
-        const killStressTooltip = battleStress.breakdown.length > 0
-          ? `击杀压力分：\n${battleStress.breakdown.map((b) => `${b.unit} ×${b.count} (系数${b.factor}) = ${b.points}`).join('\n')}\n${buildStressConversionTooltip(battleStress.casualtyPoints, battleStress.stressPoints)}`
-          : '';
-        const killStressCell = `<td title="${escapeHtml(killStressTooltip)}">${battleStress.stressPoints > 0 ? battleStress.stressPoints : '<span class="cell-value-zero">0</span>'}</td>`;
+        // Column 5: 修复单位数 (X+Y)
+        const xRepairs = roundBeforeRepairs(nation.id);
+        const yRepairs = battleRepairs[nation.id] || 0;
+        const repairCell = `<td>${formatXY(xRepairs, yRepairs)}</td>`;
 
-        // 本战压力：本场战斗新增压力点（X=回合累计压力，Y=本场新增压力）
-        const roundStress = getNationAccumulatedStress(nation.id);
-        const battleStressOnly = battleStress.stressPoints;
-        const battleStressTooltip = buildStressConversionTooltip(battleStress.casualtyPoints, battleStress.stressPoints);
-        const battleStressCell = `<td title="${escapeHtml(battleStressTooltip)}">${formatXY(roundStress, battleStressOnly)}</td>`;
-
-        // 总压力：当前回合累计压力 = 之前累计 + 本场新增
-        const totalStress = roundStress + battleStressOnly;
+        // Column 6: 总压力 (cross-round: campaign.totalStress + current round stress)
+        const crossRoundStress = campaignTotal[nation.id] || 0;
+        const roundStressTotal = (roundAccumStress[nation.id] || 0);
+        const totalStress = crossRoundStress + roundStressTotal;
         const totalStressCell = totalStress > 0
-          ? `<td class="${getStressCellClass(totalStress, nation.id)}" title="回合累计压力：${totalStress}\n压力阈值：${NATION_STRESS_THRESHOLDS[nation.id] || '?'}\n当前区域：${getStressZone(totalStress, nation.id).labelCN}">${totalStress}</td>`
+          ? `<td class="${getStressCellClass(totalStress, nation.id)}" title="跨回合总压力：${totalStress}\n= 历史累计 ${crossRoundStress} + 本回合 ${roundStressTotal}\n压力阈值：${NATION_STRESS_THRESHOLDS[nation.id] || '?'}\n当前区域：${getStressZone(totalStress, nation.id).labelCN}">${totalStress}</td>`
           : '<td><span class="cell-value-zero">0</span></td>';
 
-        // 压力阈值
+        // Column 7: 势力压力阈值
         const threshold = NATION_STRESS_THRESHOLDS[nation.id];
-        const thresholdCell = `<td title="当压力点 ≥ ${threshold} 时，国家在 Homeland Status Track 上前进一个 Zone">${threshold || '<span class="cell-value-zero">?</span>'}</td>`;
+        const thresholdCell = `<td title="当压力点 ≥ ${threshold} 时，国家在 Homeland Status Track 上前进一个 Zone">${threshold || '?'}</td>`;
 
         const sideClass = nation.side === 'axis' ? 'axis-nation' : 'allied-nation';
 
         return `<tr>
-          <td class="col-nation ${sideClass}">${nation.label}</td>
+          <td class="col-nation ${sideClass}">${buildNationCell(nation)}</td>
           ${unitCells}
-          ${repairCell}
           ${lossPointsCell}
           ${killStressCell}
-          ${battleStressCell}
+          ${repairCell}
           ${totalStressCell}
           ${thresholdCell}
         </tr>`;
       }).join('');
 
-      // Build thead with correct colspan for unit group label
-      const unitColCount = BATTLE_SUMMARY_UNIT_COLUMNS.length;
+      // Build thead
+      const unitColCount = unitCols.length;
       const theadHtml = `
         <tr>
           <th class="col-nation">国家</th>
           <th class="col-group-label" colspan="${unitColCount}">损失单位</th>
-          <th class="col-repair">修复单位</th>
-          <th class="col-loss-points">损失单位分</th>
-          <th class="col-kill-stress">击杀压力分</th>
-          <th class="col-battle-stress">本战压力</th>
-          <th class="col-total-stress">总压力</th>
-          <th class="col-stress-threshold">压力阈值</th>
+          <th>损失单位分数</th>
+          <th>击杀压力分</th>
+          <th>修复单位数</th>
+          <th>总压力</th>
+          <th>压力阈值</th>
         </tr>
         <tr>
           <th class="col-nation"></th>
-          ${BATTLE_SUMMARY_UNIT_COLUMNS.map((col) => `<th>${col.label}</th>`).join('')}
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
+          ${unitCols.map((col) => `<th class="col-unit-sub">${col.label}\n(${col.pt}pt)</th>`).join('')}
+          <th></th><th></th><th></th><th></th><th></th>
         </tr>`;
 
       tbody.closest('table').querySelector('thead').innerHTML = theadHtml;
@@ -6238,7 +6544,7 @@
       if (!tbody) return;
 
       const cr = gameState.campaign.currentRound;
-      const hasBattles = cr.battles.length > 0;
+      const campaign = gameState.campaign;
 
       // Update toolbar indicators
       const roundEl = document.getElementById('roundViewRoundNumber');
@@ -6246,120 +6552,130 @@
       if (roundEl) roundEl.textContent = cr.roundNumber;
       if (battleCountEl) battleCountEl.textContent = cr.battleCount;
 
-      if (!hasBattles) {
-        if (thead) thead.innerHTML = '';
-        tbody.innerHTML = '';
-        if (emptyEl) emptyEl.classList.remove('is-hidden');
-        renderRoundLog();
-        return;
-      }
-
       if (emptyEl) emptyEl.classList.add('is-hidden');
 
       const roundLosses = cr.accumulatedLosses || {};
-      const roundPaidRepairs = cr.accumulatedPaidRepairs || {};
-      const roundFreeRepairs = cr.accumulatedFreeRepairs || {};
+      const roundAccumStress = cr.accumulatedStress || {};
+      const campaignTotal = campaign.totalStress || {};
+      const territoryLosses = campaign.territoryLosses || {};
+      const medalUsage = campaign.medalUsage || {};
 
-      // Build table header
-      const unitColCount = BATTLE_SUMMARY_UNIT_COLUMNS.length;
+      // Build table header: 国家 → 压力阈值 → 总压力 → ... → 损失领土 → 奖章使用
       if (thead) {
         thead.innerHTML = `
           <tr>
             <th class="col-nation">国家</th>
-            <th class="col-group-label" colspan="${unitColCount}">损失单位</th>
-            <th class="col-repair">修复单位（付费）</th>
-            <th class="col-repair">修复单位（免费）</th>
-            <th class="col-loss-points">损失单位分</th>
-            <th class="col-kill-stress">击杀压力分</th>
-            <th class="col-battle-stress">本回合压力</th>
-            <th class="col-total-stress">总压力</th>
-            <th class="col-stress-threshold">压力阈值</th>
-            <th class="col-recovery">压力恢复</th>
-          </tr>
-          <tr>
-            <th class="col-nation"></th>
-            ${BATTLE_SUMMARY_UNIT_COLUMNS.map((col) => `<th>${col.label}</th>`).join('')}
-            <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+            <th class="col-threshold">压力阈值</th>
+            <th>总压力</th>
+            <th>本回合新增压力</th>
+            <th>单位损失分数</th>
+            <th>损失分数换算压力</th>
+            <th>损失领土</th>
+            <th>民用物资/奖章使用</th>
           </tr>`;
       }
 
-      const rows = NATIONS.filter((nation) => {
-        const hasLosses = roundLosses[nation.id];
-        const hasRepairs = (roundPaidRepairs[nation.id] || 0) > 0 || (roundFreeRepairs[nation.id] || 0) > 0;
-        return hasLosses || hasRepairs;
-      }).map((nation) => {
+      // Show ALL 7 nations
+      const rows = NATIONS.map((nation) => {
         const nationRoundLosses = roundLosses[nation.id] || {};
-
-        // Unit loss cells: X (accumulated) + Y (manual adjustment)
-        const unitCells = BATTLE_SUMMARY_UNIT_COLUMNS.map((col) => {
-          const roundVal = nationRoundLosses[col.key] || 0;
-          const adjVal = getRoundAdjustment(nation.id, col.key);
-          const cellId = `round-loss-${nation.id}-${col.key}`;
-          const editable = adjVal > 0 ? ' cell-edited' : '';
-          return `<td class="round-editable${editable}" data-cell-type="loss" data-nation="${nation.id}" data-unit="${col.key}" id="${cellId}">${formatXY(roundVal, adjVal)}</td>`;
-        }).join('');
-
-        // Repair cells: X + Y
-        const paidVal = roundPaidRepairs[nation.id] || 0;
-        const paidAdj = getRoundRepairAdjustment(nation.id);
-        const paidClass = paidAdj > 0 ? ' cell-edited' : '';
-        const repairPaidCell = `<td class="round-editable${paidClass}" data-cell-type="repair" data-nation="${nation.id}" id="round-repair-${nation.id}">${formatXY(paidVal, paidAdj)}</td>`;
-
-        const freeVal = roundFreeRepairs[nation.id] || 0;
-        const repairFreeCell = `<td>${freeVal || '<span class="cell-value-zero">0</span>'}</td>`;
-
-        // Stress recovery: 0 + Y
-        const recoveryAdj = getRoundStressRecoveryAdjustment(nation.id);
-        const recoveryClass = recoveryAdj > 0 ? ' cell-edited' : '';
-        const recoveryCell = `<td class="round-editable${recoveryClass}" data-cell-type="stressRecovery" data-nation="${nation.id}" id="round-recovery-${nation.id}">${formatXY(0, recoveryAdj)}</td>`;
-
-        // ── Stress-related columns (round summary) ─────────────────────────
-        // 损失单位分：从回合累计损失计算
-        const roundLossCp = getNationCasualtyPoints(nationRoundLosses);
-        const lossPointsTooltip = buildLossPointsTooltip(roundLossCp.breakdown);
-        const lossPointsCell = `<td title="${escapeHtml(lossPointsTooltip)}">${roundLossCp.total > 0 ? roundLossCp.total : '<span class="cell-value-zero">0</span>'}</td>`;
-
-        // 击杀压力分：本回合所有战斗对敌方造成的压力合计
-        // 从 battles 中统计本回合所有战斗的 stressEntries
-        const roundKillStress = computeRoundKillStress(nation.id);
-        const killStressCell = roundKillStress.stressPoints > 0
-          ? `<td title="${escapeHtml(roundKillStress.tooltip || '')}">${roundKillStress.stressPoints}</td>`
-          : '<td><span class="cell-value-zero">0</span></td>';
-
-        // 本回合压力：系统统计 X + 玩家修正 Y
-        const roundStressVal = getNationAccumulatedStress(nation.id);
-        const stressAdj = getRoundStressAdjustment(nation.id);
-        const stressAdjClass = stressAdj > 0 ? ' cell-edited' : '';
-        const battleStressCell = `<td class="round-editable${stressAdjClass}" data-cell-type="stress" data-nation="${nation.id}" id="round-stress-${nation.id}">${formatXY(roundStressVal, stressAdj)}</td>`;
-
-        // 总压力：系统统计 + 修正值
-        const totalStressVal = roundStressVal + stressAdj;
-        const totalStressCell = totalStressVal > 0
-          ? `<td class="${getStressCellClass(totalStressVal, nation.id)}" title="回合累计压力：${totalStressVal}\n压力阈值：${NATION_STRESS_THRESHOLDS[nation.id] || '?'}\n当前区域：${getStressZone(totalStressVal, nation.id).labelCN}">${totalStressVal}</td>`
-          : '<td><span class="cell-value-zero">0</span></td>';
+        const threshold = NATION_STRESS_THRESHOLDS[nation.id] || 5;
 
         // 压力阈值
-        const threshold = NATION_STRESS_THRESHOLDS[nation.id];
-        const thresholdCell = `<td title="当压力点 ≥ ${threshold} 时，国家在 Homeland Status Track 上前进一个 Zone。\n规则确认：ITALY=4，其余待对照实体 Stress Track。">${threshold || '<span class="cell-value-zero">?</span>'}</td>`;
+        const thresholdCell = `<td class="col-threshold">${threshold}</td>`;
+
+        // 总压力 = cross-round total + round stress + territory - medals
+        const crossRound = campaignTotal[nation.id] || 0;
+        const roundStressVal = roundAccumStress[nation.id] || 0;
+        const terrLoss = territoryLosses[nation.id] || 0;
+        const medalUse = medalUsage[nation.id] || 0;
+        const totalStressDisplay = crossRound + roundStressVal + terrLoss - medalUse;
+
+        const totalStressCell = totalStressDisplay > 0
+          ? `<td class="${getStressCellClass(totalStressDisplay, nation.id)}" title="跨回合 ${crossRound} + 本回合 ${roundStressVal} + 领土 ${terrLoss} - 奖章 ${medalUse} = ${totalStressDisplay}\n当前区域：${getStressZone(totalStressDisplay, nation.id).labelCN}">${totalStressDisplay}</td>`
+          : '<td><span class="cell-value-zero">0</span></td>';
+
+        // 本回合新增压力
+        const newStress = roundStressVal + terrLoss - medalUse;
+        const newStressCell = newStress !== 0
+          ? `<td>${newStress > 0 ? '+' : ''}${newStress}</td>`
+          : '<td><span class="cell-value-zero">0</span></td>';
+
+        // 单位损失分数 (with clickable icon for breakdown tooltip)
+        const lossCpResult = getNationCasualtyPoints(nationRoundLosses);
+        const breakdownHtml = lossCpResult.breakdown.length > 0
+          ? lossCpResult.breakdown.map((b) => `${b.unit} ×${b.count} * ${b.factor}pt = ${b.points}pt`).join('<br>')
+          : '本回合无损失';
+        const lossCpCell = lossCpResult.total > 0
+          ? `<td>${lossCpResult.total}<span class="loss-breakdown-trigger" data-nation="${nation.id}" data-tooltip="${escapeHtml(breakdownHtml)}" title="点击查看损失明细">?</span></td>`
+          : '<td><span class="cell-value-zero">0</span></td>';
+
+        // 损失分数换算压力 (CP → Stress via Conversion Chart)
+        const cpToStress = convertCasualtyPointsToStress(lossCpResult.total);
+        const cpStressRange = getStressConversionRange(cpToStress);
+        const cpStressCell = cpToStress > 0
+          ? `<td title="伤亡点 ${lossCpResult.total} → [${cpStressRange}] → ${cpToStress} 压力点">${cpToStress}</td>`
+          : '<td><span class="cell-value-zero">0</span></td>';
+
+        // 损失领土 (interactive: adds stress)
+        const terrCell = `<td class="round-editable-cell" data-cell-type="territoryLoss" data-nation="${nation.id}" title="左键+1 / 右键-1 / 滚轮调整。增加总压力。">${terrLoss || '<span class="cell-value-zero">0</span>'}</td>`;
+
+        // 民用物资/奖章使用 (interactive: reduces stress)
+        const medalCell = `<td class="round-editable-cell" data-cell-type="medalUsage" data-nation="${nation.id}" title="左键+1 / 右键-1 / 滚轮调整。减少总压力。">${medalUse || '<span class="cell-value-zero">0</span>'}</td>`;
 
         const sideClass = nation.side === 'axis' ? 'axis-nation' : 'allied-nation';
 
         return `<tr>
-          <td class="col-nation ${sideClass}">${nation.label}</td>
-          ${unitCells}
-          ${repairPaidCell}
-          ${repairFreeCell}
-          ${lossPointsCell}
-          ${killStressCell}
-          ${battleStressCell}
-          ${totalStressCell}
+          <td class="col-nation ${sideClass}">${buildNationCell(nation)}</td>
           ${thresholdCell}
-          ${recoveryCell}
+          ${totalStressCell}
+          ${newStressCell}
+          ${lossCpCell}
+          ${cpStressCell}
+          ${terrCell}
+          ${medalCell}
         </tr>`;
       }).join('');
 
       tbody.innerHTML = rows;
       renderRoundLog();
+
+      // Bind tooltip popup for loss breakdown triggers
+      bindLossBreakdownTriggers();
+    }
+
+    function bindLossBreakdownTriggers() {
+      document.querySelectorAll('.loss-breakdown-trigger').forEach((trigger) => {
+        // Remove old listeners by cloning
+        const clone = trigger.cloneNode(true);
+        trigger.parentNode.replaceChild(clone, trigger);
+        clone.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showLossBreakdownPopup(e.target);
+        });
+      });
+    }
+
+    function showLossBreakdownPopup(trigger) {
+      // Remove any existing popup
+      const existing = document.querySelector('.loss-breakdown-popup');
+      if (existing) existing.remove();
+
+      const tooltip = trigger.dataset.tooltip;
+      if (!tooltip) return;
+
+      const popup = document.createElement('div');
+      popup.className = 'loss-breakdown-popup';
+      popup.innerHTML = tooltip.replace(/<br>/g, '\n');
+      document.body.appendChild(popup);
+
+      const rect = trigger.getBoundingClientRect();
+      popup.style.left = Math.min(rect.left, window.innerWidth - 320) + 'px';
+      popup.style.top = (rect.bottom + 6) + 'px';
+
+      // Auto-hide after 4s or click outside
+      const hide = () => { if (popup.parentNode) popup.remove(); };
+      setTimeout(hide, 4000);
+      document.addEventListener('click', hide, { once: true });
     }
 
     function renderRoundLog() {
@@ -6408,33 +6724,52 @@
         else delete adj.stress[nationId];
       }
 
+      // medalUsage and territoryLoss are stored directly in campaign, not in manualAdjustments
+      if (cellType === 'medalUsage') {
+        const campaign = gameState.campaign;
+        if (!campaign.medalUsage) campaign.medalUsage = {};
+        const current = campaign.medalUsage[nationId] || 0;
+        const next = Math.max(0, current + delta);
+        if (next > 0) campaign.medalUsage[nationId] = next;
+        else delete campaign.medalUsage[nationId];
+      }
+      if (cellType === 'territoryLoss') {
+        const campaign = gameState.campaign;
+        if (!campaign.territoryLosses) campaign.territoryLosses = {};
+        const current = campaign.territoryLosses[nationId] || 0;
+        const next = Math.max(0, current + delta);
+        if (next > 0) campaign.territoryLosses[nationId] = next;
+        else delete campaign.territoryLosses[nationId];
+      }
+
       saveState();
       renderRoundSummary();
     }
 
     function handleRoundCellClick(event) {
       if (gameState.ui.currentView !== 'round') return;
-      const cell = event.target.closest('.round-editable');
+      const cell = event.target.closest('.round-editable-cell, .round-editable');
       if (!cell) return;
       event.preventDefault();
-      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit, 1);
+      // For .round-editable-cell, unit is not needed
+      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit || '', 1);
     }
 
     function handleRoundCellContextMenu(event) {
       if (gameState.ui.currentView !== 'round') return;
-      const cell = event.target.closest('.round-editable');
+      const cell = event.target.closest('.round-editable-cell, .round-editable');
       if (!cell) return;
       event.preventDefault();
-      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit, -1);
+      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit || '', -1);
     }
 
     function handleRoundCellWheel(event) {
       if (gameState.ui.currentView !== 'round') return;
-      const cell = event.target.closest('.round-editable');
+      const cell = event.target.closest('.round-editable-cell, .round-editable');
       if (!cell) return;
       event.preventDefault();
       const delta = event.deltaY < 0 ? 1 : -1;
-      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit, delta);
+      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit || '', delta);
     }
 
     // ─── Stress View Rendering ─────────────────────────────────────────────
@@ -6540,6 +6875,26 @@
       else delete goods[nationId];
       saveState();
       if (gameState.ui.currentView === 'stress') renderStressView();
+    }
+
+    // ─── Dice Roll Page ────────────────────────────────────────────────────
+
+    function rollFreeDice() {
+      const input = document.getElementById('diceCountInput');
+      const area = document.getElementById('diceResultArea');
+      if (!input || !area) return;
+      const count = Math.max(1, Math.floor(Number(input.value) || 0));
+      if (count <= 0) return;
+      input.value = count;
+
+      // Generate random dice
+      const results = Array.from({ length: count }, () => DICE_FACES[Math.floor(Math.random() * DICE_FACES.length)]);
+      // Sort by color order
+      results.sort((a, b) => DICE_ORDER.indexOf(a) - DICE_ORDER.indexOf(b));
+
+      area.innerHTML = results.map((color, i) => {
+        return `<div class="die-token" data-color="${color}" title="${DICE_LABELS[color]} / ${color}"><img src="${DICE_ASSETS[color]}" alt="${DICE_LABELS[color]} dice"></div>`;
+      }).join('');
     }
 
     // ─── Event Binding ─────────────────────────────────────────────────────
@@ -6690,6 +7045,11 @@
       });
 
       document.getElementById('stageStartButton').addEventListener('click', handleStageStartButton);
+      const rollDiceBtn = document.getElementById('rollDiceButton');
+      if (rollDiceBtn) rollDiceBtn.addEventListener('click', rollFreeDice);
+      // Also allow Enter key in dice count input
+      const diceCountInput = document.getElementById('diceCountInput');
+      if (diceCountInput) diceCountInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') rollFreeDice(); });
       document.getElementById('closeZoneTooltipButton').addEventListener('click', closeZoneTooltip);
       document.getElementById('undoZoneDamageButton').addEventListener('click', () => {
         const zoneId = gameState.damage && gameState.damage.tooltip ? gameState.damage.tooltip.zoneId : null;
@@ -6719,6 +7079,27 @@
         renderDiceUi();
         renderBattleBoard();
       });
+
+      const toggleBattleTypeBtn = document.getElementById('toggleBattleTypeButton');
+      if (toggleBattleTypeBtn) {
+        toggleBattleTypeBtn.addEventListener('click', () => {
+          gameState.battleType = gameState.battleType === 'land' ? 'sea' : 'land';
+          gameState.ui.inputMode = null;
+          gameState.ui.activeZoneId = null;
+          gameState.damage.tooltip.zoneId = null;
+          gameState.damage.assignments.airDamage = null;
+          gameState.damage.assignments.surfaceDamage = null;
+          gameState.damage.forceAdvantageSnapshot = null;
+          resetRepairState();
+          resetCombatResolutionState();
+          resetAllAutoAssignmentFlags();
+          updateBoardBackground();
+          updateToolbar();
+          renderDiceUi();
+          renderBattleBoard();
+          saveState();
+        });
+      }
 
       document.getElementById('restartBattleButton').addEventListener('click', resetCurrentBattle);
 

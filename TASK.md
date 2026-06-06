@@ -1,669 +1,602 @@
-# TASK-BATTLE-PHASE-2
+# TASK.md - Escort Phase（护航阶段）实现
 
-## 开发前要求
+## 开发目标
 
-先阅读项目规则文档（War Room规则摘要）。
+为海战流程增加独立的：
 
-重点关注：
-
-* Air Battle
-* Surface Battle
-* Force Advantage
-* Damage Assignment
-* Repair Step
-* Black Dice
-* White Dice
-
-当前热区系统已完成，不允许重构热区架构。
-
-后续所有功能基于现有热区实现。
-
----
-
-# 页面总体流程
-
-新增顶部阶段导航条。
-
-当前阶段必须高亮。
-
-流程固定为：
-
-```text
-① 空战
-↓
-② 空战伤害分配
-↓
-③ 陆战
-↓
-④ 陆战伤害分配
-↓
-⑤ 修复单位
+```txt
+Escort Phase（护航阶段）
 ```
 
-阶段之间采用按钮切换。
+用于实现：
 
-只有当前阶段完成后才能进入下一阶段。
+Cruiser Escort Stance（巡洋舰护航姿态）
 
----
+规则要求：
 
-# 战斗模式
-
-轴心国与同盟国分别拥有独立伤害分配模式。
-
-例如：
-
-Axis:
-Auto
-
-Allies:
-Manual
-
-允许同时存在。
-
-配置位置：
-
-战斗页面顶部。
+* 蓝骰结算后才能发动
+* 巡洋舰代替航母/战列舰承受伤害
+* 可保护己方及盟友单位
+* 受损巡洋舰仍可护航
+* 仅沉没后失去能力
 
 ---
 
-支持以下五种模式：
+# 一、设计原则
 
-## 1 Auto
+不要严格模拟：
 
-自动分配伤害
-
-使用本文档中的 Auto Allocation Algorithm
-
----
-
-## 2 Random
-
-随机分配
-
-所有合法目标随机选择。
-
-仍然遵守：
-
-* 受损优先
-* 轻伤优先
-* 伤害类型限制
-
----
-
-## 3 Same Nation First
-
-优先同国
-
-优先继续打击已经开始承受该颜色伤害的国家。
-
-例如：
-
-Germany Infantry
-已承担1点黄色伤害
-
-下一发黄色伤害：
-
-优先继续分配给Germany。
-
----
-
-## 4 Largest Stack
-
-最大堆叠
-
-优先伤害当前该兵种数量最多的国家。
-
-例如：
-
-Germany Infantry 6
-
-Italy Infantry 2
-
-Yellow Hit
-
-优先Germany。
-
----
-
-## 5 Manual
-
-完全手动。
-
-系统只负责：
-
-* 判断合法目标
-* 高亮合法目标
-* 记录结果
-
-不进行推荐。
-
----
-
-# Auto Allocation Algorithm
-
-Auto模式核心算法。
-
----
-
-## 第一原则
-
-优先遵守兵种内部伤害优先级。
-
----
-
-## 第二原则
-
-优先全歼一个国家的该兵种。
-
-示例：
-
-Germany Infantry 2
-
-Italy Infantry 6
-
-Yellow Hit 2
-
-结果：
-
-Germany全部消灭。
-
-而不是：
-
-Germany 1
-Italy 1
-
----
-
-## 第三原则
-
-若只能全歼其中一个国家：
-
-优先全歼单位数量较少的国家。
-
-示例：
-
-Germany Infantry 2
-
-Italy Infantry 6
-
-Yellow Hit 2
-
-结果：
-
-Germany全部消灭。
-
----
-
-## 第四原则
-
-若无法全歼任何国家：
-
-优先伤害该兵种数量最多的国家。
-
-示例：
-
-Germany Infantry 8
-
-Italy Infantry 3
-
-Yellow Hit 2
-
-结果：
-
-Germany承担2。
-
----
-
-## 第五原则
-
-若数量相同：
-
-按照国家显示顺序。
-
-从左到右。
-
----
-
-# 兵种内部伤害优先级
-
-所有模式均遵守。
-
-包括：
-
-Auto
-Random
-Same Nation First
-Largest Stack
-
----
-
-## Infantry
-
-Offense
-优先于
-Defense
-
----
-
-## Artillery
-
-Offense
-优先于
-Defense
-
----
-
-## Armor
-
-Offense
-优先于
-Defense
-
-原因：
-
-Offense仅2生命。
-
-Defense拥有完整生命轨。
-
----
-
-## Fighter
-
-Offense
-优先于
-Defense
-
----
-
-## Bomber
-
-Ground Support
-优先于
-Strategic
-
----
-
-## Destroyer
-
-Escort
-优先于
-Defense
-优先于
-Offense
-
----
-
-# 多生命单位
-
-适用于：
-
-Armor
-Carrier
-Battleship
-
----
-
-状态：
-
-Healthy
-Light Damage
-Heavy Damage
-Destroyed
-
----
-
-伤害优先级：
-
-Heavy Damage
-优先于
-Light Damage
-优先于
-Healthy
-
----
-
-白骰与黑骰：
-
-优先命中：
-
-Heavy Damage
-
-之后：
-
-Light Damage
-
-之后：
-
-Healthy
-
----
-
-# Roll Results 与伤害分配联动
-
-新增：
-
-Damage Assignment Mode
-
----
-
-进入伤害分配阶段后：
-
-Roll Results区域保留。
-
-不隐藏。
-
----
-
-所有骰子必须保留实体显示。
-
-例如：
-
-🟡
-🟡
-🔵
-⚫
-
----
-
-已分配骰子：
-
-显示灰色。
-
-并添加：
-
-Assigned状态。
-
----
-
-当前待分配骰子：
-
-高亮闪烁。
-
----
-
-未分配骰子：
-
-正常显示。
-
----
-
-# 分配流程
-
-系统始终锁定一个骰子。
-
-例如：
-
-当前：
-
-Yellow
-
----
-
-系统：
-
-高亮所有合法目标。
-
----
-
-玩家点击目标。
-
----
-
-骰子变为Assigned。
-
----
-
-自动跳转下一枚骰子。
-
----
-
-若当前势力所有骰子完成：
-
-自动切换到另一势力。
-
----
-
-双方全部完成：
-
-允许进入下一阶段。
-
----
-
-# Force Advantage
-
-伤害分配阶段必须实时检查。
-
----
-
-若当前阶段存在：
-
-Force Advantage
-
-则：
-
-黑骰
-白骰
-
-合法目标同步变化。
-
----
-
-高亮逻辑必须同步更新。
-
----
-
-# 热区显示升级
-
-现有热区已扩大。
-
-允许显示更多信息。
-
----
-
-每个热区将当前数字改为：
-
-```text
-存活（未进入伤害分配阶段时则为部署单位数）
-受损
-歼灭
+```txt
+伤害分配
+→ 询问是否转移
+→ 重新分配
 ```
 
-三个数字。
-
----
-
-布局示例：
-
-```text
-8
-2
-3
-```
-
-或者：
-
-```text
-Alive 8
-
-Damaged 1 其实总会是1，因为受伤单位总是要优先被分配伤害变成Destroyed
-
-Destroyed 3
-```
-
----
-
-颜色：
-
-Alive
-绿色
-
-Damaged
-橙色
-
-Destroyed
-红色
-
----
-
-# 多生命单位显示
-
-Armor
-Carrier
-Battleship
-
----
-
-示例：
-
-Alive 4
-
-damaged 1 轻伤重伤使用同一个数字，因为轻伤单位总是要优先分配伤害，变成重伤
-
-Destroyed 3
-
----
-
-但是轻伤重伤要做颜色区分：
-
-Healthy
-绿色
-
-Light
-黄色
-
-Heavy
-橙红色
-
-Destroyed
-红色
-
----
-
-# 热区伤害记录系统
-
-每个热区保存：
-
-Assigned Dice Log
-
----
-
-记录：
-
-Dice Color
-
-Assignment Time
-
-Source Phase
-
----
-
-示例：
-
-使用die-token实体骰子记录
-
----
-
-# Tooltip
-
-在分配伤害阶段点击热区：
-
-展开Tooltip。
-
----
-
-显示：
-
-当前区域已分配骰子。使用die-token实体骰子记录
-
----
-
-支持：
-
-关闭
-
-清空
-
-撤销
-
----
-
-# 快速分配操作
-
-左键：
-
-自动添加伤害。
-
----
-
-滚轮上滚：
-
-自动添加伤害。
-
----
-
-优先顺序：
-
-颜色骰
-↓
-白骰
-↓
-黑骰
-
----
-
-# 快速撤销操作
-
-右键：
-
-撤销伤害。
-
----
-
-滚轮下滚：
-
-撤销伤害。
-
----
-
-撤销优先级：
-
-黑骰
-↓
-白骰
-↓
-颜色骰
-
----
-
-# Mapping Tool区域用途变更
-
-热区已完成。
-
-Mapping Tool不再作为主要功能区。
+这种规则书流程。
 
 改为：
 
-Battle Log
+```txt
+护航拦截
+```
+
+流程。
+
+本质效果完全一致。
+
+但更适合当前网页工具架构。
+
+---
+
+# 二、海战阶段顺序调整
+
+原流程：
+
+```txt
+海战
+↓
+伤害分配
+↓
+修复
+```
+
+修改为：
+
+```txt
+海战掷骰
+↓
+蓝骰结算
+↓
+Escort Phase
+↓
+自动/手动伤害分配
+↓
+修复单位
+```
+
+---
+
+# 三、蓝骰结算
+
+Escort Phase 开始前：
+
+必须先结算所有蓝骰。
+
+原因：
+
+规则原文：
+
+After blue hits are resolved...
+
+---
+
+结算后：
+
+更新巡洋舰状态。
+
+例如：
+
+```txt
+英国巡洋舰
+
+存活 1
+受损 1
+```
+
+---
+
+只有仍存活的 Escort Cruiser 才能进入 Escort Phase。
+
+---
+
+# 四、进入 Escort Phase 条件
+
+系统检查：
+
+当前参战单位中是否存在：
+
+```txt
+Cruiser
++
+Escort Stance
+```
+
+---
+
+如果不存在：
+
+自动跳过 Escort Phase。
+
+进入伤害分配阶段。
+
+---
+
+如果存在：
+
+进入 Escort Phase。
+
+---
+
+# 五、Escort Phase UI
+
+顶部阶段栏新增：
+
+```txt
+空战
+空战伤害分配
+海战
+Escort
+海战伤害分配
+修复
+```
+
+---
+
+当前阶段高亮：
+
+```txt
+Escort
+```
+
+---
+
+显示提示：
+
+```txt
+选择护航巡洋舰，然后选择要拦截的敌方骰子。
+每次拦截消耗巡洋舰1点生命。
+```
+
+---
+
+# 六、可选巡洋舰
+
+系统自动高亮：
+
+所有：
+
+```txt
+Cruiser
++
+Escort Stance
++
+未沉没
+```
+
+热区。
+
+---
+
+点击热区：
+
+进入：
+
+```txt
+Escort Mode
+```
+
+---
+
+同一时间只能选中一个巡洋舰。
+
+---
+
+再次点击：
+
+取消选择。
+
+---
+
+# 七、骰子拦截机制
+
+选中巡洋舰后：
+
+敌方 Roll Results 区域高亮。
+
+---
+
+点击敌方骰子：
+
+执行：
+
+```txt
+护航拦截
+```
+
+---
+
+结果：
+
+该骰子：
+
+```txt
+ESCORTED
+```
+
+状态。
 
 ---
 
 显示：
 
-阶段切换
+灰色
 
-骰子结果
+半透明
 
-自动分配结果
-
-撤销记录
-
-修复记录
-
-Force Advantage变化
+不可再次使用
 
 ---
 
-用于追踪整个战斗过程。
+同时：
 
+巡洋舰受到：
+
+```txt
+1点伤害
 ```
+
+---
+
+更新热区状态。
+
+---
+
+Battle Log记录：
+
+```txt
+UK Cruiser intercepted Red Hit
 ```
+
+---
+
+# 八、合法拦截骰子
+
+不是所有骰子都能拦截。
+
+---
+
+允许：
+
+红骰
+
+绿骰
+
+白骰
+
+黑骰
+
+---
+
+禁止：
+
+蓝骰
+
+---
+
+原因：
+
+蓝骰已经结算。
+
+---
+
+# 九、白骰与黑骰限制
+
+只有当：
+
+当前白骰/黑骰
+
+有资格命中：
+
+```txt
+Carrier
+或
+Battleship
+```
+
+时。
+
+才能被 Escort 拦截。
+
+---
+
+例如：
+
+当前兵种优势允许：
+
+```txt
+白骰 → 战列舰
+```
+
+则允许拦截。
+
+---
+
+如果：
+
+当前白骰只能打：
+
+```txt
+Destroyer
+```
+
+则禁止拦截。
+
+---
+
+合法性判断必须复用现有：
+
+```javascript
+getValidTargets()
+```
+
+逻辑。
+
+禁止硬编码。
+
+---
+
+# 十、生命消耗
+
+每拦截一次：
+
+巡洋舰承受：
+
+```txt
+1点伤害
+```
+
+---
+
+受损巡洋舰：
+
+仍可继续拦截。
+
+---
+
+只要：
+
+```txt
+未沉没
+```
+
+即可。
+
+---
+
+例如：
+
+巡洋舰剩余2血。
+
+则可连续拦截2次。
+
+---
+
+# 十一、巡洋舰沉没
+
+如果护航过程中：
+
+生命归零。
+
+---
+
+立即：
+
+```txt
+Destroyed
+```
+
+---
+
+热区变为：
+
+歼灭状态。
+
+---
+
+停止继续拦截。
+
+---
+
+# 十二、自动模式支持
+
+自动分配模式下：
+
+Escort Phase 自动执行。
+
+---
+
+自动算法：
+
+优先使用 Escort Cruiser 拦截高价值伤害。
+
+---
+
+优先级：
+
+```txt
+红骰
+↓
+绿骰
+↓
+白骰
+↓
+黑骰
+```
+
+---
+
+直到：
+
+```txt
+无可拦截骰子
+```
+
+或：
+
+```txt
+所有 Escort Cruiser 沉没
+```
+
+---
+
+Battle Log记录：
+
+```txt
+Auto Escort:
+Germany Cruiser intercepted Red Hit
+```
+
+---
+
+# 十三、随机模式支持
+
+Random 模式：
+
+随机选择：
+
+```txt
+可用 Escort Cruiser
+```
+
+和：
+
+```txt
+可拦截骰子
+```
+
+---
+
+# 十四、手动模式支持
+
+Manual 模式：
+
+玩家手动执行 Escort。
+
+---
+
+系统只负责：
+
+* 高亮合法巡洋舰
+* 高亮合法骰子
+* 验证规则
+* 记录结果
+
+---
+
+# 十五、热区表现
+
+Escort 巡洋舰：
+
+边框改为：
+
+金色高亮
+
+---
+
+Tooltip新增：
+
+```txt
+ESCORT STANCE
+
+可代替：
+Carrier
+Battleship
+
+承受伤害
+```
+
+---
+
+# 十六、Roll Results表现
+
+被拦截骰子：
+
+新增状态：
+
+```txt
+ESCORTED
+```
+
+---
+
+样式：
+
+* 灰色
+* 半透明
+* 划线（可选）
+* Tooltip显示来源巡洋舰
+
+---
+
+示例：
+
+```txt
+ESCORTED
+
+By:
+UK Cruiser #1
+```
+
+---
+
+# 十七、Battle Log
+
+新增日志类型：
+
+```txt
+Escort Intercept
+```
+
+---
+
+示例：
+
+Germany Cruiser intercepted White Hit
+
+UK Cruiser intercepted Battleship Hit
+
+Japan Cruiser destroyed while escorting
+
+---
+
+# 十八、规则确认事项
+
+Claude必须重新检查规则文档：
+
+Cruiser Escort Stance
+
+确认：
+
+1. 护航巡洋舰是否能保护盟友单位
+
+2. 白骰是否允许护航转移
+
+3. 黑骰是否允许护航转移
+
+4. 多艘巡洋舰同时存在时是否有额外限制
+
+5. 护航伤害是否逐个结算
+
+当前实现应尽量贴近规则原意。
+
+但优先保证网页交互简洁和可操作性。
