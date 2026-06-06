@@ -19,6 +19,11 @@
       --yellow-border: rgba(244, 200, 74, 0.95);
       --red: rgba(231, 76, 60, 0.38);
       --red-border: rgba(231, 76, 60, 0.95);
+      --zone-fill-opacity: 0.98;
+      --zone-theme-tan: rgba(218, 205, 166, 0.98);
+      --zone-repair-selected: rgba(181, 218, 126, 0.92);
+      --zone-destroyed-bg: rgba(5, 5, 5, 0.96);
+      --zone-casualty-overlay: rgba(20, 10, 6, 0.34);
       --shadow: 0 18px 60px rgba(0, 0, 0, 0.42);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
     }
@@ -251,7 +256,6 @@
     }
 
     .phase-nav,
-    .assignment-mode-panel,
     .assignment-action-panel {
       display: flex;
       flex-wrap: wrap;
@@ -296,7 +300,7 @@
       filter: none;
     }
 
-    .assignment-mode-panel {
+    .assignment-group {
       position: relative;
       justify-content: center;
       padding: 2px 0;
@@ -317,6 +321,15 @@
       white-space: nowrap;
     }
 
+    .damage-mode-controls,
+    .repair-mode-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
     .mode-control select {
       min-height: 24px;
       border: 1px solid rgba(255, 255, 255, 0.14);
@@ -325,6 +338,18 @@
       color: #fff;
       font-size: 12px;
       font-weight: 800;
+    }
+
+    .mode-control input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: #b5da7e;
+    }
+
+    .repair-mode-controls .mode-control {
+      border-color: rgba(181, 218, 126, 0.42);
+      color: #e7f8cc;
+      background: rgba(181, 218, 126, 0.10);
     }
 
     .mode-help-button {
@@ -479,6 +504,7 @@
     .battle-action-row {
       justify-content: flex-start;
       align-items: center;
+      flex:1;
     }
 
     .battle-roll-row {
@@ -513,16 +539,13 @@
     }
 
     .roll-result-panel {
-      display: grid;
-      grid-template-columns: minmax(156px, 0.6fr) minmax(198px, 0.69fr);
-      grid-template-rows: auto auto;
-      gap: 4px 7px;
-      flex: 1 1 410px;
-      min-width: 410px;
-      align-items: stretch;
+      display: flex;
+      align-items: center;
+      flex: 1 1 240px;
+      min-width: 240px;
       border: 1px solid transparent;
       border-radius: 12px;
-      padding: 4px 5px;
+      padding: 2px 4px;
       transition: border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
     }
 
@@ -543,7 +566,8 @@
       background: linear-gradient(180deg, #ffe18a, #f4b83f);
       font-size: 15px;
       font-weight: 950;
-      line-height: 1.1;
+      line-height: 1.3;
+      white-space: pre-line;
     }
 
     .stage-start-button:disabled {
@@ -551,15 +575,6 @@
       opacity: 0.46;
       transform: none;
       filter: grayscale(0.8);
-    }
-
-    .roll-result-panel[data-side="allied"] .roll-result-grid {
-      grid-column: 2;
-    }
-
-    .roll-result-panel[data-side="allied"] .roll-summary {
-      grid-column: 1;
-      grid-row: 2;
     }
 
     .roll-summary-row {
@@ -600,7 +615,8 @@
     }
 
     .roll-result-panel.force-advantage,
-    .dice-card.force-advantage {
+    .dice-card.force-advantage,
+    .overview-dice-row.force-advantage {
       border-color: rgba(244, 200, 74, 0.95);
       background: linear-gradient(180deg, rgba(244, 200, 74, 0.16), rgba(255, 255, 255, 0.04));
       box-shadow: 0 0 0 1px rgba(244, 200, 74, 0.30) inset, 0 0 18px rgba(244, 200, 74, 0.18);
@@ -608,18 +624,35 @@
 
     .advantage-control-row {
       display: flex;
-      grid-column: 1 / -1;
       align-items: center;
       gap: 8px;
       min-height: 24px;
-      margin-bottom: 0;
     }
 
-    .roll-result-panel[data-side="axis"] .advantage-control-row {
+    .control-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .assignment-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .repair-controls-row {
+      display: flex;
+      justify-content: center;
+      padding: 2px 0;
+    }
+
+    .control-status-row .advantage-control-row.advantage-axis {
       justify-content: flex-end;
     }
 
-    .roll-result-panel[data-side="allied"] .advantage-control-row {
+    .control-status-row .advantage-control-row.advantage-allied {
       justify-content: flex-start;
     }
 
@@ -701,11 +734,10 @@
     .roll-result-grid {
       display: grid;
       grid-template-columns: repeat(15, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(26px, 1fr));
-      grid-auto-rows: minmax(26px, 1fr);
+      grid-template-rows: 1fr;
       gap: 3px;
-      min-height: 58px;
-      align-content: start;
+      min-height: 32px;
+      align-content: center;
       justify-content: stretch;
       padding: 0;
       border: 0;
@@ -799,7 +831,7 @@
 
     .battle-main-layout {
       display: grid;
-      grid-template-columns: 174px minmax(0, 1fr) 174px;
+      grid-template-columns: 230px minmax(0, 1fr) 230px;
       gap: 8px;
       flex: 1 1 auto;
       min-height: 0;
@@ -831,6 +863,114 @@
     .dice-card.compact {
       padding: 6px;
       opacity: 0.94;
+    }
+
+    .overview-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+      padding: 12px;
+      background:
+        linear-gradient(180deg, rgba(218, 205, 166, 0.10), rgba(255, 255, 255, 0.045)),
+        rgba(255, 255, 255, 0.055);
+    }
+
+    .overview-dice-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .overview-dice-row {
+      display: grid;
+      grid-template-columns: minmax(0, 0.86fr) minmax(58px, 0.5fr);
+      gap: 6px;
+      align-items: center;
+      min-width: 0;
+      padding: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .overview-dice-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      min-width: 0;
+      color: #fff7d0;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .overview-dice-row .dice-count-large {
+      min-height: 34px;
+      padding: 4px;
+      font-size: 25px;
+    }
+
+    .overview-dice-row .dice-summary {
+      grid-column: 1 / -1;
+      margin-top: 0;
+    }
+
+    .overview-section-title {
+      margin: 2px 0 0;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .overview-nation-list,
+    .strategic-summary-list {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .overview-nation-row,
+    .strategic-summary-row {
+      min-width: 0;
+      padding: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.22);
+      color: #dfe7d1;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .overview-nation-row strong {
+      color: #fff2bc;
+    }
+
+    .overview-nation-row.has-repair {
+      border-color: rgba(181, 218, 126, 0.48);
+      background: rgba(181, 218, 126, 0.12);
+    }
+
+    .overview-nation-row.has-loss {
+      border-color: rgba(231, 76, 60, 0.42);
+      background: rgba(231, 76, 60, 0.10);
+    }
+
+    .overview-muted {
+      color: var(--muted);
+    }
+
+    .strategic-dice-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 4px 0;
+    }
+
+    .strategic-effect-list {
+      margin: 0;
+      padding-left: 16px;
     }
 
     .dice-card-header {
@@ -905,16 +1045,6 @@
       font-weight: 950;
       line-height: 1;
       transform-origin: center;
-    }
-
-    .roll-result-panel[data-side="axis"] .roll-summary {
-      justify-self: end;
-      padding-right: 4px;
-    }
-
-    .roll-result-panel[data-side="allied"] .roll-summary {
-      justify-self: start;
-      padding-left: 4px;
     }
 
     .dice-color-count {
@@ -1133,6 +1263,37 @@
       box-shadow: 0 0 16px rgba(244, 200, 74, 0.48), inset 0 0 0 1px rgba(255, 255, 255, 0.16);
     }
 
+    .hot-zone.repair-selected,
+    .hot-zone.debug.repair-selected {
+      z-index: 5;
+      outline: 3px solid var(--zone-repair-selected);
+      outline-offset: -3px;
+      box-shadow: 0 0 18px rgba(181, 218, 126, 0.58), inset 0 0 20px rgba(181, 218, 126, 0.34);
+    }
+
+    .hot-zone.casualty-marked::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: var(--zone-casualty-overlay);
+      pointer-events: none;
+    }
+
+    .hot-zone.zone-destroyed,
+    .hot-zone.nation-destroyed,
+    .hot-zone.side-destroyed {
+      border-color: rgba(108, 46, 36, 0.88) !important;
+      background: var(--zone-destroyed-bg) !important;
+    }
+
+    .hot-zone.zone-destroyed .count-badge,
+    .hot-zone.nation-destroyed .count-badge,
+    .hot-zone.side-destroyed .count-badge {
+      color: #ff8a7f;
+      text-shadow: 0 0 12px rgba(231, 76, 60, 0.72), 0 2px 6px #000;
+    }
+
     .hot-zone:not(.has-value):not(.debug):not(.input-current) .count-badge {
       display: none;
     }
@@ -1164,15 +1325,19 @@
       display: grid;
       grid-template-rows: 1fr 0.72fr 1fr;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.26);
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.58);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.40);
+      border: 2px solid rgba(255, 255, 255, 0.32);
+      border-radius: 6px;
+      background-color: #1a1f2e;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.48);
     }
 
     .nation-control.active {
-      border-color: rgba(244, 200, 74, 0.92);
-      box-shadow: 0 0 16px rgba(244, 200, 74, 0.42), 0 8px 24px rgba(0, 0, 0, 0.42);
+      border-color: rgba(244, 200, 74, 0.95);
+      box-shadow: 0 0 20px rgba(244, 200, 74, 0.5), 0 8px 24px rgba(0, 0, 0, 0.48);
+      z-index: 9;
     }
 
     .nation-control button {
@@ -1183,30 +1348,26 @@
       border-radius: 0;
       background: transparent;
       box-shadow: none;
-      color: #fff;
-      font-size: clamp(6px, 0.62vw, 11px);
-      font-weight: 900;
+      color: transparent;
       line-height: 1;
-      text-shadow: 0 1px 2px #000;
+      transition: background 0.12s;
     }
 
     .nation-control button:hover {
       transform: none;
-      filter: brightness(1.2);
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    .nation-control .mode-air {
-      background: rgba(78, 208, 255, 0.24);
+    .nation-control .mode-air:hover {
+      background: rgba(255, 255, 255, 0.06);
     }
 
-    .nation-control .mode-all {
-      background: rgba(244, 200, 74, 0.22);
-      color: #fff4bc;
-      font-size: clamp(7px, 0.72vw, 12px);
+    .nation-control .mode-all:hover {
+      background: rgba(255, 255, 255, 0.06);
     }
 
-    .nation-control .mode-land {
-      background: rgba(46, 204, 113, 0.22);
+    .nation-control .mode-land:hover {
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .battle-info {
@@ -1357,6 +1518,271 @@
       margin-top: 18px;
     }
 
+    /* Battle Summary View */
+    .battle-summary-view {
+      flex-direction: column;
+      background: #080b14;
+      overflow-y: auto;
+    }
+
+    .battle-summary-view .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .battle-summary-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 28px 40px;
+    }
+
+    .battle-summary-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .battle-summary-header h2 {
+      font-size: 24px;
+      color: var(--text);
+      margin: 0 0 6px;
+    }
+
+    .battle-summary-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .battle-summary-table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .battle-summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .battle-summary-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .battle-summary-table th {
+      background: var(--panel-strong);
+      color: var(--muted);
+      font-weight: 600;
+      padding: 10px 8px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .battle-summary-table th.col-nation {
+      text-align: left;
+      min-width: 90px;
+      position: sticky;
+      left: 0;
+      z-index: 3;
+      background: var(--panel-strong);
+    }
+
+    .battle-summary-table th.col-group-label {
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    .battle-summary-table td {
+      padding: 8px 8px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      font-family: "SF Mono", "Cascadia Code", "Consolas", monospace, Inter, sans-serif;
+      font-size: 12px;
+    }
+
+    .battle-summary-table td.col-nation {
+      text-align: left;
+      font-weight: 600;
+      font-family: Inter, sans-serif;
+      font-size: 13px;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: var(--panel);
+    }
+
+    .battle-summary-table tbody tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .battle-summary-table tbody tr:nth-child(even) td.col-nation {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .battle-summary-table tbody tr:hover td {
+      background: rgba(244, 200, 74, 0.06);
+    }
+
+    .battle-summary-table tbody tr:hover td.col-nation {
+      background: rgba(244, 200, 74, 0.08);
+    }
+
+    .battle-summary-table .cell-value-new {
+      color: var(--accent-2);
+      font-weight: 600;
+    }
+
+    .battle-summary-table .cell-value-zero {
+      color: rgba(170, 181, 204, 0.3);
+    }
+
+    .battle-summary-table .round-editable {
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s;
+      border-radius: 3px;
+    }
+
+    .battle-summary-table .round-editable:hover {
+      background: rgba(244, 200, 74, 0.1);
+      outline: 1px dashed rgba(244, 200, 74, 0.35);
+      outline-offset: -2px;
+    }
+
+    .battle-summary-table .round-editable.cell-edited {
+      background: rgba(78, 208, 255, 0.1);
+    }
+
+    .battle-summary-table .round-editable.cell-edited:hover {
+      background: rgba(78, 208, 255, 0.18);
+      outline-color: rgba(78, 208, 255, 0.5);
+    }
+
+    .battle-summary-table .col-nation.axis-nation {
+      border-left: 3px solid rgba(231, 76, 60, 0.6);
+    }
+
+    .battle-summary-table .col-nation.allied-nation {
+      border-left: 3px solid rgba(46, 204, 113, 0.6);
+    }
+
+    .battle-summary-table .stress-warning {
+      background: rgba(244, 200, 74, 0.15) !important;
+      color: var(--accent);
+    }
+
+    .battle-summary-table .stress-danger {
+      background: rgba(231, 76, 60, 0.2) !important;
+      color: #e74c3c;
+    }
+
+    .battle-summary-table .stress-critical {
+      background: rgba(200, 40, 40, 0.3) !important;
+      color: #ff4444;
+      font-weight: 700;
+    }
+
+    .battle-summary-empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+    }
+
+    .battle-summary-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .battle-summary-actions button {
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: var(--panel);
+      color: var(--text);
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .battle-summary-actions button:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .battle-summary-actions .primary-button {
+      background: var(--accent);
+      color: #0f1220;
+      border-color: var(--accent);
+    }
+
+    .battle-summary-actions .primary-button:hover {
+      background: #f5d55c;
+      border-color: #f5d55c;
+    }
+
+    .battle-summary-actions .danger-button {
+      border-color: rgba(231, 76, 60, 0.5);
+      color: #e74c3c;
+    }
+
+    .battle-summary-actions .danger-button:hover {
+      background: rgba(231, 76, 60, 0.15);
+      border-color: rgba(231, 76, 60, 0.8);
+    }
+
+    .stress-inline-btn {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: background 0.12s;
+    }
+
+    .stress-inline-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.35);
+    }
+
+    .round-log-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--panel);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 16px;
+    }
+
+    .round-log-summary {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 0;
+    }
+
     @media (max-width: 760px) {
       body {
         overflow: auto;
@@ -1407,7 +1833,7 @@
 
       .roll-result-panel,
       .roll-summary-panel {
-        flex: 0 0 430px;
+        flex: 0 0 260px;
       }
 
       .stage-start-control {
@@ -1438,7 +1864,7 @@
     <section id="view-home" class="view home-view" aria-labelledby="home-title">
       <div class="home-card">
         <h1 id="home-title" class="home-title">War Room Assistant</h1>
-        <p class="home-subtitle">桌面共用战斗辅助终端 · Phase 1</p>
+        <p class="home-subtitle">桌面共用战斗辅助终端 · 战斗辅助 + 结算系统</p>
 
         <div class="home-grid">
           <section class="option-panel" aria-labelledby="battle-mode-title">
@@ -1473,13 +1899,14 @@
         <div class="home-actions">
           <button id="startBattleButton" class="primary-button" type="button">开始新战斗</button>
           <button id="continueBattleButton" type="button">继续上次战斗</button>
+          <button data-show-view="battle-summary" type="button">战斗结算</button>
+          <button data-show-view="round" type="button">回合结算</button>
+          <button data-show-view="stress" type="button">Stress</button>
           <button id="clearSaveButton" class="danger-button" type="button">清空存档</button>
-          <button data-show-view="round" type="button">Round 占位</button>
-          <button data-show-view="stress" type="button">Stress 占位</button>
         </div>
 
         <p class="home-note">
-          当前阶段实现首页、战斗页面框架、Battle Board Mapping Tool、单位快速录入与基础骰子辅助。完整战斗结算、压力系统与回合系统暂不开发。
+          当前阶段实现：首页、战斗页面（录入/骰子/伤害分配/修复/结算）、战斗结算页面（X+Y统计表）。压力系统与完整回合结算页面后续开发。回合 <strong id="homeRoundNumber">1</strong> · 已完成 <strong id="homeBattleCount">0</strong> 场战斗。
         </p>
       </div>
     </section>
@@ -1487,7 +1914,8 @@
     <section id="view-battle" class="view battle-view" aria-labelledby="battle-title">
       <header class="toolbar">
         <button data-show-view="home" type="button">← 首页</button>
-        <button data-show-view="round" type="button">Round</button>
+        <button data-show-view="battle-summary" type="button">战斗结算</button>
+        <button data-show-view="round" type="button">回合结算</button>
         <button data-show-view="stress" type="button">Stress</button>
         <span class="status-pill">模式 <strong id="battleModeStatus">完整战斗</strong></span>
         <span class="status-pill">战场 <strong id="battleTypeStatus">陆战</strong></span>
@@ -1499,47 +1927,67 @@
 
       <div id="battleControlPanel" class="battle-control-panel" aria-label="Battle Control Panel">
         <div class="battle-control-header">
-          
+
           <div class="battle-action-row" aria-label="战斗控制按钮">
             <span class="battle-actions-title">控制面板</span>
               <button id="restartBattleButton" class="battle-action-button secondary" type="button">重新本场战斗</button>
               <button id="newBattleInBattleButton" class="battle-action-button danger" type="button">新战斗</button>
           </div>
-          <button id="toggleBattleControlPanelButton" class="battle-action-button secondary battle-control-toggle" type="button" aria-expanded="true" aria-controls="battleControlPanelBody">收起</button>
+          <nav id="phaseNav" class="phase-nav" aria-label="战斗阶段导航"></nav>
+          <div style="flex: 1; display: flex; justify-content: flex-end;">
+            <button id="toggleBattleControlPanelButton" class="battle-action-button secondary battle-control-toggle" type="button" aria-expanded="true" aria-controls="battleControlPanelBody">收起</button>
+          </div>
         </div>
 
         <div id="battleControlPanelBody" class="battle-control-body">
-          <nav id="phaseNav" class="phase-nav" aria-label="战斗阶段导航"></nav>
 
-          <div class="assignment-mode-panel" aria-label="伤害分配模式">
-            <label class="mode-control">
-              <span>Axis</span>
-              <select id="axisDamageModeSelect" data-damage-mode-side="axis" aria-label="Axis 伤害分配模式"></select>
-              <button class="mode-help-button" data-mode-help-side="axis" type="button" aria-label="Axis 分配算法说明">?</button>
-            </label>
-            <label class="mode-control">
-              <span>Allies</span>
-              <select id="alliedDamageModeSelect" data-damage-mode-side="allied" aria-label="Allies 伤害分配模式"></select>
-              <button class="mode-help-button" data-mode-help-side="allied" type="button" aria-label="Allies 分配算法说明">?</button>
-            </label>
-            <div id="algorithmTooltip" class="algorithm-tooltip is-hidden" role="dialog" aria-live="polite">
-              <button id="closeAlgorithmTooltipButton" class="tooltip-close-button" type="button" aria-label="关闭算法说明">×</button>
-              <h4 id="algorithmTooltipTitle">分配算法</h4>
-              <p id="algorithmTooltipText"></p>
+          <div class="control-status-row" aria-label="控制状态行">
+            <div class="assignment-group" data-assignment-side="axis">
+              <label class="mode-control">
+                <span>Axis</span>
+                <select id="axisDamageModeSelect" data-damage-mode-side="axis" aria-label="Axis 伤害分配模式"></select>
+                <button class="mode-help-button" data-mode-help-side="axis" type="button" aria-label="Axis 分配算法说明">?</button>
+              </label>
             </div>
+            <div class="advantage-control-row advantage-axis" data-advantage-side="axis">
+              <div id="axisForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
+              <label class="port-advantage-toggle is-hidden">
+                <input data-port-advantage-side="axis" type="checkbox">
+                <span>港口优势</span>
+              </label>
+            </div>
+            <div class="advantage-control-row advantage-allied" data-advantage-side="allied">
+              <div id="alliedForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
+              <label class="port-advantage-toggle is-hidden">
+                <input data-port-advantage-side="allied" type="checkbox">
+                <span>港口优势</span>
+              </label>
+            </div>
+            <div class="assignment-group" data-assignment-side="allied">
+              <label class="mode-control">
+                <span>Allies</span>
+                <select id="alliedDamageModeSelect" data-damage-mode-side="allied" aria-label="Allies 伤害分配模式"></select>
+                <button class="mode-help-button" data-mode-help-side="allied" type="button" aria-label="Allies 分配算法说明">?</button>
+              </label>
+            </div>
+          </div>
+
+          <div class="repair-controls-row is-hidden" data-repair-mode-controls>
+            <label class="mode-control">
+              <input id="autoRepairCheckbox" type="checkbox" checked>
+              <span>自动修复</span>
+            </label>
+          </div>
+
+          <div id="algorithmTooltip" class="algorithm-tooltip is-hidden" role="dialog" aria-live="polite">
+            <button id="closeAlgorithmTooltipButton" class="tooltip-close-button" type="button" aria-label="关闭算法说明">×</button>
+            <h4 id="algorithmTooltipTitle">分配算法</h4>
+            <p id="algorithmTooltipText"></p>
           </div>
 
           <div class="roll-result-row" aria-label="实体骰子结果">
             <section class="roll-result-panel" data-side="axis" aria-label="轴心国实体骰子结果">
-              <div class="advantage-control-row">
-                <div id="axisForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
-                <label class="port-advantage-toggle is-hidden">
-                  <input data-port-advantage-side="axis" type="checkbox">
-                  <span>港口优势</span>
-                </label>
-              </div>
               <div id="axisRollResults" class="roll-result-grid" aria-live="polite"></div>
-              <div id="axisRollSummary" class="roll-summary" aria-label="Axis 未分配骰子统计"></div>
             </section>
 
             <div class="stage-start-control" aria-label="当前阶段操作">
@@ -1547,37 +1995,37 @@
             </div>
 
             <section class="roll-result-panel" data-side="allied" aria-label="同盟国实体骰子结果">
-              <div class="advantage-control-row">
-                <div id="alliedForceAdvantageBadge" class="force-advantage-badge neutral" aria-live="polite"></div>
-                <label class="port-advantage-toggle is-hidden">
-                  <input data-port-advantage-side="allied" type="checkbox">
-                  <span>港口优势</span>
-                </label>
-              </div>
               <div id="alliedRollResults" class="roll-result-grid" aria-live="polite"></div>
-              <div id="alliedRollSummary" class="roll-summary" aria-label="Allied 未分配骰子统计"></div>
             </section>
           </div>
         </div>
       </div>
 
       <div class="battle-main-layout">
-        <aside class="dice-side-panel axis-panel" aria-label="Axis Dice Summary">
-          <h3>轴心国</h3>
-          <section class="dice-card" data-dice-area="axis_air" aria-labelledby="axis-air-dice-title">
-            <div id="axis-air-dice-title" class="dice-card-header">空战骰</div>
-            <div id="axis_airDiceCount" class="dice-count-large">0<small>骰</small></div>
-            <div id="axis_airDiceSummary" class="dice-summary"></div>
-          </section>
-          <section class="dice-card" data-dice-area="axis_surface" aria-labelledby="axis-surface-dice-title">
-            <div id="axis-surface-dice-title" class="dice-card-header"><span data-dice-title-text>地面战骰</span><span id="axisForceAdvantageCardBadge" class="dice-advantage-tag neutral"></span></div>
-            <div id="axis_surfaceDiceCount" class="dice-count-large">0<small>骰</small></div>
-            <div id="axis_surfaceDiceSummary" class="dice-summary"></div>
-          </section>
-          <section class="dice-card compact" data-dice-area="axis_strategic" aria-labelledby="axis-strategic-dice-title">
-            <div id="axis-strategic-dice-title" class="dice-card-header">战略轰炸</div>
-            <div id="axis_strategicDiceCount" class="dice-count-large">0<small>骰</small></div>
-            <div id="axis_strategicDiceSummary" class="dice-summary"></div>
+        <aside class="dice-side-panel axis-panel" aria-label="Axis Overview">
+          <h3>轴心国总览</h3>
+          <section class="dice-card overview-card" data-overview-side="axis" aria-label="轴心国总览面板">
+            <div class="overview-dice-grid">
+              <div class="overview-dice-row" data-dice-area="axis_air" aria-labelledby="axis-air-dice-title">
+                <span id="axis-air-dice-title" class="overview-dice-label">空战骰</span>
+                <div id="axis_airDiceCount" class="dice-count-large">0<small>骰</small></div>
+                <div id="axis_airDiceSummary" class="dice-summary"></div>
+              </div>
+              <div class="overview-dice-row" data-dice-area="axis_surface" aria-labelledby="axis-surface-dice-title">
+                <span id="axis-surface-dice-title" class="overview-dice-label"><span data-dice-title-text>地面战骰</span><span id="axisForceAdvantageCardBadge" class="dice-advantage-tag neutral"></span></span>
+                <div id="axis_surfaceDiceCount" class="dice-count-large">0<small>骰</small></div>
+                <div id="axis_surfaceDiceSummary" class="dice-summary"></div>
+              </div>
+              <div class="overview-dice-row" data-dice-area="axis_strategic" aria-labelledby="axis-strategic-dice-title">
+                <span id="axis-strategic-dice-title" class="overview-dice-label">战略轰炸</span>
+                <div id="axis_strategicDiceCount" class="dice-count-large">0<small>骰</small></div>
+                <div id="axis_strategicDiceSummary" class="dice-summary"></div>
+              </div>
+            </div>
+            <div class="overview-section-title">修复 / 资源提示</div>
+            <div id="axisRepairOverview" class="overview-nation-list" aria-live="polite"></div>
+            <div class="overview-section-title">战略轰炸效果</div>
+            <div id="axisStrategicOverview" class="strategic-summary-list" aria-live="polite"></div>
           </section>
         </aside>
 
@@ -1609,46 +2057,161 @@
           </div>
         </div>
 
-        <aside class="dice-side-panel allied-panel" aria-label="Allied Dice Summary">
-          <h3>同盟国</h3>
-          <section class="dice-card" data-dice-area="allied_air" aria-labelledby="allied-air-dice-title">
-            <div id="allied-air-dice-title" class="dice-card-header">空战骰</div>
-            <div id="allied_airDiceCount" class="dice-count-large">0<small>骰</small></div>
-            <div id="allied_airDiceSummary" class="dice-summary"></div>
-          </section>
-          <section class="dice-card" data-dice-area="allied_surface" aria-labelledby="allied-surface-dice-title">
-            <div id="allied-surface-dice-title" class="dice-card-header"><span data-dice-title-text>地面战骰</span><span id="alliedForceAdvantageCardBadge" class="dice-advantage-tag neutral"></span></div>
-            <div id="allied_surfaceDiceCount" class="dice-count-large">0<small>骰</small></div>
-            <div id="allied_surfaceDiceSummary" class="dice-summary"></div>
-          </section>
-          <section class="dice-card compact" data-dice-area="allied_strategic" aria-labelledby="allied-strategic-dice-title">
-            <div id="allied-strategic-dice-title" class="dice-card-header">战略轰炸</div>
-            <div id="allied_strategicDiceCount" class="dice-count-large">0<small>骰</small></div>
-            <div id="allied_strategicDiceSummary" class="dice-summary"></div>
+        <aside class="dice-side-panel allied-panel" aria-label="Allied Overview">
+          <h3>同盟国总览</h3>
+          <section class="dice-card overview-card" data-overview-side="allied" aria-label="同盟国总览面板">
+            <div class="overview-dice-grid">
+              <div class="overview-dice-row" data-dice-area="allied_air" aria-labelledby="allied-air-dice-title">
+                <span id="allied-air-dice-title" class="overview-dice-label">空战骰</span>
+                <div id="allied_airDiceCount" class="dice-count-large">0<small>骰</small></div>
+                <div id="allied_airDiceSummary" class="dice-summary"></div>
+              </div>
+              <div class="overview-dice-row" data-dice-area="allied_surface" aria-labelledby="allied-surface-dice-title">
+                <span id="allied-surface-dice-title" class="overview-dice-label"><span data-dice-title-text>地面战骰</span><span id="alliedForceAdvantageCardBadge" class="dice-advantage-tag neutral"></span></span>
+                <div id="allied_surfaceDiceCount" class="dice-count-large">0<small>骰</small></div>
+                <div id="allied_surfaceDiceSummary" class="dice-summary"></div>
+              </div>
+              <div class="overview-dice-row" data-dice-area="allied_strategic" aria-labelledby="allied-strategic-dice-title">
+                <span id="allied-strategic-dice-title" class="overview-dice-label">战略轰炸</span>
+                <div id="allied_strategicDiceCount" class="dice-count-large">0<small>骰</small></div>
+                <div id="allied_strategicDiceSummary" class="dice-summary"></div>
+              </div>
+            </div>
+            <div class="overview-section-title">修复 / 资源提示</div>
+            <div id="alliedRepairOverview" class="overview-nation-list" aria-live="polite"></div>
+            <div class="overview-section-title">战略轰炸效果</div>
+            <div id="alliedStrategicOverview" class="strategic-summary-list" aria-live="polite"></div>
           </section>
         </aside>
       </div>
     </section>
 
-    <section id="view-round" class="view placeholder-view" aria-labelledby="round-title">
-      <div class="placeholder-card">
-        <h2 id="round-title">Round 回合系统</h2>
-        <p>Phase 1 暂不开发回合结算。这里保留页面结构，后续仍通过 <strong>showView()</strong> 切换。</p>
-        <div class="placeholder-actions">
-          <button data-show-view="home" type="button">返回首页</button>
-          <button data-show-view="battle" type="button">进入战斗页面</button>
+    <section id="view-battle-summary" class="view battle-summary-view" aria-labelledby="battle-summary-title">
+      <header class="toolbar">
+        <button data-show-view="home" type="button">← 首页</button>
+        <button data-show-view="battle" type="button">战斗</button>
+        <button data-show-view="round" type="button">回合结算</button>
+        <span class="status-pill">模式 <strong id="battleSummaryModeStatus">完整战斗</strong></span>
+        <span class="status-pill">战场 <strong id="battleSummaryTypeStatus">陆战</strong></span>
+        <span class="status-pill">回合 <strong id="battleSummaryRoundNumber">1</strong></span>
+        <span class="status-pill">本回合第 <strong id="battleSummaryBattleCount">0</strong> 场战斗</span>
+      </header>
+
+      <div class="battle-summary-container">
+        <div class="battle-summary-header">
+          <h2 id="battle-summary-title">战斗结算</h2>
+          <p class="battle-summary-subtitle">格式：X + Y — X = 本回合累计，Y = 本场战斗新增</p>
         </div>
+
+        <div class="battle-summary-table-wrapper">
+          <table id="battleSummaryTable" class="battle-summary-table" aria-label="战斗结算统计表">
+            <thead>
+              <tr>
+                <th class="col-nation">国家</th>
+                <th class="col-group-label" colspan="0">损失单位</th>
+                <th class="col-repair">修复单位</th>
+                <th class="col-loss-points">损失单位分</th>
+                <th class="col-kill-stress">击杀压力分</th>
+                <th class="col-battle-stress">本战压力</th>
+                <th class="col-total-stress">总压力</th>
+                <th class="col-stress-threshold">压力阈值</th>
+              </tr>
+            </thead>
+            <tbody id="battleSummaryTbody"></tbody>
+          </table>
+        </div>
+
+        <div id="battleSummaryEmpty" class="battle-summary-empty is-hidden">
+          <p>暂无战斗结算数据。请先完成至少一场战斗。</p>
+        </div>
+
+        <div class="battle-summary-actions">
+          <button id="startNewBattleFromSummaryButton" class="primary-button" type="button">开始新战斗</button>
+          <button id="goToRoundSummaryButton" type="button">进入回合结算</button>
+          <button id="resetRoundButton" class="danger-button" type="button">重置本回合</button>
+        </div>
+
+        <details class="round-log-container" id="battleSummaryRoundLog">
+          <summary class="round-log-summary">Battle Log（本场战斗记录）</summary>
+          <ol id="battleSummaryLogList" class="battle-log-list" aria-live="polite"></ol>
+        </details>
       </div>
     </section>
 
-    <section id="view-stress" class="view placeholder-view" aria-labelledby="stress-title">
-      <div class="placeholder-card">
-        <h2 id="stress-title">Stress 压力系统</h2>
-        <p>Phase 1 暂不开发压力与勋章管理。这里保留页面结构，后续仍通过 <strong>showView()</strong> 切换。</p>
-        <div class="placeholder-actions">
-          <button data-show-view="home" type="button">返回首页</button>
-          <button data-show-view="battle" type="button">进入战斗页面</button>
+    <section id="view-round" class="view battle-summary-view" aria-labelledby="round-title">
+      <header class="toolbar">
+        <button data-show-view="home" type="button">← 首页</button>
+        <button data-show-view="battle" type="button">战斗</button>
+        <button data-show-view="battle-summary" type="button">战斗结算</button>
+        <span class="status-pill">回合 <strong id="roundViewRoundNumber">1</strong></span>
+        <span class="status-pill">已完成 <strong id="roundViewBattleCount">0</strong> 场战斗</span>
+      </header>
+
+      <div class="battle-summary-container">
+        <div class="battle-summary-header">
+          <h2 id="round-title">回合结算</h2>
+          <p class="battle-summary-subtitle">格式：X + Y — X = 系统自动统计，Y = 玩家手动修正（左键+1 / 右键-1 / 滚轮调整）</p>
         </div>
+
+        <div class="battle-summary-table-wrapper">
+          <table id="roundSummaryTable" class="battle-summary-table" aria-label="回合结算统计表">
+            <thead id="roundSummaryThead"></thead>
+            <tbody id="roundSummaryTbody"></tbody>
+          </table>
+        </div>
+
+        <div id="roundSummaryEmpty" class="battle-summary-empty is-hidden">
+          <p>本回合暂无战斗记录。请先完成至少一场战斗。</p>
+        </div>
+
+        <div class="battle-summary-actions">
+          <button id="confirmEndRoundFromSummaryButton" class="primary-button" type="button">确认回合结束</button>
+          <button id="resetRoundFromSummaryButton" class="danger-button" type="button">重置本回合</button>
+        </div>
+
+        <details class="round-log-container" id="roundViewLog">
+          <summary class="round-log-summary">Round Log（回合记录）</summary>
+          <ol id="roundViewLogList" class="battle-log-list" aria-live="polite"></ol>
+        </details>
+      </div>
+    </section>
+
+    <section id="view-stress" class="view battle-summary-view" aria-labelledby="stress-title">
+      <header class="toolbar">
+        <button data-show-view="home" type="button">← 首页</button>
+        <button data-show-view="battle" type="button">战斗</button>
+        <button data-show-view="battle-summary" type="button">战斗结算</button>
+        <button data-show-view="round" type="button">回合结算</button>
+        <span class="status-pill">回合 <strong id="stressViewRoundNumber">1</strong></span>
+      </header>
+
+      <div class="battle-summary-container">
+        <div class="battle-summary-header">
+          <h2 id="stress-title">压力与勋章管理</h2>
+          <p class="battle-summary-subtitle">各国压力状态跟踪 · 勋章/民用物资管理 · 阈值数字需对照物理 Morale Board 确认</p>
+        </div>
+
+        <div class="battle-summary-table-wrapper">
+          <table id="stressTable" class="battle-summary-table" aria-label="压力状态表">
+            <thead>
+              <tr>
+                <th class="col-nation">国家</th>
+                <th>当前压力点数</th>
+                <th>当前压力区域</th>
+                <th>压力阈值</th>
+                <th>区域惩罚</th>
+                <th>可用勋章</th>
+                <th>可用民用物资</th>
+                <th>本回合压力恢复</th>
+              </tr>
+            </thead>
+            <tbody id="stressTbody"></tbody>
+          </table>
+        </div>
+
+        <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:8px">
+          提示：压力点数 = 损失单位 × 兵种伤亡系数 → 查 Conversion Chart 转换表。勋章/民用物资按 1:1 抵消压力点（规则 §12 Step 1）。当前 Zone 由压力点 ÷ 阈值迭代计算（规则 §12 Step 2）。
+        </p>
       </div>
     </section>
   </main>
@@ -1702,7 +2265,42 @@
         },
         nextActionId: 1
       },
+      repair: {
+        selectedZoneIds: [],
+        repairAllChecked: {
+          axis: false,
+          allied: false
+        },
+        previewByNation: {},
+        autoRepairEnabled: true
+      },
+      combatResolution: {
+        performed: false,
+        repairedByNation: {},
+        repairCostByNation: {},
+        paidRepairsByNation: {},
+        freeRepairsByNation: {},
+        repairedZones: [],
+        lossesByNation: {},
+        lossEntries: [],
+        stressEntries: [],
+        strategicBombing: []
+      },
       battleLog: [],
+      campaign: {
+        currentRound: {
+          roundNumber: 1,
+          battleCount: 0,
+          accumulatedLosses: {},
+          accumulatedRepairs: {},
+          accumulatedPaidRepairs: {},
+          accumulatedFreeRepairs: {},
+          accumulatedStress: {},
+          manualAdjustments: {},
+          battles: []
+        },
+        history: []
+      },
       ui: {
         currentView: 'home',
         debugMode: true,
@@ -1750,19 +2348,19 @@
 
       // 热区横向可用区域；每个阵营会在本区域内按 hotZoneSideNations 平均分配 x 和 w。
       hotZoneRegions: {
-        // 陆战中央预留区域保持 0.4225 → 0.5625；左右外边距均为 0.15。
+        // 陆战中央预留区域保持 0.4225 → 0.5625；左右外边距均为 0.05，剩余空间由各国平分。
         land: {
-          // 陆战轴心热区：从战斗面板左边距到中央预留区左边界。
-          axis: { left: 0.15, right: 0.4225 },
-          // 陆战同盟热区：从中央预留区右边界到战斗面板右边距。
-          allied: { left: 0.5625, right: 0.85 }
+          // 陆战轴心热区：从左边距 0.05 到中央预留区左边界。
+          axis: { left: 0.05, right: 0.4225 },
+          // 陆战同盟热区：从中央预留区右边界到右边距 0.95。
+          allied: { left: 0.5625, right: 0.95 }
         },
-        // 海战中央预留区域保持 0.418 → 0.582；左右外边距均为 0.15。
+        // 海战中央预留区域保持 0.418 → 0.582；左右外边距均为 0.05，剩余空间由各国平分。
         sea: {
-          // 海战轴心热区：从战斗面板左边距到中央预留区左边界。
-          axis: { left: 0.15, right: 0.418 },
-          // 海战同盟热区：从中央预留区右边界到战斗面板右边距。
-          allied: { left: 0.582, right: 0.85 }
+          // 海战轴心热区：从左边距 0.05 到中央预留区左边界。
+          axis: { left: 0.05, right: 0.418 },
+          // 海战同盟热区：从中央预留区右边界到右边距 0.95。
+          allied: { left: 0.582, right: 0.95 }
         }
       },
 
@@ -1883,15 +2481,15 @@
       // 未匹配到兵种时使用的默认热区视觉。
       fallback: {
         // 默认边框颜色。
-        border: 'rgba(78, 208, 255, 0.72)',
-        // 默认无值底色。
-        fill: 'rgba(10, 18, 36, 0.82)',
+        border: 'rgba(213, 195, 146, 0.92)',
+        // 默认无值底色；alpha 统一读取 --zone-fill-opacity，便于调试热区透明度。
+        fill: 'rgba(86, 79, 56, var(--zone-fill-opacity, 0.98))',
         // 默认有值底色。
-        valueFill: 'rgba(12, 28, 42, 0.90)',
+        valueFill: 'rgba(116, 103, 66, var(--zone-fill-opacity, 0.98))',
         // 默认当前输入格底色。
-        activeFill: 'rgba(34, 40, 48, 0.94)',
+        activeFill: 'rgba(134, 116, 70, var(--zone-fill-opacity, 0.98))',
         // 默认数字颜色。
-        value: '#ffffff'
+        value: '#fff8d6'
       },
 
       // 兵种到颜色组的映射；新增兵种时优先改这里。
@@ -1913,37 +2511,37 @@
 
       // 颜色组的具体视觉值；如需换主题，只改这里的 rgba/hex。
       colors: {
-        // 红色组：轰炸机、战列舰。
+        // 红色组：轰炸机、战列舰。浅棕红，贴近军用标识色。
         red: {
-          border: 'rgba(255, 92, 80, 0.96)',
-          fill: 'rgba(50, 18, 18, 0.92)',
-          valueFill: 'rgba(66, 22, 20, 0.92)',
-          activeFill: 'rgba(74, 36, 20, 0.95)',
-          value: '#ffd1cc'
+          border: 'rgba(186, 93, 74, 0.96)',
+          fill: 'rgba(138, 88, 72, var(--zone-fill-opacity, 0.98))',
+          valueFill: 'rgba(156, 96, 74, var(--zone-fill-opacity, 0.98))',
+          activeFill: 'rgba(176, 112, 78, var(--zone-fill-opacity, 0.98))',
+          value: '#fff0df'
         },
-        // 绿色组：战斗机、坦克、航母。
+        // 绿色组：战斗机、坦克、航母。橄榄绿。
         green: {
-          border: 'rgba(78, 220, 126, 0.96)',
-          fill: 'rgba(14, 38, 26, 0.92)',
-          valueFill: 'rgba(18, 52, 34, 0.92)',
-          activeFill: 'rgba(38, 58, 28, 0.95)',
-          value: '#c6ffd8'
+          border: 'rgba(148, 176, 105, 0.96)',
+          fill: 'rgba(96, 120, 78, var(--zone-fill-opacity, 0.98))',
+          valueFill: 'rgba(112, 136, 84, var(--zone-fill-opacity, 0.98))',
+          activeFill: 'rgba(132, 150, 92, var(--zone-fill-opacity, 0.98))',
+          value: '#f3ffd4'
         },
-        // 蓝色组：火炮、巡洋舰。
+        // 蓝色组：火炮、巡洋舰。海军灰蓝。
         blue: {
-          border: 'rgba(92, 174, 255, 0.96)',
-          fill: 'rgba(14, 28, 48, 0.92)',
-          valueFill: 'rgba(18, 38, 64, 0.92)',
-          activeFill: 'rgba(32, 48, 70, 0.95)',
-          value: '#cbe6ff'
+          border: 'rgba(126, 166, 184, 0.96)',
+          fill: 'rgba(82, 108, 124, var(--zone-fill-opacity, 0.98))',
+          valueFill: 'rgba(92, 122, 142, var(--zone-fill-opacity, 0.98))',
+          activeFill: 'rgba(106, 138, 156, var(--zone-fill-opacity, 0.98))',
+          value: '#e4f6ff'
         },
-        // 黄色组：步兵、潜艇。
+        // 黄色组：步兵、潜艇。卡其沙黄。
         yellow: {
-          border: 'rgba(255, 218, 92, 0.98)',
-          fill: 'rgba(48, 40, 12, 0.92)',
-          valueFill: 'rgba(64, 52, 16, 0.92)',
-          activeFill: 'rgba(76, 60, 20, 0.95)',
-          value: '#fff0b8'
+          border: 'rgba(220, 198, 132, 0.98)',
+          fill: 'rgba(142, 126, 74, var(--zone-fill-opacity, 0.98))',
+          valueFill: 'rgba(164, 144, 82, var(--zone-fill-opacity, 0.98))',
+          activeFill: 'rgba(184, 160, 92, var(--zone-fill-opacity, 0.98))',
+          value: '#fff8d0'
         }
       }
     };
@@ -1957,6 +2555,16 @@
       { id: 'usa', label: 'United States', short: 'USA', side: 'allied' },
       { id: 'china', label: 'China', short: 'CHN', side: 'allied' }
     ];
+
+    const NATION_FLAG_IMAGES = {
+      germany: 'assets/ger.png',
+      japan: 'assets/jpn.png',
+      italy: 'assets/ita.png',
+      uk: 'assets/uk.png',
+      soviet: 'assets/ussr.png',
+      usa: 'assets/usa.png',
+      china: 'assets/chn.png'
+    };
 
     // 战斗类型与骰子规则配置：控制陆战/海战显示名称、姿态顺序、兵种、热区所属分组以及每单位产出的骰子数。
     // stances[].id 是存档键和热区 id 后缀；unit 用于热区配色和兵力优势类型判断；group 决定 AIR/LAND 输入模式；airDice/surfaceDice/strategicDice 是对应阶段每单位骰子数。
@@ -2080,6 +2688,103 @@
     const MULTI_LIFE_UNITS = ['Armor', 'Carrier', 'Battleship'];
     const SIDE_LABELS = { axis: '轴心国', allied: '同盟国' };
     const SOURCE_TO_TARGET_SIDE = { axis: 'allied', allied: 'axis' };
+    const STRATEGIC_BOMBING_EFFECTS = {
+      yellow: '摧毁 1 个在建 Infantry 或 Submarine，或敌方 OSR -1。',
+      blue: '摧毁 1 个在建 Artillery 或 Cruiser，或敌方 Iron -1。',
+      green: '摧毁 1 个在建 Armor、Carrier 或 Fighter。',
+      red: '摧毁 1 个在建 Bomber 或 Battleship，或敌方 Oil -1。',
+      white: '所有 Infrastructure 受损，添加 1 个 Bomb Token。',
+      black: '任选以上 1 种结果，即使不造成伤害。'
+    };
+    // 单位伤亡点数系数 — 标准游戏 Morale Board 红色列 Multiplying Factor
+    // 来源：实体 Morale Board 确认
+    const MORALE_FACTORS = {
+      Infantry: 2,
+      Artillery: 2,
+      Armor: 4,
+      Fighter: 4,
+      Bomber: 6,
+      Submarine: 6,
+      Cruiser: 10,
+      Battleship: 20,
+      Carrier: 20
+    };
+
+    // 伤亡点数 → 压力点数转换表（标准游戏 Morale Board Conversion Chart）
+    // 来源：实体 Morale Board 确认
+    const STRESS_CONVERSION_CHART = [
+      { maxCasualtyPoints: 18, stressPoints: 0 },
+      { maxCasualtyPoints: 34, stressPoints: 1 },
+      { maxCasualtyPoints: 50, stressPoints: 2 },
+      { maxCasualtyPoints: 68, stressPoints: 3 },
+      { maxCasualtyPoints: 88, stressPoints: 4 },
+      { maxCasualtyPoints: 108, stressPoints: 5 },
+      { maxCasualtyPoints: Infinity, stressPoints: 6 }
+    ];
+
+    // 压力区域定义 — 来自 WR_RULES_2ND_EDITION §12 Morale Step 4: Apply Stress Zone Penalties
+    // 颜色、背景、惩罚描述均基于规则文本确认；Zone 名称与顺序与 Homeland Status Track 一致。
+    // 惩罚为累积制（cumulative）且每回合重复触发（recur）。
+    const STRESS_ZONES = [
+      { id: 'white', label: 'White Zone', labelCN: '可接受压力 (Acceptable Stress)', color: '#d4d8e0', bg: 'rgba(200,205,215,0.06)', penalty: '无惩罚（起始位置）', order: 0 },
+      { id: 'blue', label: 'Blue Zone', labelCN: '劳工与民乱 (Labor and Civil Unrest)', color: '#4ed0ff', bg: 'rgba(78,208,255,0.1)', penalty: '必须支付任意 3 资源（若有）', order: 1 },
+      { id: 'yellow', label: 'Yellow Zone', labelCN: '铁路港口瘫痪 (Dysfunctional Rails and Ports)', color: '#f4c84a', bg: 'rgba(244,200,74,0.14)', penalty: '铁路不可用（自身及盟友）；无港口优势；禁止海运贸易', order: 2 },
+      { id: 'orange', label: 'Orange Zone', labelCN: '补给线中断 (Disrupted Supply Lines)', color: '#f39c12', bg: 'rgba(243,156,18,0.16)', penalty: '战略规划阶段少 3 个命令 (O&P Chart 最后 3 格划掉)', order: 3 },
+      { id: 'red', label: 'Red Zone', labelCN: '经济崩溃 (Economic Collapse)', color: '#e74c3c', bg: 'rgba(231,76,60,0.18)', penalty: '无法获得新资源（仍可花费/损失现有资源）', order: 4 },
+      { id: 'gray', label: 'Gray Zone', labelCN: '大规模逃亡 (Mass Desertion)', color: '#95a5a6', bg: 'rgba(120,130,135,0.2)', penalty: '从世界地图移除等于当前压力点数的单位（不含在建单位和航母舰载机），压力点不减少；无法继续前进', order: 5 }
+    ];
+
+    // 各国压力阈值 — ITALY=4 来自规则文本明确确认（§12 Step 2: "ITALY's Stress Threshold is 4"）
+    // 其余阈值需对照实体 Morale Board Stress Track 上的方形国旗位置确认。
+    // 阈值含义：当 Stress Points ≥ Threshold 时，国家在 Homeland Status Track 上前进 1 Zone，
+    // 同时 Stress Points 减去 Threshold（保留余数），可在一回合内连续前进多个 Zone。
+    const NATION_STRESS_THRESHOLDS = {
+      germany: 6,
+      japan: 5,
+      italy: 4,    // 规则确认: "ITALY's Stress Threshold is 4"
+      uk: 5,
+      soviet: 6,
+      usa: 7,
+      china: 3
+    };
+
+    function getStressZone(stressPoints, nationId) {
+      if (stressPoints <= 0) return STRESS_ZONES[0];
+      const threshold = NATION_STRESS_THRESHOLDS[nationId] || 5;
+      // 规则 §12 Step 2: 当 Stress Points ≥ Threshold 时前进一个 Zone，
+      // 减去 Threshold 保留余数，可连续前进多个 Zone。
+      let remaining = stressPoints;
+      let zone = 0;
+      while (remaining >= threshold && zone < STRESS_ZONES.length - 1) {
+        remaining -= threshold;
+        zone++;
+      }
+      return STRESS_ZONES[zone];
+    }
+
+    // 计算从累计压力点数和阈值推算所在的 Zone 序号
+    function getStressZoneIndex(stressPoints, nationId) {
+      if (stressPoints <= 0) return 0;
+      const threshold = NATION_STRESS_THRESHOLDS[nationId] || 5;
+      let remaining = stressPoints;
+      let zone = 0;
+      while (remaining >= threshold && zone < STRESS_ZONES.length - 1) {
+        remaining -= threshold;
+        zone++;
+      }
+      return zone;
+    }
+
+    // 计算压力点数的渐进式 Zone 剩余值（当前 Zone 内剩余多少压力点）
+    function getStressRemainder(stressPoints, nationId) {
+      if (stressPoints <= 0) return 0;
+      const threshold = NATION_STRESS_THRESHOLDS[nationId] || 5;
+      let remaining = stressPoints;
+      while (remaining >= threshold) {
+        remaining -= threshold;
+      }
+      return remaining;
+    }
 
     const ZONES_BY_TYPE = {
       land: buildZones('land'),
@@ -2176,7 +2881,7 @@
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
-          gameState = clone(DEFAULT_STATE);
+          gameState = normalizeState({});
           return;
         }
 
@@ -2184,7 +2889,7 @@
         gameState = normalizeState(saved);
       } catch (error) {
         console.warn('Failed to load saved War Room state. Defaults will be used.', error);
-        gameState = clone(DEFAULT_STATE);
+        gameState = normalizeState({});
       }
     }
 
@@ -2196,12 +2901,15 @@
       next.ui.portAdvantage = Object.assign(clone(DEFAULT_STATE.ui.portAdvantage), saved && saved.ui && saved.ui.portAdvantage ? saved.ui.portAdvantage : {});
       next.ui.portAdvantage.axis = Boolean(next.ui.portAdvantage.axis);
       next.ui.portAdvantage.allied = Boolean(next.ui.portAdvantage.allied);
-      next.nations = saved && saved.nations && typeof saved.nations === 'object' ? saved.nations : {};
+      next.nations = normalizeNationsState(saved && saved.nations && typeof saved.nations === 'object' ? saved.nations : {});
       next.battleBoard = normalizeBattleBoardState(saved && saved.battleBoard && typeof saved.battleBoard === 'object' ? migrateLegacyBattleBoard(saved.battleBoard) : {});
       next.dice = normalizeDiceState(saved && saved.dice ? saved.dice : {});
       next.battleFlow = normalizeBattleFlow(saved && saved.battleFlow ? saved.battleFlow : {});
       next.damage = normalizeDamageState(saved && saved.damage ? saved.damage : {});
+      next.repair = normalizeRepairState(saved && saved.repair ? saved.repair : {});
+      next.combatResolution = normalizeCombatResolutionState(saved && saved.combatResolution ? saved.combatResolution : {});
       next.battleLog = Array.isArray(saved && saved.battleLog) ? saved.battleLog.slice(-80) : [];
+      next.campaign = normalizeCampaignState(saved && saved.campaign ? saved.campaign : {});
 
       if (!['normal', 'quick'].includes(next.battleMode)) {
         next.battleMode = 'normal';
@@ -2209,7 +2917,7 @@
       if (!['land', 'sea'].includes(next.battleType)) {
         next.battleType = 'land';
       }
-      if (!['home', 'battle', 'round', 'stress'].includes(next.ui.currentView)) {
+      if (!['home', 'battle', 'battle-summary', 'round', 'stress'].includes(next.ui.currentView)) {
         next.ui.currentView = 'home';
       }
       if (typeof next.ui.debugMode !== 'boolean') {
@@ -2243,6 +2951,168 @@
         });
       });
       return migrated;
+    }
+
+    function normalizeNationsState(savedNations) {
+      const nations = {};
+      NATIONS.forEach((nation) => {
+        const saved = savedNations && savedNations[nation.id] && typeof savedNations[nation.id] === 'object' ? savedNations[nation.id] : {};
+        nations[nation.id] = {
+          repairsThisBattle: clampNonNegativeInteger(saved.repairsThisBattle),
+          repairCostThisBattle: clampNonNegativeInteger(saved.repairCostThisBattle)
+        };
+      });
+      return nations;
+    }
+
+    function normalizeNationNumberMap(rawMap) {
+      const map = {};
+      if (!rawMap || typeof rawMap !== 'object') return map;
+      NATIONS.forEach((nation) => {
+        const value = clampNonNegativeInteger(rawMap[nation.id]);
+        if (value > 0) map[nation.id] = value;
+      });
+      return map;
+    }
+
+    function normalizeRepairPreviewMap(rawMap) {
+      const map = {};
+      if (!rawMap || typeof rawMap !== 'object') return map;
+      NATIONS.forEach((nation) => {
+        const saved = rawMap[nation.id];
+        if (!saved || typeof saved !== 'object') return;
+        const repairCount = clampNonNegativeInteger(saved.repairCount);
+        const resourceCost = clampNonNegativeInteger(saved.resourceCost);
+        const freeCount = clampNonNegativeInteger(saved.freeCount);
+        const zoneCount = clampNonNegativeInteger(saved.zoneCount);
+        if (repairCount > 0 || resourceCost > 0 || freeCount > 0 || zoneCount > 0) {
+          map[nation.id] = { repairCount, resourceCost, freeCount, zoneCount };
+        }
+      });
+      return map;
+    }
+
+    function getKnownZoneIdSet() {
+      return new Set(Object.values(ZONES_BY_TYPE).flat().map((zone) => zone.id));
+    }
+
+    function normalizeRepairState(savedRepair) {
+      const repair = clone(DEFAULT_STATE.repair);
+      const knownZoneIds = getKnownZoneIdSet();
+      if (savedRepair && typeof savedRepair === 'object') {
+        repair.selectedZoneIds = Array.isArray(savedRepair.selectedZoneIds)
+          ? [...new Set(savedRepair.selectedZoneIds.filter((zoneId) => knownZoneIds.has(zoneId)))]
+          : [];
+        repair.repairAllChecked = Object.assign(repair.repairAllChecked, savedRepair.repairAllChecked || {});
+        repair.previewByNation = normalizeRepairPreviewMap(savedRepair.previewByNation);
+        repair.autoRepairEnabled = typeof savedRepair.autoRepairEnabled === 'boolean' ? savedRepair.autoRepairEnabled : true;
+      }
+      repair.repairAllChecked.axis = Boolean(repair.repairAllChecked.axis);
+      repair.repairAllChecked.allied = Boolean(repair.repairAllChecked.allied);
+      return repair;
+    }
+
+    function normalizeLossEntries(rawEntries) {
+      if (!Array.isArray(rawEntries)) return [];
+      return rawEntries
+        .filter((entry) => entry && typeof entry === 'object')
+        .map((entry) => ({
+          zoneId: typeof entry.zoneId === 'string' ? entry.zoneId : null,
+          nationId: typeof entry.nationId === 'string' ? entry.nationId : null,
+          nationShort: typeof entry.nationShort === 'string' ? entry.nationShort : '',
+          unit: typeof entry.unit === 'string' ? entry.unit : '',
+          stanceLabel: typeof entry.stanceLabel === 'string' ? entry.stanceLabel : '',
+          count: clampNonNegativeInteger(entry.count),
+          source: typeof entry.source === 'string' ? entry.source : 'destroyed',
+          label: typeof entry.label === 'string' ? entry.label : ''
+        }))
+        .filter((entry) => entry.nationId && entry.unit && entry.count > 0);
+    }
+
+    function normalizeCombatResolutionState(savedResolution) {
+      const resolution = clone(DEFAULT_STATE.combatResolution);
+      if (savedResolution && typeof savedResolution === 'object') {
+        resolution.performed = Boolean(savedResolution.performed);
+        resolution.repairedByNation = normalizeNationNumberMap(savedResolution.repairedByNation);
+        resolution.repairCostByNation = normalizeNationNumberMap(savedResolution.repairCostByNation);
+        resolution.paidRepairsByNation = normalizeNationNumberMap(savedResolution.paidRepairsByNation);
+        resolution.freeRepairsByNation = normalizeNationNumberMap(savedResolution.freeRepairsByNation);
+        resolution.repairedZones = Array.isArray(savedResolution.repairedZones) ? savedResolution.repairedZones.slice(-160) : [];
+        resolution.lossesByNation = normalizeNationNumberMap(savedResolution.lossesByNation);
+        resolution.lossEntries = normalizeLossEntries(savedResolution.lossEntries);
+        resolution.stressEntries = Array.isArray(savedResolution.stressEntries) ? savedResolution.stressEntries.slice(-160) : [];
+        resolution.strategicBombing = Array.isArray(savedResolution.strategicBombing) ? savedResolution.strategicBombing.slice(-80) : [];
+      }
+      return resolution;
+    }
+
+    function normalizeCampaignState(savedCampaign) {
+      const campaign = clone(DEFAULT_STATE.campaign);
+      if (!savedCampaign || typeof savedCampaign !== 'object') return campaign;
+      if (savedCampaign.currentRound && typeof savedCampaign.currentRound === 'object') {
+        const sr = savedCampaign.currentRound;
+        campaign.currentRound.roundNumber = clampNonNegativeInteger(sr.roundNumber) || 1;
+        campaign.currentRound.battleCount = clampNonNegativeInteger(sr.battleCount);
+        campaign.currentRound.accumulatedLosses = normalizeNationUnitMap(sr.accumulatedLosses);
+        campaign.currentRound.accumulatedRepairs = normalizeNationNumberMap(sr.accumulatedRepairs);
+        campaign.currentRound.accumulatedPaidRepairs = normalizeNationNumberMap(sr.accumulatedPaidRepairs);
+        campaign.currentRound.accumulatedFreeRepairs = normalizeNationNumberMap(sr.accumulatedFreeRepairs);
+        campaign.currentRound.accumulatedStress = normalizeNationNumberMap(sr.accumulatedStress);
+        campaign.currentRound.manualAdjustments = normalizeManualAdjustments(sr.manualAdjustments);
+        campaign.currentRound.battles = Array.isArray(sr.battles) ? sr.battles.slice(-40) : [];
+      }
+      campaign.history = Array.isArray(savedCampaign.history) ? savedCampaign.history.slice(-50) : [];
+      return campaign;
+    }
+
+    function normalizeNationUnitMap(rawMap) {
+      const map = {};
+      if (!rawMap || typeof rawMap !== 'object') return map;
+      NATIONS.forEach((nation) => {
+        const nationData = rawMap[nation.id];
+        if (!nationData || typeof nationData !== 'object') return;
+        const unitMap = {};
+        Object.entries(nationData).forEach(([unit, count]) => {
+          const clamped = clampNonNegativeInteger(count);
+          if (clamped > 0) unitMap[unit] = clamped;
+        });
+        if (Object.keys(unitMap).length > 0) map[nation.id] = unitMap;
+      });
+      return map;
+    }
+
+    function normalizeManualAdjustments(raw) {
+      if (!raw || typeof raw !== 'object') return {};
+      const adj = {};
+      if (raw.losses && typeof raw.losses === 'object') {
+        adj.losses = {};
+        NATIONS.forEach((nation) => {
+          const nationData = raw.losses[nation.id];
+          if (nationData && typeof nationData === 'object') {
+            const unitMap = {};
+            Object.entries(nationData).forEach(([unit, count]) => {
+              const clamped = clampNonNegativeInteger(count);
+              if (clamped > 0) unitMap[unit] = clamped;
+            });
+            if (Object.keys(unitMap).length > 0) adj.losses[nation.id] = unitMap;
+          }
+        });
+      }
+      if (raw.repairs && typeof raw.repairs === 'object') {
+        adj.repairs = normalizeNationNumberMap(raw.repairs);
+      }
+      if (raw.stress && typeof raw.stress === 'object') {
+        adj.stress = normalizeNationNumberMap(raw.stress);
+      }
+      if (raw.stressRecovery && typeof raw.stressRecovery === 'object') {
+        adj.stressRecovery = normalizeNationNumberMap(raw.stressRecovery);
+      }
+      return adj;
+    }
+
+    function clampNonNegativeInteger(value) {
+      const number = Math.floor(Number(value));
+      return Number.isFinite(number) ? Math.max(0, number) : 0;
     }
 
     function normalizeBattleBoardState(savedBoard) {
@@ -2389,11 +3259,135 @@
       resetDiceStateOnly();
       gameState.battleFlow = normalizeBattleFlow({});
       gameState.damage = normalizeDamageState({});
+      resetRepairState();
+      resetCombatResolutionState();
       gameState.battleLog = [];
       gameState.ui.inputMode = null;
       gameState.ui.activeZoneId = null;
       gameState.ui.portAdvantage = clone(DEFAULT_STATE.ui.portAdvantage);
-      addBattleLog('开始新战斗，已清空战斗板。', { save: false });
+      gameState.campaign = normalizeCampaignState({});
+      addBattleLog('开始新战斗，已清空战斗板与回合数据。', { save: false });
+      saveState();
+    }
+
+    function accumulateBattleToRound() {
+      const resolution = gameState.combatResolution;
+      if (!resolution || !resolution.performed) return false;
+      const cr = gameState.campaign.currentRound;
+      cr.battleCount += 1;
+
+      // Accumulate losses by nation and unit type
+      (resolution.lossEntries || []).forEach((entry) => {
+        if (!cr.accumulatedLosses[entry.nationId]) cr.accumulatedLosses[entry.nationId] = {};
+        const nationLosses = cr.accumulatedLosses[entry.nationId];
+        nationLosses[entry.unit] = (nationLosses[entry.unit] || 0) + entry.count;
+      });
+
+      // Accumulate repairs — track total, paid, and free separately
+      Object.entries(resolution.repairedByNation || {}).forEach(([nationId, count]) => {
+        cr.accumulatedRepairs[nationId] = (cr.accumulatedRepairs[nationId] || 0) + count;
+      });
+      Object.entries(resolution.paidRepairsByNation || {}).forEach(([nationId, count]) => {
+        cr.accumulatedPaidRepairs[nationId] = (cr.accumulatedPaidRepairs[nationId] || 0) + count;
+      });
+      Object.entries(resolution.freeRepairsByNation || {}).forEach(([nationId, count]) => {
+        cr.accumulatedFreeRepairs[nationId] = (cr.accumulatedFreeRepairs[nationId] || 0) + count;
+      });
+
+      // Accumulate stress from battle resolution
+      (resolution.stressEntries || []).forEach((entry) => {
+        cr.accumulatedStress[entry.nationId] = (cr.accumulatedStress[entry.nationId] || 0) + (entry.stressPoints || 0);
+      });
+
+      // Save battle summary to round
+      cr.battles.push({
+        battleIndex: cr.battleCount,
+        battleType: gameState.battleType,
+        timestamp: new Date().toISOString(),
+        repairedByNation: clone(resolution.repairedByNation || {}),
+        repairCostByNation: clone(resolution.repairCostByNation || {}),
+        lossesByNation: clone(resolution.lossesByNation || {}),
+        lossEntries: clone(resolution.lossEntries || []),
+        stressEntries: clone(resolution.stressEntries || []),
+        strategicBombing: clone(resolution.strategicBombing || [])
+      });
+      saveState();
+      return true;
+    }
+
+    function startNewBattle() {
+      accumulateBattleToRound();
+      gameState.battleBoard = {};
+      resetDiceStateOnly();
+      gameState.battleFlow = normalizeBattleFlow({});
+      gameState.damage = normalizeDamageState({});
+      resetRepairState();
+      resetCombatResolutionState();
+      gameState.battleLog = [];
+      gameState.ui.inputMode = null;
+      gameState.ui.activeZoneId = null;
+      gameState.ui.portAdvantage = clone(DEFAULT_STATE.ui.portAdvantage);
+      addBattleLog(`开始第 ${gameState.campaign.currentRound.battleCount + 1} 场战斗，回合累计已保存。`, { save: false });
+      saveState();
+    }
+
+    function saveRoundStartSnapshot() {
+      gameState.campaign.currentRound.roundStartSnapshot = {
+        battleBoard: clone(gameState.battleBoard),
+        nations: clone(gameState.nations),
+        combatResolution: clone(gameState.combatResolution),
+        accumulatedLosses: clone(gameState.campaign.currentRound.accumulatedLosses),
+        accumulatedRepairs: clone(gameState.campaign.currentRound.accumulatedRepairs),
+        accumulatedPaidRepairs: clone(gameState.campaign.currentRound.accumulatedPaidRepairs),
+        accumulatedFreeRepairs: clone(gameState.campaign.currentRound.accumulatedFreeRepairs),
+        accumulatedStress: clone(gameState.campaign.currentRound.accumulatedStress),
+        battleCount: gameState.campaign.currentRound.battleCount,
+        battles: clone(gameState.campaign.currentRound.battles)
+      };
+      saveState();
+    }
+
+    function resetRound() {
+      const snapshot = gameState.campaign.currentRound.roundStartSnapshot;
+      if (!snapshot) return false;
+      gameState.battleBoard = clone(snapshot.battleBoard);
+      gameState.nations = clone(snapshot.nations);
+      gameState.combatResolution = normalizeCombatResolutionState(snapshot.combatResolution);
+      gameState.campaign.currentRound.accumulatedLosses = clone(snapshot.accumulatedLosses);
+      gameState.campaign.currentRound.accumulatedRepairs = clone(snapshot.accumulatedRepairs);
+      gameState.campaign.currentRound.accumulatedPaidRepairs = clone(snapshot.accumulatedPaidRepairs || {});
+      gameState.campaign.currentRound.accumulatedFreeRepairs = clone(snapshot.accumulatedFreeRepairs || {});
+      gameState.campaign.currentRound.accumulatedStress = clone(snapshot.accumulatedStress);
+      gameState.campaign.currentRound.battleCount = snapshot.battleCount;
+      gameState.campaign.currentRound.battles = clone(snapshot.battles);
+      resetDiceStateOnly();
+      gameState.battleFlow = normalizeBattleFlow({});
+      gameState.damage = normalizeDamageState({});
+      resetRepairState();
+      gameState.battleLog = [];
+      gameState.ui.inputMode = null;
+      gameState.ui.activeZoneId = null;
+      gameState.campaign.currentRound.roundStartSnapshot = null;
+      addBattleLog('已重置本回合到回合开始时状态。', { save: false });
+      saveState();
+      return true;
+    }
+
+    function confirmEndRound() {
+      const cr = gameState.campaign.currentRound;
+      gameState.campaign.history.push({
+        roundNumber: cr.roundNumber,
+        battleCount: cr.battleCount,
+        accumulatedLosses: clone(cr.accumulatedLosses),
+        accumulatedRepairs: clone(cr.accumulatedRepairs),
+        accumulatedStress: clone(cr.accumulatedStress),
+        battles: clone(cr.battles),
+        timestamp: new Date().toISOString()
+      });
+      gameState.campaign.currentRound = normalizeCampaignState({}).currentRound;
+      gameState.campaign.currentRound.roundNumber = (gameState.campaign.history.length || 0) + 1;
+      resetBattleBoard();
+      addBattleLog(`第 ${gameState.campaign.history.length} 回合已确认结束，开始第 ${gameState.campaign.currentRound.roundNumber} 回合。`, { save: false });
       saveState();
     }
 
@@ -2408,6 +3402,19 @@
         resetAllAutoAssignmentFlags();
       }
       clearAllDiceAnimations();
+    }
+
+    function resetRepairState() {
+      gameState.repair = normalizeRepairState({});
+    }
+
+    function resetCombatResolutionState() {
+      gameState.combatResolution = normalizeCombatResolutionState({});
+      NATIONS.forEach((nation) => {
+        if (!gameState.nations[nation.id]) gameState.nations[nation.id] = { repairsThisBattle: 0, repairCostThisBattle: 0 };
+        gameState.nations[nation.id].repairsThisBattle = 0;
+        gameState.nations[nation.id].repairCostThisBattle = 0;
+      });
     }
 
     function resetCurrentBattle() {
@@ -2427,6 +3434,8 @@
       gameState.damage.assignments.surfaceDamage = null;
       gameState.damage.forceAdvantageSnapshot = null;
       gameState.damage.tooltip.zoneId = null;
+      resetRepairState();
+      resetCombatResolutionState();
       addBattleLog('重新本场战斗：受损与摧毁单位已全部加回存活。', { save: false });
       renderDiceUi();
       renderBattleBoard();
@@ -2443,7 +3452,8 @@
         return;
       }
       localStorage.removeItem(STORAGE_KEY);
-      gameState = clone(DEFAULT_STATE);
+      gameState = normalizeState({});
+      window.gameState = gameState;
       syncHomeControls();
       showView('home');
     }
@@ -2504,7 +3514,7 @@
     }
 
     function showView(viewName) {
-      const safeView = ['home', 'battle', 'round', 'stress'].includes(viewName) ? viewName : 'home';
+      const safeView = ['home', 'battle', 'battle-summary', 'round', 'stress'].includes(viewName) ? viewName : 'home';
       document.querySelectorAll('.view').forEach((view) => {
         view.classList.toggle('active', view.id === `view-${safeView}`);
       });
@@ -2527,6 +3537,21 @@
         renderBattleBoard();
       }
 
+      if (safeView === 'battle-summary') {
+        renderBattleSummary();
+      }
+
+      if (safeView === 'round') {
+        if (!gameState.campaign.currentRound.roundStartSnapshot) {
+          saveRoundStartSnapshot();
+        }
+        renderRoundSummary();
+      }
+
+      if (safeView === 'stress') {
+        renderStressView();
+      }
+
       saveState();
     }
 
@@ -2537,6 +3562,10 @@
       document.querySelectorAll('input[name="battleType"]').forEach((input) => {
         input.checked = input.value === gameState.battleType;
       });
+      const homeRoundEl = document.getElementById('homeRoundNumber');
+      const homeBattleEl = document.getElementById('homeBattleCount');
+      if (homeRoundEl) homeRoundEl.textContent = gameState.campaign.currentRound.roundNumber;
+      if (homeBattleEl) homeBattleEl.textContent = gameState.campaign.currentRound.battleCount;
     }
 
     function updateToolbar() {
@@ -2616,6 +3645,33 @@
       zoneEl.style.setProperty('--zone-value-color', style.value);
     }
 
+    function isZoneFullyDestroyed(zone) {
+      if (!zone) return false;
+      const cell = getBattleCellState(zone.nation, zone.stance);
+      return getSurvivingCountFromCell(cell) === 0 && cell.destroyed > 0;
+    }
+
+    function getSurfaceDestructionSummary(filterFn) {
+      let surviving = 0;
+      let destroyed = 0;
+      getCurrentZones()
+        .filter((zone) => zone.group === 'land' && filterFn(zone))
+        .forEach((zone) => {
+          const cell = getBattleCellState(zone.nation, zone.stance);
+          surviving += getSurvivingCountFromCell(cell);
+          destroyed += cell.destroyed;
+        });
+      return { surviving, destroyed, allDestroyed: destroyed > 0 && surviving === 0 };
+    }
+
+    function getNationSurfaceDestructionState(nationId) {
+      return getSurfaceDestructionSummary((zone) => zone.nation === nationId);
+    }
+
+    function getSideSurfaceDestructionState(side) {
+      return getSurfaceDestructionSummary((zone) => zone.side === side);
+    }
+
     function getZoneIdsForMode(nationId, scope) {
       return getStancesForType(gameState.battleType)
         .filter((stance) => scope === 'all' || stance.group === scope)
@@ -2668,6 +3724,11 @@
       overlay.innerHTML = '';
       const fragment = document.createDocumentFragment();
       const zones = getCurrentZones();
+      const selectedRepairZoneIds = new Set((gameState.repair && gameState.repair.selectedZoneIds) || []);
+      const destroyedNationIds = new Set(NATIONS
+        .filter((nation) => getNationSurfaceDestructionState(nation.id).allDestroyed)
+        .map((nation) => nation.id));
+      const destroyedSideIds = new Set(['axis', 'allied'].filter((side) => getSideSurfaceDestructionState(side).allDestroyed));
 
       const assignmentContext = getCurrentAssignmentContext();
       const assignableZoneIds = assignmentContext ? new Set(zones.filter((zone) => Boolean(choosePendingDieForZone(zone, assignmentContext.stageKey))).map((zone) => zone.id)) : new Set();
@@ -2679,7 +3740,12 @@
         zoneEl.className = 'hot-zone';
         if (gameState.ui.debugMode) zoneEl.classList.add('debug');
         if (value > 0 || (shouldShowZoneDamageBreakdown() && cell.destroyed > 0)) zoneEl.classList.add('has-value');
+        if (getDamagedCountFromCell(cell) > 0 || cell.destroyed > 0) zoneEl.classList.add('casualty-marked');
         if (isInputCurrentZone(zone.id)) zoneEl.classList.add('input-current');
+        if (isRepairStage() && selectedRepairZoneIds.has(zone.id)) zoneEl.classList.add('repair-selected');
+        if (isZoneFullyDestroyed(zone)) zoneEl.classList.add('zone-destroyed');
+        if (destroyedNationIds.has(zone.nation)) zoneEl.classList.add('nation-destroyed');
+        if (destroyedSideIds.has(zone.side)) zoneEl.classList.add('side-destroyed');
         if (assignmentContext && assignableZoneIds.has(zone.id)) {
           zoneEl.classList.add('legal-target');
         }
@@ -2721,10 +3787,14 @@
         control.style.width = `${nationControlWidth * 100}%`;
         control.style.height = `${nationControl.height * 100}%`;
         control.title = `${nation.label}\n上半：AIR INPUT MODE\n中间：INPUT MODE\n下半：${surfaceModeLabel} INPUT MODE`;
+        const flagSrc = NATION_FLAG_IMAGES[nation.id] || '';
+        control.style.backgroundImage = flagSrc ? `url(${flagSrc})` : '';
+        control.style.backgroundSize = '100% 100%';
+        control.style.backgroundPosition = 'center';
         control.innerHTML = `
-          <button class="mode-air" data-nation-id="${nation.id}" data-mode-scope="air" type="button">AIR</button>
-          <button class="mode-all" data-nation-id="${nation.id}" data-mode-scope="all" type="button">${nation.short}</button>
-          <button class="mode-land" data-nation-id="${nation.id}" data-mode-scope="land" type="button">${surfaceModeLabel}</button>
+          <button class="mode-air" data-nation-id="${nation.id}" data-mode-scope="air" type="button"></button>
+          <button class="mode-all" data-nation-id="${nation.id}" data-mode-scope="all" type="button"></button>
+          <button class="mode-land" data-nation-id="${nation.id}" data-mode-scope="land" type="button"></button>
         `;
         fragment.appendChild(control);
       });
@@ -2735,6 +3805,7 @@
       updateBoardHint();
       renderDiceSummary();
       renderBattleFlowUi();
+      renderOverviewPanels();
       renderBattleLog();
       updateBattleInfoCollapsedState();
       renderZoneTooltip();
@@ -2828,6 +3899,7 @@
       renderActiveRollResults();
       renderDiceControls();
       renderBattleFlowUi();
+      renderOverviewPanels();
     }
 
     function getDiceAreaState(area) {
@@ -3045,11 +4117,9 @@
       const resultsBySide = options.resultsBySide || getRollDisplayResultsBySide(groupKey);
       ['axis', 'allied'].forEach((side) => {
         const container = document.getElementById(`${side}RollResults`);
-        const summary = document.getElementById(`${side}RollSummary`);
         if (!container) return;
         const assignmentDice = assignmentPackage && assignmentPackage.dice ? assignmentPackage.dice[side] : null;
         const sourceResults = assignmentDice ? assignmentDice.map((die) => die.color) : (resultsBySide[side] || []);
-        const summaryResults = assignmentDice ? assignmentDice.filter((die) => die.status === 'pending').map((die) => die.color) : sourceResults;
         const results = assignmentDice
           ? assignmentDice.slice(0, DICE_STAGE_CAP)
           : (options.sorted === false ? [...sourceResults] : sortDiceResults(sourceResults).slice(0, DICE_STAGE_CAP)).map((color, index) => ({ color, originalIndex: index, status: 'plain' }));
@@ -3088,8 +4158,6 @@
             container.appendChild(die);
           });
         }
-
-        if (summary) summary.innerHTML = buildDiceSummaryHtml(countDiceResults(summaryResults));
       });
     }
 
@@ -3303,12 +4371,87 @@
       });
       renderForceAdvantageUi();
       renderDiceControls();
+      renderOverviewPanels();
     }
 
     function buildDiceSummaryHtml(counts) {
       return DICE_ORDER.map((color) => (
         `<span class="dice-color-count ${color}" title="${DICE_LABELS[color]} / ${color}"><span class="dice-dot ${color}"></span><span class="dice-count-number ${color}">${counts[color] || 0}</span></span>`
       )).join('');
+    }
+
+    function renderOverviewPanels() {
+      ['axis', 'allied'].forEach(renderSideOverviewPanel);
+    }
+
+    function renderSideOverviewPanel(side) {
+      const repairContainer = document.getElementById(`${side}RepairOverview`);
+      const strategicContainer = document.getElementById(`${side}StrategicOverview`);
+      if (repairContainer) repairContainer.innerHTML = buildRepairOverviewHtml(side);
+      if (strategicContainer) strategicContainer.innerHTML = buildStrategicOverviewHtml(side);
+    }
+
+    function buildRepairOverviewHtml(side) {
+      const preview = recomputeRepairPreview({ persist: false });
+      const resolution = ensureCombatResolutionState();
+      return NATIONS
+        .filter((nation) => nation.side === side && hasNationInCurrentBattleType(nation.id))
+        .map((nation) => {
+          const previewRow = preview[nation.id] || { repairCount: 0, resourceCost: 0, freeCount: 0, zoneCount: 0 };
+          const repaired = resolution.performed ? (resolution.repairedByNation[nation.id] || 0) : previewRow.repairCount;
+          const cost = resolution.performed ? (resolution.repairCostByNation[nation.id] || 0) : previewRow.resourceCost;
+          const lossCount = getResolutionLossCountForNation(nation.id);
+          const classes = ['overview-nation-row'];
+          if (repaired > 0 || cost > 0) classes.push('has-repair');
+          if (lossCount > 0) classes.push('has-loss');
+          const lossText = lossCount > 0 ? `；已记录损失 ${lossCount} 个` : '';
+          const freeText = previewRow.freeCount > 0 && !resolution.performed ? `（含免费 ${previewRow.freeCount}）` : '';
+          return `<div class="${classes.join(' ')}"><strong>${nation.label}</strong><br>${nation.short} 本轮修复 ${repaired} 个单位${freeText}，本回合资源减少 ${cost}${lossText}</div>`;
+        })
+        .join('');
+    }
+
+    function hasNationInCurrentBattleType(nationId) {
+      return getCurrentZones().some((zone) => zone.nation === nationId);
+    }
+
+    function getResolutionLossCountForNation(nationId) {
+      const resolution = ensureCombatResolutionState();
+      return (resolution.lossEntries || [])
+        .filter((entry) => entry.nationId === nationId && entry.source !== 'freeLightRecovery')
+        .reduce((total, entry) => total + entry.count, 0);
+    }
+
+    function buildStrategicOverviewHtml(side) {
+      if (gameState.battleType !== 'land') {
+        return '<div class="strategic-summary-row overview-muted">海战无战略轰炸。</div>';
+      }
+      const resolution = ensureCombatResolutionState();
+      const records = resolution.performed
+        ? (resolution.strategicBombing || []).filter((record) => record.side === side)
+        : getStrategicBombingRecords(side);
+      if (records.length === 0) {
+        return '<div class="strategic-summary-row overview-muted">暂无战略轰炸骰。</div>';
+      }
+      return records.map((record, index) => {
+        const diceHtml = (record.results || []).map((color) => `<span class="die-token" title="${DICE_LABELS[color]} · ${STRATEGIC_BOMBING_EFFECTS[color] || ''}"><img src="${DICE_ASSETS[color]}" alt="${DICE_LABELS[color]} dice"></span>`).join('');
+        const effects = (record.results || []).map((color) => `<li><strong>${DICE_LABELS[color]}</strong>：${STRATEGIC_BOMBING_EFFECTS[color] || '无对应效果。'}</li>`).join('');
+        return `<div class="strategic-summary-row"><strong>${SIDE_LABELS[side]} Bomber ${index + 1}</strong><div class="strategic-dice-line">${diceHtml}</div><ol class="strategic-effect-list">${effects}</ol></div>`;
+      }).join('');
+    }
+
+    function getStrategicBombingRecords(side) {
+      const area = `${side}_strategic`;
+      const results = getDiceAreaState(area).results || [];
+      const records = [];
+      for (let index = 0; index < results.length; index += 4) {
+        records.push({
+          side,
+          bomberIndex: Math.floor(index / 4),
+          results: results.slice(index, index + 4)
+        });
+      }
+      return records;
     }
 
     function getSurfaceStageName() {
@@ -3375,9 +4518,18 @@
           }
         }
         runOneTimeAutoAssignments(stageId, { silentRender: true });
+        updateAssignmentStageCompletion(stageId);
       }
       if (stageId === 'surfaceBattle') {
         captureForceAdvantageSnapshot();
+      }
+      if (stageId === 'repair') {
+        recomputeRepairPreview();
+        const repairState = ensureRepairState();
+        if (repairState.autoRepairEnabled) {
+          selectAllDamagedZonesForSide('axis', true);
+          selectAllDamagedZonesForSide('allied', true);
+        }
       }
       if (previousStage !== stageId) {
         addBattleLog(`阶段切换：${getStageLabel(stageId)}`, { save: false });
@@ -3418,6 +4570,15 @@
     }
 
     function renderDamageModeControls() {
+      const repairStage = isRepairStage();
+      // Toggle assignment groups (mode selectors) — hide in repair stage
+      document.querySelectorAll('[data-assignment-side]').forEach((group) => {
+        group.classList.toggle('is-hidden', repairStage);
+      });
+      // Toggle repair controls row — show only in repair stage
+      const repairControls = document.querySelector('[data-repair-mode-controls]');
+      if (repairControls) repairControls.classList.toggle('is-hidden', !repairStage);
+
       ['axis', 'allied'].forEach((side) => {
         const select = document.querySelector(`[data-damage-mode-side="${side}"]`);
         if (select) {
@@ -3426,10 +4587,18 @@
         }
         const helpButton = document.querySelector(`[data-mode-help-side="${side}"]`);
         if (helpButton) {
-          helpButton.classList.toggle('is-hidden', gameState.damage.modes[side] === 'manual');
+          helpButton.classList.toggle('is-hidden', repairStage || gameState.damage.modes[side] === 'manual');
           helpButton.title = gameState.damage.modes[side] === 'manual' ? '手动分配不需要算法说明' : '点击查看分配算法说明';
         }
       });
+
+      // Global auto-repair checkbox
+      const autoRepairCheckbox = document.getElementById('autoRepairCheckbox');
+      if (autoRepairCheckbox) {
+        const repairState = ensureRepairState();
+        autoRepairCheckbox.checked = Boolean(repairState.autoRepairEnabled);
+        autoRepairCheckbox.disabled = !repairStage || ensureCombatResolutionState().performed;
+      }
     }
 
     function renderAlgorithmTooltip() {
@@ -3437,7 +4606,7 @@
       if (!tooltip) return;
       const tooltipState = gameState.damage.algorithmTooltip || {};
       const mode = tooltipState.mode;
-      const isVisible = mode && mode !== 'manual' && DAMAGE_MODES[mode];
+      const isVisible = !isRepairStage() && mode && mode !== 'manual' && DAMAGE_MODES[mode];
       tooltip.classList.toggle('is-hidden', !isVisible);
       if (!isVisible) return;
       const title = document.getElementById('algorithmTooltipTitle');
@@ -3460,9 +4629,10 @@
       }
 
       if (stageId === 'repair') {
-        button.textContent = '修复全部';
-        button.disabled = false;
-        button.title = '点击后修复所有受损单位，并完成修复阶段。';
+        const performed = ensureCombatResolutionState().performed;
+        button.innerHTML = performed ? '已结算' : '完成修复<br>结算回合';
+        button.disabled = performed;
+        button.title = performed ? '本场战斗结算已完成，可前往「战斗结算」页面查看统计。' : '点击记录修复选择、损失单位与压力，并进入战斗结算页面。';
         return;
       }
 
@@ -3515,7 +4685,12 @@
       if (isDamageAssignmentStage(stageId)) {
         const context = getCurrentAssignmentContext();
         if (context) {
-          markCurrentDieMiss({ reason: '手动跳过' });
+          const targets = getLegalTargetsForDie(context.side, context.die, stageId);
+          if (targets.length === 0) {
+            markCurrentDieMiss({ reason: '无可用目标，自动跳过' });
+          } else {
+            markCurrentDieMiss({ reason: '手动跳过' });
+          }
           return;
         }
         updateAssignmentStageCompletion(stageId);
@@ -3524,8 +4699,9 @@
         return;
       }
       if (stageId === 'repair') {
-        repairAllZones();
-        completeRepairStage();
+        runCombatResolution();
+        accumulateBattleToRound();
+        showView('battle-summary');
       }
     }
 
@@ -3649,9 +4825,33 @@
     function refreshAssignmentActiveSide(stageKey = gameState.battleFlow.currentStage) {
       const packageState = getAssignmentPackage(stageKey);
       if (!packageState) return null;
-      const nextSide = ['axis', 'allied'].find((side) => getFirstPendingDie(packageState, side)) || packageState.activeSide;
-      packageState.activeSide = nextSide;
-      return getFirstPendingDie(packageState, nextSide) ? nextSide : null;
+
+      // Auto-skip dice with no legal targets
+      let safety = 0;
+      while (safety < 60) {
+        safety++;
+        const nextSide = ['axis', 'allied'].find((side) => getFirstPendingDie(packageState, side)) || packageState.activeSide;
+        packageState.activeSide = nextSide;
+        const die = getFirstPendingDie(packageState, nextSide);
+        if (!die) return null;
+
+        // Check if current die has any legal targets
+        const mode = gameState.damage.modes[nextSide];
+        if (mode === 'manual') {
+          // In manual mode: check if die has targets, skip if not
+          const targets = getLegalTargetsForDie(nextSide, die, stageKey);
+          if (targets.length === 0) {
+            die.status = 'unavailable';
+            die.assignedOrder = getNextActionId();
+            die.missReason = '无可用目标，自动跳过';
+            addBattleLog(`${SIDE_LABELS[nextSide]} ${DICE_LABELS[die.color]}骰无可用目标，自动跳过。`, { save: false });
+            continue;
+          }
+        }
+        // In auto mode, runLayeredAutoAssignments handles this separately
+        return nextSide;
+      }
+      return null;
     }
 
     function hasPendingDice(packageState, side) {
@@ -4084,39 +5284,380 @@
       saveState();
     }
 
-    function repairZone(zoneId, options = {}) {
+    function ensureRepairState() {
+      gameState.repair = normalizeRepairState(gameState.repair || {});
+      return gameState.repair;
+    }
+
+    function ensureCombatResolutionState() {
+      gameState.combatResolution = normalizeCombatResolutionState(gameState.combatResolution || {});
+      return gameState.combatResolution;
+    }
+
+    function isPortFreeRepairZone(zone) {
+      return Boolean(gameState.battleType === 'sea'
+        && zone
+        && zone.group === 'land'
+        && gameState.ui.portAdvantage
+        && gameState.ui.portAdvantage[zone.side]);
+    }
+
+    function getRepairBreakdownForZone(zone, cell = null) {
+      const normalized = normalizeCellState(cell || getBattleCellState(zone.nation, zone.stance));
+      const light = normalized.light;
+      const damaged = normalized.damaged;
+      const heavy = normalized.heavy;
+      const freeLight = isMultiLifeZone(zone) ? light : 0;
+      const chargeable = damaged + heavy + (isMultiLifeZone(zone) ? 0 : light);
+      const freePort = isPortFreeRepairZone(zone) ? chargeable : 0;
+      const resourceCost = Math.max(0, chargeable - freePort);
+      return {
+        repairCount: damaged + light + heavy,
+        resourceCost,
+        freeCount: freeLight + freePort,
+        freeLight,
+        freePort,
+        damaged,
+        light,
+        heavy
+      };
+    }
+
+    function getRepairableZoneIdsForSide(side) {
+      return getCurrentZones()
+        .filter((zone) => zone.side === side && getRepairBreakdownForZone(zone).repairCount > 0)
+        .map((zone) => zone.id);
+    }
+
+    function syncRepairAllFlags() {
+      const repair = ensureRepairState();
+      const selected = new Set(repair.selectedZoneIds);
+      ['axis', 'allied'].forEach((side) => {
+        const zoneIds = getRepairableZoneIdsForSide(side);
+        repair.repairAllChecked[side] = zoneIds.length > 0 && zoneIds.every((zoneId) => selected.has(zoneId));
+      });
+    }
+
+    function recomputeRepairPreview(options = {}) {
+      const repair = ensureRepairState();
+      const currentZoneIds = new Set(getCurrentZones().map((zone) => zone.id));
+      const selected = new Set(repair.selectedZoneIds.filter((zoneId) => currentZoneIds.has(zoneId)));
+      const preview = {};
+      getCurrentZones().forEach((zone) => {
+        if (!selected.has(zone.id)) return;
+        const breakdown = getRepairBreakdownForZone(zone);
+        if (breakdown.repairCount <= 0) {
+          selected.delete(zone.id);
+          return;
+        }
+        if (!preview[zone.nation]) {
+          preview[zone.nation] = { repairCount: 0, resourceCost: 0, freeCount: 0, zoneCount: 0 };
+        }
+        preview[zone.nation].repairCount += breakdown.repairCount;
+        preview[zone.nation].resourceCost += breakdown.resourceCost;
+        preview[zone.nation].freeCount += breakdown.freeCount;
+        preview[zone.nation].zoneCount += 1;
+      });
+      repair.selectedZoneIds = [...selected];
+      repair.previewByNation = preview;
+      syncRepairAllFlags();
+      if (options.save) saveState();
+      return preview;
+    }
+
+    function toggleRepairSelection(zoneId) {
+      const resolution = ensureCombatResolutionState();
+      if (resolution.performed) {
+        addBattleLog('战斗结算已记录，不能再修改修复选择。', { save: false });
+        renderBattleFlowUi();
+        saveState();
+        return false;
+      }
       const zone = getZoneById(zoneId);
       if (!zone) return false;
-      const cell = getBattleCellState(zone.nation, zone.stance);
-      const repaired = cell.damaged + cell.light + cell.heavy;
-      if (repaired <= 0) return false;
-      cell.alive += repaired;
-      cell.damaged = 0;
-      cell.light = 0;
-      cell.heavy = 0;
-      addBattleLog(`修复 ${zone.nationShort} ${zone.stanceLabel}：${repaired} 个单位恢复。`, { save: false });
-      if (!options.silentRender) {
+      const breakdown = getRepairBreakdownForZone(zone);
+      if (breakdown.repairCount <= 0) {
+        addBattleLog(`${zone.nationShort} ${zone.stanceLabel} 没有受损单位可标记修复。`, { save: false });
         renderBattleBoard();
         saveState();
+        return false;
       }
+      const repair = ensureRepairState();
+      const selected = new Set(repair.selectedZoneIds);
+      const willSelect = !selected.has(zone.id);
+      if (willSelect) {
+        selected.add(zone.id);
+      } else {
+        selected.delete(zone.id);
+      }
+      repair.selectedZoneIds = [...selected];
+      recomputeRepairPreview();
+      addBattleLog(`${willSelect ? '标记修复' : '取消修复'} ${zone.nationShort} ${zone.stanceLabel}：${breakdown.repairCount} 个单位，本回合资源${willSelect ? '预计减少' : '恢复预览减少'} ${breakdown.resourceCost}。`, { save: false });
+      renderDiceUi();
+      renderBattleBoard();
+      saveState();
+      return true;
+    }
+
+    function repairZone(zoneId) {
+      // 兼容旧调用名：修复阶段现在只做“待修复选择”，不直接修改受损状态。
+      return toggleRepairSelection(zoneId);
+    }
+
+    function selectAllDamagedZonesForSide(side, checked) {
+      if (!['axis', 'allied'].includes(side)) return false;
+      const resolution = ensureCombatResolutionState();
+      if (resolution.performed) {
+        addBattleLog('战斗结算已记录，不能再修改全部修复选择。', { save: false });
+        renderBattleBoard();
+        saveState();
+        return false;
+      }
+      const repair = ensureRepairState();
+      const selected = new Set(repair.selectedZoneIds);
+      const zoneIds = getRepairableZoneIdsForSide(side);
+      zoneIds.forEach((zoneId) => {
+        if (checked) selected.add(zoneId);
+        else selected.delete(zoneId);
+      });
+      repair.selectedZoneIds = [...selected];
+      repair.repairAllChecked[side] = checked;
+      const preview = recomputeRepairPreview();
+      const sideRepairCount = NATIONS
+        .filter((nation) => nation.side === side)
+        .reduce((total, nation) => total + ((preview[nation.id] && preview[nation.id].repairCount) || 0), 0);
+      if (sideRepairCount > 0 || !checked) {
+        addBattleLog(`${SIDE_LABELS[side]} ${checked ? '全部修复已标记' : '全部修复已取消'}：${checked ? sideRepairCount : 0} 个单位。`, { save: false });
+      }
+      renderDiceUi();
+      renderBattleBoard();
+      saveState();
       return true;
     }
 
     function repairAllZones() {
-      let repairedZones = 0;
-      getCurrentZones().forEach((zone) => {
-        if (repairZone(zone.id, { silentRender: true })) repairedZones += 1;
-      });
-      addBattleLog(`一键修复完成：${repairedZones} 个热区发生恢复。`, { save: false });
-      renderBattleBoard();
-      saveState();
+      // 兼容旧调用名：只标记当前双方全部受损热区。
+      selectAllDamagedZonesForSide('axis', true);
+      selectAllDamagedZonesForSide('allied', true);
     }
 
-    function completeRepairStage() {
-      completeStage('repair');
-      addBattleLog('修复阶段完成。', { save: false });
-      renderBattleFlowUi();
+    function buildLossEntry(zone, count, source, label) {
+      return {
+        zoneId: zone.id,
+        nationId: zone.nation,
+        nationShort: zone.nationShort,
+        unit: zone.unit,
+        stanceLabel: zone.stanceLabel,
+        count,
+        source,
+        label
+      };
+    }
+
+    function addLossEntry(lossEntries, lossesByNation, zone, count, source, label) {
+      if (count <= 0) return;
+      lossEntries.push(buildLossEntry(zone, count, source, label));
+      if (source !== 'freeLightRecovery') {
+        lossesByNation[zone.nation] = (lossesByNation[zone.nation] || 0) + count;
+      }
+    }
+
+    function runCombatResolution() {
+      if (!isRepairStage()) return false;
+      const resolution = ensureCombatResolutionState();
+      if (resolution.performed) return false;
+
+      const preview = recomputeRepairPreview();
+      const selected = new Set(ensureRepairState().selectedZoneIds);
+      const repairedByNation = {};
+      const repairCostByNation = {};
+      const paidRepairsByNation = {};
+      const freeRepairsByNation = {};
+      const repairedZones = [];
+      Object.entries(preview).forEach(([nationId, row]) => {
+        if (row.repairCount > 0) repairedByNation[nationId] = row.repairCount;
+        if (row.resourceCost > 0) repairCostByNation[nationId] = row.resourceCost;
+        const paid = row.repairCount - (row.freeCount || 0);
+        if (paid > 0) paidRepairsByNation[nationId] = paid;
+        if (row.freeCount > 0) freeRepairsByNation[nationId] = row.freeCount;
+      });
+
+      getCurrentZones().forEach((zone) => {
+        if (!selected.has(zone.id)) return;
+        const breakdown = getRepairBreakdownForZone(zone);
+        if (breakdown.repairCount <= 0) return;
+        repairedZones.push({
+          zoneId: zone.id,
+          nationId: zone.nation,
+          nationShort: zone.nationShort,
+          unit: zone.unit,
+          stanceLabel: zone.stanceLabel,
+          repairCount: breakdown.repairCount,
+          resourceCost: breakdown.resourceCost,
+          freeCount: breakdown.freeCount
+        });
+      });
+
+      const lossEntries = [];
+      const lossesByNation = {};
+      getCurrentZones().forEach((zone) => {
+        const cell = getBattleCellState(zone.nation, zone.stance);
+        if (cell.destroyed > 0) addLossEntry(lossEntries, lossesByNation, zone, cell.destroyed, 'destroyed', '已摧毁');
+        const isSelected = selected.has(zone.id);
+        if (!isSelected) {
+          if (cell.damaged > 0) addLossEntry(lossEntries, lossesByNation, zone, cell.damaged, 'pendingEliminated', '未修复受损，按规则待移入 Eliminated');
+          if (cell.heavy > 0) addLossEntry(lossEntries, lossesByNation, zone, cell.heavy, 'pendingEliminated', '未修复重伤，按规则待移入 Eliminated');
+          if (!isMultiLifeZone(zone) && cell.light > 0) addLossEntry(lossEntries, lossesByNation, zone, cell.light, 'pendingEliminated', '未修复受损，按规则待移入 Eliminated');
+        }
+        if (isMultiLifeZone(zone) && cell.light > 0) {
+          addLossEntry(lossEntries, lossesByNation, zone, cell.light, 'freeLightRecovery', '轻伤按规则免费恢复（暂不改棋盘）');
+        }
+      });
+
+      const strategicBombing = ['axis', 'allied'].flatMap((side) => getStrategicBombingRecords(side)).filter((record) => record.results.length > 0);
+      const stressEntries = recordStressPlaceholders(lossEntries);
+      gameState.combatResolution = normalizeCombatResolutionState({
+        performed: true,
+        repairedByNation,
+        repairCostByNation,
+        paidRepairsByNation,
+        freeRepairsByNation,
+        repairedZones,
+        lossesByNation,
+        lossEntries,
+        stressEntries,
+        strategicBombing
+      });
+
+      NATIONS.forEach((nation) => {
+        if (!gameState.nations[nation.id]) gameState.nations[nation.id] = { repairsThisBattle: 0, repairCostThisBattle: 0 };
+        gameState.nations[nation.id].repairsThisBattle = repairedByNation[nation.id] || 0;
+        gameState.nations[nation.id].repairCostThisBattle = repairCostByNation[nation.id] || 0;
+      });
+
+      addBattleLog('战斗结算已记录：棋盘受损状态暂不修改，仅保存修复选择、损失和压力占位。', { save: false });
+      logRepairResolutionSummary(repairedByNation, repairCostByNation);
+      logLossResolutionSummary(lossEntries);
+      if (stressEntries.length > 0) {
+        const totalStress = stressEntries.reduce((sum, entry) => sum + (entry.stressPoints || 0), 0);
+        addBattleLog(`压力记录：已统计损失单位，本场战斗共产生 ${totalStress} 压力点（标准 Conversion Chart 转换）。`, { save: false });
+      }
+      if (strategicBombing.length > 0) {
+        addBattleLog(`战略轰炸摘要已记录：${strategicBombing.length} 架 Bomber 分组（每架最多 4 骰）。`, { save: false });
+      }
+      completeRepairStage({ silentSave: true });
+      addBattleLog('✅ 结算战斗完成！点击上方「战斗结算」查看本场统计，或继续下一场战斗。', { save: false });
+      renderDiceUi();
+      renderBattleBoard();
       saveState();
+      return true;
+    }
+
+    function logRepairResolutionSummary(repairedByNation, repairCostByNation) {
+      NATIONS.forEach((nation) => {
+        const repaired = repairedByNation[nation.id] || 0;
+        const cost = repairCostByNation[nation.id] || 0;
+        if (repaired > 0 || cost > 0) {
+          addBattleLog(`${nation.label} 本轮修复 ${repaired} 个单位，本回合资源减少 ${cost}。`, { save: false });
+        }
+      });
+    }
+
+    function logLossResolutionSummary(lossEntries) {
+      const stressLosses = lossEntries.filter((entry) => entry.source !== 'freeLightRecovery');
+      if (stressLosses.length === 0) {
+        addBattleLog('损失记录：本次结算没有需要进入压力占位的损失单位。', { save: false });
+        return;
+      }
+      NATIONS.forEach((nation) => {
+        const entries = stressLosses.filter((entry) => entry.nationId === nation.id);
+        if (entries.length === 0) return;
+        const summary = {};
+        entries.forEach((entry) => {
+          summary[entry.unit] = (summary[entry.unit] || 0) + entry.count;
+        });
+        const text = Object.entries(summary).map(([unit, count]) => `${unit} ${count}`).join('，');
+        addBattleLog(`${nation.label} 损失记录：${text}。`, { save: false });
+      });
+    }
+
+    function recordStressPlaceholders(lossEntries) {
+      return lossEntries
+        .filter((entry) => entry.source !== 'freeLightRecovery')
+        .map((entry) => {
+          const casualtyPoints = computeCasualtyPoints(entry.unit, entry.count);
+          const stressPoints = convertCasualtyPointsToStress(casualtyPoints);
+          return {
+            nationId: entry.nationId,
+            nationShort: entry.nationShort,
+            unit: entry.unit,
+            count: entry.count,
+            casualtyPoints,
+            stressPoints,
+            missingRules: false
+          };
+        });
+    }
+
+    function computeCasualtyPoints(unit, count) {
+      const factor = MORALE_FACTORS[unit];
+      if (Number.isFinite(factor)) return factor * count;
+      // 未知兵种按 1 点计算（保守默认值）
+      return count;
+    }
+
+    function computeNationCasualtyPoints(nationLosses) {
+      // nationLosses: { Infantry: 3, Armor: 1, ... }
+      let total = 0;
+      const breakdown = [];
+      Object.entries(nationLosses || {}).forEach(([unit, count]) => {
+        const factor = MORALE_FACTORS[unit] || 1;
+        const points = factor * count;
+        total += points;
+        breakdown.push({ unit, count, factor, points });
+      });
+      return { total, breakdown };
+    }
+
+    function convertCasualtyPointsToStress(casualtyPoints) {
+      if (casualtyPoints === null || casualtyPoints === undefined || casualtyPoints <= 0) return 0;
+      // 标准游戏 Conversion Chart 查找表
+      for (let i = 0; i < STRESS_CONVERSION_CHART.length; i++) {
+        if (casualtyPoints <= STRESS_CONVERSION_CHART[i].maxCasualtyPoints) {
+          return STRESS_CONVERSION_CHART[i].stressPoints;
+        }
+      }
+      return STRESS_CONVERSION_CHART[STRESS_CONVERSION_CHART.length - 1].stressPoints;
+    }
+
+    function getStressConversionRange(stressPoints) {
+      // 返回产生给定压力点数的伤亡点数区间（用于 tooltip）
+      const ranges = STRESS_CONVERSION_CHART.filter((entry) => entry.stressPoints === stressPoints);
+      if (ranges.length === 0) return '';
+      const entry = ranges[0];
+      const prevMax = STRESS_CONVERSION_CHART.find((e) => e.stressPoints === stressPoints - 1);
+      const min = prevMax ? prevMax.maxCasualtyPoints + 1 : 0;
+      const max = entry.maxCasualtyPoints === Infinity ? '∞' : entry.maxCasualtyPoints;
+      return `${min}-${max}`;
+    }
+
+    function formatCasualtyPointsBreakdown(breakdown) {
+      if (!breakdown || breakdown.length === 0) return '无损失';
+      return breakdown
+        .map((item) => `${item.unit} ×${item.count} = ${item.points}`)
+        .join('\n') + `\n总计 = ${breakdown.reduce((sum, item) => sum + item.points, 0)}`;
+    }
+
+    function formatStressConversionTooltip(casualtyPoints, stressPoints) {
+      const range = getStressConversionRange(stressPoints);
+      return `伤亡点数 ${casualtyPoints} → 查表：${range} 区间 → ${stressPoints} 压力点`;
+    }
+
+    function completeRepairStage(options = {}) {
+      completeStage('repair');
+      addBattleLog('修复 / 战斗结算阶段完成。', { save: false });
+      renderBattleFlowUi();
+      if (!options.silentSave) saveState();
     }
 
     function openZoneTooltip(zoneId, options = {}) {
@@ -4142,7 +5683,10 @@
       const summary = document.getElementById('zoneTooltipSummary');
       const diceLog = document.getElementById('zoneTooltipDiceLog');
       if (title) title.textContent = `${zone.nationShort} · ${zone.stanceLabel}`;
-      if (summary) summary.textContent = formatZoneDiceSummary(zone);
+      if (summary) {
+        const selectedText = isRepairStage() && ensureRepairState().selectedZoneIds.includes(zone.id) ? ' · 已标记修复' : '';
+        summary.textContent = `${formatZoneDiceSummary(zone)}${selectedText}`;
+      }
       if (diceLog) {
         const entries = cell.assignedDiceLog || [];
         if (entries.length === 0) {
@@ -4151,6 +5695,13 @@
           diceLog.innerHTML = entries.map((entry) => `<span class="die-token" title="${DICE_LABELS[entry.diceColor]} · ${entry.assignmentTime}"><img src="${DICE_ASSETS[entry.diceColor]}" alt="${DICE_LABELS[entry.diceColor]} dice"></span>`).join('');
         }
       }
+      const resolutionLocked = ensureCombatResolutionState().performed;
+      ['undoZoneDamageButton', 'clearZoneLogButton'].forEach((buttonId) => {
+        const button = document.getElementById(buttonId);
+        if (!button) return;
+        button.disabled = resolutionLocked;
+        button.title = resolutionLocked ? '战斗结算已记录，避免结算数据失效，暂不允许修改伤害日志。' : '';
+      });
     }
 
     function toggleInputMode(nationId, scope) {
@@ -4272,8 +5823,8 @@
 
       if (isRepairStage()) {
         event.preventDefault();
-        openZoneTooltip(zone.id);
-        repairZone(zone.id);
+        openZoneTooltip(zone.id, { save: false });
+        toggleRepairSelection(zone.id);
         return;
       }
 
@@ -4297,8 +5848,8 @@
       }
 
       if (isRepairStage()) {
-        openZoneTooltip(zone.id);
-        repairZone(zone.id);
+        openZoneTooltip(zone.id, { save: false });
+        toggleRepairSelection(zone.id);
         return;
       }
 
@@ -4325,8 +5876,8 @@
       }
 
       if (isRepairStage()) {
-        openZoneTooltip(zone.id);
-        repairZone(zone.id);
+        openZoneTooltip(zone.id, { save: false });
+        toggleRepairSelection(zone.id);
         return;
       }
 
@@ -4354,15 +5905,661 @@
       }
     }
 
+    // ─── Battle Summary & Round Summary Rendering ──────────────────────────
+
+    const BATTLE_SUMMARY_UNIT_COLUMNS = [
+      { key: 'Infantry', label: '步兵' },
+      { key: 'Artillery', label: '炮兵' },
+      { key: 'Armor', label: '坦克' },
+      { key: 'Fighter', label: '战斗机' },
+      { key: 'Bomber', label: '轰炸机' },
+      { key: 'Submarine', label: '潜艇' },
+      { key: 'Cruiser', label: '巡洋舰' },
+      { key: 'Battleship', label: '战列舰' },
+      { key: 'Carrier', label: '航母' }
+    ];
+
+    function getBattleUnitLosses() {
+      const losses = {};
+      const resolution = gameState.combatResolution;
+      if (!resolution || !resolution.lossEntries) return losses;
+      resolution.lossEntries.forEach((entry) => {
+        if (!losses[entry.nationId]) losses[entry.nationId] = {};
+        losses[entry.nationId][entry.unit] = (losses[entry.nationId][entry.unit] || 0) + entry.count;
+      });
+      return losses;
+    }
+
+    function getRoundAccumulatedLosses() {
+      return gameState.campaign.currentRound.accumulatedLosses || {};
+    }
+
+    // ─── Stress computation helpers for summary tables ────────────────────────
+
+    // Get nation casualty points from a loss map { Infantry: 3, Armor: 1, ... }
+    function getNationCasualtyPoints(nationLosses) {
+      if (!nationLosses) return { total: 0, breakdown: [] };
+      return computeNationCasualtyPoints(nationLosses);
+    }
+
+    // Get nation stress points from accumulated round losses
+    function getNationRoundStress(nationId) {
+      const roundLosses = getRoundAccumulatedLosses();
+      const nationLosses = roundLosses[nationId] || {};
+      const cp = getNationCasualtyPoints(nationLosses);
+      return {
+        casualtyPoints: cp.total,
+        stressPoints: convertCasualtyPointsToStress(cp.total),
+        breakdown: cp.breakdown
+      };
+    }
+
+    // Get nation stress from a single battle's loss entries
+    function getNationBattleStress(nationId, lossEntries) {
+      const nationEntries = (lossEntries || []).filter((e) => e.nationId === nationId && e.source !== 'freeLightRecovery');
+      const byUnit = {};
+      nationEntries.forEach((e) => { byUnit[e.unit] = (byUnit[e.unit] || 0) + e.count; });
+      const cp = computeNationCasualtyPoints(byUnit);
+      return {
+        casualtyPoints: cp.total,
+        stressPoints: convertCasualtyPointsToStress(cp.total),
+        breakdown: cp.breakdown
+      };
+    }
+
+    // Get accumulated round stress for a nation
+    function getNationAccumulatedStress(nationId) {
+      return gameState.campaign.currentRound.accumulatedStress[nationId] || 0;
+    }
+
+    // Get total stress (accumulated round + battle contribution)
+    function getNationTotalStressForBattleSummary(nationId) {
+      const roundStress = getNationAccumulatedStress(nationId);
+      // This is shown as X + Y format: X = round accumulated (before this battle), Y = this battle
+      return roundStress;
+    }
+
+    function formatXY(roundAccumulated, battleValue) {
+      const x = roundAccumulated || 0;
+      const y = battleValue || 0;
+      if (x === 0 && y === 0) return '<span class="cell-value-zero">0</span>';
+      if (y === 0) return String(x);
+      return `${x} <span class="cell-value-new">+ ${y}</span>`;
+    }
+
+    function formatStressCell(accumulated, battleValue) {
+      const x = accumulated || 0;
+      const y = battleValue || 0;
+      if (x === 0 && y === 0) return '<span class="cell-value-zero">0</span>';
+      if (y === 0) return String(x);
+      return `${x} <span class="cell-value-new">+ ${y}</span>`;
+    }
+
+    function buildLossPointsTooltip(breakdown) {
+      if (!breakdown || breakdown.length === 0) return '';
+      const lines = breakdown.map((item) => `${item.unit} ×${item.count} (系数${item.factor}) = ${item.points}`);
+      const total = breakdown.reduce((sum, item) => sum + item.points, 0);
+      return `伤亡点数计算过程：\n${lines.join('\n')}\n总计 = ${total} 伤亡点`;
+    }
+
+    function buildStressConversionTooltip(casualtyPoints, stressPoints) {
+      const range = getStressConversionRange(stressPoints);
+      return `压力转换（标准 Conversion Chart）：\n${casualtyPoints} 伤亡点 → ${range} 区间 → ${stressPoints} 压力点`;
+    }
+
+    function buildKillStressTooltip(nationId) {
+      // Kill stress = stress inflicted on enemy nations in this battle
+      // For now, this is computed from the perspective of losses inflicted, not losses suffered
+      const resolution = gameState.combatResolution;
+      if (!resolution || !resolution.stressEntries || resolution.stressEntries.length === 0) return '';
+      return '击杀压力分：本场战斗损失单位 × 伤亡系数 → Conversion Chart → 压力点合计';
+    }
+
+    function getStressCellClass(stressPoints, nationId) {
+      const zoneIdx = getStressZoneIndex(stressPoints, nationId);
+      if (zoneIdx >= 4) return 'stress-critical';  // Red or Gray
+      if (zoneIdx >= 2) return 'stress-danger';     // Yellow or Orange
+      if (zoneIdx >= 1) return 'stress-warning';    // Blue
+      return '';
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderBattleSummary() {
+      const tbody = document.getElementById('battleSummaryTbody');
+      const emptyEl = document.getElementById('battleSummaryEmpty');
+      if (!tbody) return;
+
+      // Update toolbar indicators
+      const modeEl = document.getElementById('battleSummaryModeStatus');
+      const typeEl = document.getElementById('battleSummaryTypeStatus');
+      const roundEl = document.getElementById('battleSummaryRoundNumber');
+      const battleCountEl = document.getElementById('battleSummaryBattleCount');
+      if (modeEl) modeEl.textContent = gameState.battleMode === 'normal' ? '完整战斗' : '快速战斗';
+      if (typeEl) typeEl.textContent = gameState.battleType === 'land' ? '陆战' : '海战';
+      if (roundEl) roundEl.textContent = gameState.campaign.currentRound.roundNumber;
+      if (battleCountEl) battleCountEl.textContent = gameState.campaign.currentRound.battleCount;
+
+      const resolution = gameState.combatResolution;
+      const hasData = resolution && resolution.performed;
+
+      if (!hasData) {
+        tbody.innerHTML = '';
+        if (emptyEl) emptyEl.classList.remove('is-hidden');
+        // Still show battle log
+        renderBattleSummaryLog();
+        return;
+      }
+
+      if (emptyEl) emptyEl.classList.add('is-hidden');
+
+      const battleLosses = getBattleUnitLosses();
+      const roundLosses = getRoundAccumulatedLosses();
+      const roundPaidRepairs = gameState.campaign.currentRound.accumulatedPaidRepairs || {};
+      const battlePaidRepairs = resolution.paidRepairsByNation || {};
+
+      const rows = NATIONS.filter((nation) => {
+        // Only show nations that have any data
+        const hasLosses = battleLosses[nation.id] || roundLosses[nation.id];
+        const hasRepairs = (roundPaidRepairs[nation.id] || 0) > 0 || (battlePaidRepairs[nation.id] || 0) > 0;
+        return hasLosses || hasRepairs || resolution.performed;
+      }).map((nation) => {
+        const nationBattleLosses = battleLosses[nation.id] || {};
+        const nationRoundLosses = roundLosses[nation.id] || {};
+
+        // Build unit loss columns
+        const unitCells = BATTLE_SUMMARY_UNIT_COLUMNS.map((col) => {
+          const roundVal = nationRoundLosses[col.key] || 0;
+          const battleVal = nationBattleLosses[col.key] || 0;
+          return `<td>${formatXY(roundVal, battleVal)}</td>`;
+        }).join('');
+
+        // Repair column
+        const roundRepairVal = roundPaidRepairs[nation.id] || 0;
+        const battleRepairVal = battlePaidRepairs[nation.id] || 0;
+        const repairCell = `<td>${formatXY(roundRepairVal, battleRepairVal)}</td>`;
+
+        // ── Stress-related columns ─────────────────────────────────────────
+        // 损失单位分：本回合累计伤亡点数 + 本场战斗新增伤亡点数
+        const roundLossCp = getNationCasualtyPoints(nationRoundLosses);
+        const battleLossCp = getNationCasualtyPoints(nationBattleLosses);
+        // 合并 tooltip 显示回合累计 + 本场新增的详细计算过程
+        const combinedTooltipItems = [
+          ...roundLossCp.breakdown.map((b) => `${b.unit} ×${b.count} (系数${b.factor}) = ${b.points} [回合累计]`),
+          ...battleLossCp.breakdown.map((b) => `${b.unit} ×${b.count} (系数${b.factor}) = ${b.points} [本场新增]`)
+        ];
+        const lossPointsTooltip = combinedTooltipItems.length > 0
+          ? `伤亡点数计算：\n${combinedTooltipItems.join('\n')}\n回合累计总计 = ${roundLossCp.total}；本场新增总计 = ${battleLossCp.total}`
+          : '';
+        const lossPointsCell = `<td title="${escapeHtml(lossPointsTooltip)}">${formatXY(roundLossCp.total, battleLossCp.total)}</td>`;
+
+        // 击杀压力分：本场战斗对敌方造成的压力（友方所有国家击杀合计 → 暂简化为本场压力分）
+        const battleStress = getNationBattleStress(nation.id, resolution.lossEntries || []);
+        const killStressTooltip = battleStress.breakdown.length > 0
+          ? `击杀压力分：\n${battleStress.breakdown.map((b) => `${b.unit} ×${b.count} (系数${b.factor}) = ${b.points}`).join('\n')}\n${buildStressConversionTooltip(battleStress.casualtyPoints, battleStress.stressPoints)}`
+          : '';
+        const killStressCell = `<td title="${escapeHtml(killStressTooltip)}">${battleStress.stressPoints > 0 ? battleStress.stressPoints : '<span class="cell-value-zero">0</span>'}</td>`;
+
+        // 本战压力：本场战斗新增压力点（X=回合累计压力，Y=本场新增压力）
+        const roundStress = getNationAccumulatedStress(nation.id);
+        const battleStressOnly = battleStress.stressPoints;
+        const battleStressTooltip = buildStressConversionTooltip(battleStress.casualtyPoints, battleStress.stressPoints);
+        const battleStressCell = `<td title="${escapeHtml(battleStressTooltip)}">${formatXY(roundStress, battleStressOnly)}</td>`;
+
+        // 总压力：当前回合累计压力 = 之前累计 + 本场新增
+        const totalStress = roundStress + battleStressOnly;
+        const totalStressCell = totalStress > 0
+          ? `<td class="${getStressCellClass(totalStress, nation.id)}" title="回合累计压力：${totalStress}\n压力阈值：${NATION_STRESS_THRESHOLDS[nation.id] || '?'}\n当前区域：${getStressZone(totalStress, nation.id).labelCN}">${totalStress}</td>`
+          : '<td><span class="cell-value-zero">0</span></td>';
+
+        // 压力阈值
+        const threshold = NATION_STRESS_THRESHOLDS[nation.id];
+        const thresholdCell = `<td title="当压力点 ≥ ${threshold} 时，国家在 Homeland Status Track 上前进一个 Zone">${threshold || '<span class="cell-value-zero">?</span>'}</td>`;
+
+        const sideClass = nation.side === 'axis' ? 'axis-nation' : 'allied-nation';
+
+        return `<tr>
+          <td class="col-nation ${sideClass}">${nation.label}</td>
+          ${unitCells}
+          ${repairCell}
+          ${lossPointsCell}
+          ${killStressCell}
+          ${battleStressCell}
+          ${totalStressCell}
+          ${thresholdCell}
+        </tr>`;
+      }).join('');
+
+      // Build thead with correct colspan for unit group label
+      const unitColCount = BATTLE_SUMMARY_UNIT_COLUMNS.length;
+      const theadHtml = `
+        <tr>
+          <th class="col-nation">国家</th>
+          <th class="col-group-label" colspan="${unitColCount}">损失单位</th>
+          <th class="col-repair">修复单位</th>
+          <th class="col-loss-points">损失单位分</th>
+          <th class="col-kill-stress">击杀压力分</th>
+          <th class="col-battle-stress">本战压力</th>
+          <th class="col-total-stress">总压力</th>
+          <th class="col-stress-threshold">压力阈值</th>
+        </tr>
+        <tr>
+          <th class="col-nation"></th>
+          ${BATTLE_SUMMARY_UNIT_COLUMNS.map((col) => `<th>${col.label}</th>`).join('')}
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>`;
+
+      tbody.closest('table').querySelector('thead').innerHTML = theadHtml;
+      tbody.innerHTML = rows;
+
+      renderBattleSummaryLog();
+    }
+
+    function renderBattleSummaryLog() {
+      const logList = document.getElementById('battleSummaryLogList');
+      if (!logList) return;
+      const logs = gameState.battleLog || [];
+      logList.innerHTML = logs.slice(-30).reverse().map((entry) => {
+        const time = entry.time || '';
+        return `<li><time>${time}</time> ${entry.message}</li>`;
+      }).join('');
+    }
+
+    function getRoundAdjustment(nationId, unitKey) {
+      const adj = gameState.campaign.currentRound.manualAdjustments || {};
+      const losses = adj.losses || {};
+      const nationLosses = losses[nationId] || {};
+      return nationLosses[unitKey] || 0;
+    }
+
+    function getRoundRepairAdjustment(nationId) {
+      const adj = gameState.campaign.currentRound.manualAdjustments || {};
+      const repairs = adj.repairs || {};
+      return repairs[nationId] || 0;
+    }
+
+    function getRoundStressRecoveryAdjustment(nationId) {
+      const adj = gameState.campaign.currentRound.manualAdjustments || {};
+      const recovery = adj.stressRecovery || {};
+      return recovery[nationId] || 0;
+    }
+
+    function getRoundStressAdjustment(nationId) {
+      const adj = gameState.campaign.currentRound.manualAdjustments || {};
+      const stress = adj.stress || {};
+      return stress[nationId] || 0;
+    }
+
+    function computeRoundKillStress(nationId) {
+      // 统计本回合所有战斗中该国家对敌方造成的压力
+      const cr = gameState.campaign.currentRound;
+      const battles = cr.battles || [];
+      let totalStressPoints = 0;
+      const allBreakdowns = [];
+
+      battles.forEach((b) => {
+        // 找出该国家作为来源的 stress entries
+        // stress entries 中的 nationId 是承受损失的国家的 ID
+        // 但 "击杀压力分" 指的是该国家造成的压力 — 需要从 battle 数据中查找
+        // 当前数据结构中，stressEntries 记录的是承受损失方（被击杀方）
+        // 对于 "击杀压力分" 列，我们显示该国家自己承受的压力（作为被击杀方）
+        // 这是因为 War Room 中压力由承受损失方承担
+        const entries = (b.stressEntries || []).filter((e) => e.nationId === nationId);
+        entries.forEach((e) => {
+          totalStressPoints += (e.stressPoints || 0);
+          allBreakdowns.push(e);
+        });
+      });
+
+      const tooltip = allBreakdowns.length > 0
+        ? allBreakdowns.map((e) => `${e.unit} ×${e.count} → ${e.casualtyPoints || computeCasualtyPoints(e.unit, e.count)} 伤亡点 → ${e.stressPoints || 0} 压力点`).join('\n')
+        : '';
+
+      return { stressPoints: totalStressPoints, tooltip };
+    }
+
+    function renderRoundSummary() {
+      const tbody = document.getElementById('roundSummaryTbody');
+      const thead = document.getElementById('roundSummaryThead');
+      const emptyEl = document.getElementById('roundSummaryEmpty');
+      if (!tbody) return;
+
+      const cr = gameState.campaign.currentRound;
+      const hasBattles = cr.battles.length > 0;
+
+      // Update toolbar indicators
+      const roundEl = document.getElementById('roundViewRoundNumber');
+      const battleCountEl = document.getElementById('roundViewBattleCount');
+      if (roundEl) roundEl.textContent = cr.roundNumber;
+      if (battleCountEl) battleCountEl.textContent = cr.battleCount;
+
+      if (!hasBattles) {
+        if (thead) thead.innerHTML = '';
+        tbody.innerHTML = '';
+        if (emptyEl) emptyEl.classList.remove('is-hidden');
+        renderRoundLog();
+        return;
+      }
+
+      if (emptyEl) emptyEl.classList.add('is-hidden');
+
+      const roundLosses = cr.accumulatedLosses || {};
+      const roundPaidRepairs = cr.accumulatedPaidRepairs || {};
+      const roundFreeRepairs = cr.accumulatedFreeRepairs || {};
+
+      // Build table header
+      const unitColCount = BATTLE_SUMMARY_UNIT_COLUMNS.length;
+      if (thead) {
+        thead.innerHTML = `
+          <tr>
+            <th class="col-nation">国家</th>
+            <th class="col-group-label" colspan="${unitColCount}">损失单位</th>
+            <th class="col-repair">修复单位（付费）</th>
+            <th class="col-repair">修复单位（免费）</th>
+            <th class="col-loss-points">损失单位分</th>
+            <th class="col-kill-stress">击杀压力分</th>
+            <th class="col-battle-stress">本回合压力</th>
+            <th class="col-total-stress">总压力</th>
+            <th class="col-stress-threshold">压力阈值</th>
+            <th class="col-recovery">压力恢复</th>
+          </tr>
+          <tr>
+            <th class="col-nation"></th>
+            ${BATTLE_SUMMARY_UNIT_COLUMNS.map((col) => `<th>${col.label}</th>`).join('')}
+            <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+          </tr>`;
+      }
+
+      const rows = NATIONS.filter((nation) => {
+        const hasLosses = roundLosses[nation.id];
+        const hasRepairs = (roundPaidRepairs[nation.id] || 0) > 0 || (roundFreeRepairs[nation.id] || 0) > 0;
+        return hasLosses || hasRepairs;
+      }).map((nation) => {
+        const nationRoundLosses = roundLosses[nation.id] || {};
+
+        // Unit loss cells: X (accumulated) + Y (manual adjustment)
+        const unitCells = BATTLE_SUMMARY_UNIT_COLUMNS.map((col) => {
+          const roundVal = nationRoundLosses[col.key] || 0;
+          const adjVal = getRoundAdjustment(nation.id, col.key);
+          const cellId = `round-loss-${nation.id}-${col.key}`;
+          const editable = adjVal > 0 ? ' cell-edited' : '';
+          return `<td class="round-editable${editable}" data-cell-type="loss" data-nation="${nation.id}" data-unit="${col.key}" id="${cellId}">${formatXY(roundVal, adjVal)}</td>`;
+        }).join('');
+
+        // Repair cells: X + Y
+        const paidVal = roundPaidRepairs[nation.id] || 0;
+        const paidAdj = getRoundRepairAdjustment(nation.id);
+        const paidClass = paidAdj > 0 ? ' cell-edited' : '';
+        const repairPaidCell = `<td class="round-editable${paidClass}" data-cell-type="repair" data-nation="${nation.id}" id="round-repair-${nation.id}">${formatXY(paidVal, paidAdj)}</td>`;
+
+        const freeVal = roundFreeRepairs[nation.id] || 0;
+        const repairFreeCell = `<td>${freeVal || '<span class="cell-value-zero">0</span>'}</td>`;
+
+        // Stress recovery: 0 + Y
+        const recoveryAdj = getRoundStressRecoveryAdjustment(nation.id);
+        const recoveryClass = recoveryAdj > 0 ? ' cell-edited' : '';
+        const recoveryCell = `<td class="round-editable${recoveryClass}" data-cell-type="stressRecovery" data-nation="${nation.id}" id="round-recovery-${nation.id}">${formatXY(0, recoveryAdj)}</td>`;
+
+        // ── Stress-related columns (round summary) ─────────────────────────
+        // 损失单位分：从回合累计损失计算
+        const roundLossCp = getNationCasualtyPoints(nationRoundLosses);
+        const lossPointsTooltip = buildLossPointsTooltip(roundLossCp.breakdown);
+        const lossPointsCell = `<td title="${escapeHtml(lossPointsTooltip)}">${roundLossCp.total > 0 ? roundLossCp.total : '<span class="cell-value-zero">0</span>'}</td>`;
+
+        // 击杀压力分：本回合所有战斗对敌方造成的压力合计
+        // 从 battles 中统计本回合所有战斗的 stressEntries
+        const roundKillStress = computeRoundKillStress(nation.id);
+        const killStressCell = roundKillStress.stressPoints > 0
+          ? `<td title="${escapeHtml(roundKillStress.tooltip || '')}">${roundKillStress.stressPoints}</td>`
+          : '<td><span class="cell-value-zero">0</span></td>';
+
+        // 本回合压力：系统统计 X + 玩家修正 Y
+        const roundStressVal = getNationAccumulatedStress(nation.id);
+        const stressAdj = getRoundStressAdjustment(nation.id);
+        const stressAdjClass = stressAdj > 0 ? ' cell-edited' : '';
+        const battleStressCell = `<td class="round-editable${stressAdjClass}" data-cell-type="stress" data-nation="${nation.id}" id="round-stress-${nation.id}">${formatXY(roundStressVal, stressAdj)}</td>`;
+
+        // 总压力：系统统计 + 修正值
+        const totalStressVal = roundStressVal + stressAdj;
+        const totalStressCell = totalStressVal > 0
+          ? `<td class="${getStressCellClass(totalStressVal, nation.id)}" title="回合累计压力：${totalStressVal}\n压力阈值：${NATION_STRESS_THRESHOLDS[nation.id] || '?'}\n当前区域：${getStressZone(totalStressVal, nation.id).labelCN}">${totalStressVal}</td>`
+          : '<td><span class="cell-value-zero">0</span></td>';
+
+        // 压力阈值
+        const threshold = NATION_STRESS_THRESHOLDS[nation.id];
+        const thresholdCell = `<td title="当压力点 ≥ ${threshold} 时，国家在 Homeland Status Track 上前进一个 Zone。\n规则确认：ITALY=4，其余待对照实体 Stress Track。">${threshold || '<span class="cell-value-zero">?</span>'}</td>`;
+
+        const sideClass = nation.side === 'axis' ? 'axis-nation' : 'allied-nation';
+
+        return `<tr>
+          <td class="col-nation ${sideClass}">${nation.label}</td>
+          ${unitCells}
+          ${repairPaidCell}
+          ${repairFreeCell}
+          ${lossPointsCell}
+          ${killStressCell}
+          ${battleStressCell}
+          ${totalStressCell}
+          ${thresholdCell}
+          ${recoveryCell}
+        </tr>`;
+      }).join('');
+
+      tbody.innerHTML = rows;
+      renderRoundLog();
+    }
+
+    function renderRoundLog() {
+      const logList = document.getElementById('roundViewLogList');
+      if (!logList) return;
+      const cr = gameState.campaign.currentRound;
+      logList.innerHTML = cr.battles.map((b, i) =>
+        `<li>第 ${i + 1} 场 · ${b.battleType === 'land' ? '陆战' : '海战'} · ${new Date(b.timestamp).toLocaleTimeString()} · 损失 ${Object.values(b.lossesByNation || {}).reduce((a, c) => a + c, 0)} 单位 · 付费修复 ${Object.values(b.repairedByNation || {}).reduce((a, c) => a + c, 0) - Object.values(b.freeRepairsByNation || {}).reduce((a, c) => a + c, 0)} 单位</li>`
+      ).join('');
+      if (cr.battles.length === 0) {
+        logList.innerHTML = '<li style="color:var(--muted)">暂无记录</li>';
+      }
+    }
+
+    function applyRoundCellAdjustment(cellType, nationId, unitKey, delta) {
+      const cr = gameState.campaign.currentRound;
+      if (!cr.manualAdjustments || typeof cr.manualAdjustments !== 'object') {
+        cr.manualAdjustments = {};
+      }
+      const adj = cr.manualAdjustments;
+
+      if (cellType === 'loss') {
+        if (!adj.losses) adj.losses = {};
+        if (!adj.losses[nationId]) adj.losses[nationId] = {};
+        const current = adj.losses[nationId][unitKey] || 0;
+        const next = Math.max(0, current + delta);
+        if (next > 0) adj.losses[nationId][unitKey] = next;
+        else delete adj.losses[nationId][unitKey];
+      } else if (cellType === 'repair') {
+        if (!adj.repairs) adj.repairs = {};
+        const current = adj.repairs[nationId] || 0;
+        const next = Math.max(0, current + delta);
+        if (next > 0) adj.repairs[nationId] = next;
+        else delete adj.repairs[nationId];
+      } else if (cellType === 'stressRecovery') {
+        if (!adj.stressRecovery) adj.stressRecovery = {};
+        const current = adj.stressRecovery[nationId] || 0;
+        const next = Math.max(0, current + delta);
+        if (next > 0) adj.stressRecovery[nationId] = next;
+        else delete adj.stressRecovery[nationId];
+      } else if (cellType === 'stress') {
+        if (!adj.stress) adj.stress = {};
+        const current = adj.stress[nationId] || 0;
+        const next = Math.max(0, current + delta);
+        if (next > 0) adj.stress[nationId] = next;
+        else delete adj.stress[nationId];
+      }
+
+      saveState();
+      renderRoundSummary();
+    }
+
+    function handleRoundCellClick(event) {
+      if (gameState.ui.currentView !== 'round') return;
+      const cell = event.target.closest('.round-editable');
+      if (!cell) return;
+      event.preventDefault();
+      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit, 1);
+    }
+
+    function handleRoundCellContextMenu(event) {
+      if (gameState.ui.currentView !== 'round') return;
+      const cell = event.target.closest('.round-editable');
+      if (!cell) return;
+      event.preventDefault();
+      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit, -1);
+    }
+
+    function handleRoundCellWheel(event) {
+      if (gameState.ui.currentView !== 'round') return;
+      const cell = event.target.closest('.round-editable');
+      if (!cell) return;
+      event.preventDefault();
+      const delta = event.deltaY < 0 ? 1 : -1;
+      applyRoundCellAdjustment(cell.dataset.cellType, cell.dataset.nation, cell.dataset.unit, delta);
+    }
+
+    // ─── Stress View Rendering ─────────────────────────────────────────────
+
+    function getMedalsAvailable() {
+      const cr = gameState.campaign.currentRound;
+      if (!cr.medalsAvailable) cr.medalsAvailable = {};
+      return cr.medalsAvailable;
+    }
+
+    function getCivilianGoodsAvailable() {
+      const cr = gameState.campaign.currentRound;
+      if (!cr.civilianGoodsAvailable) cr.civilianGoodsAvailable = {};
+      return cr.civilianGoodsAvailable;
+    }
+
+    function renderStressView() {
+      const tbody = document.getElementById('stressTbody');
+      if (!tbody) return;
+
+      // Update toolbar
+      const roundEl = document.getElementById('stressViewRoundNumber');
+      if (roundEl) roundEl.textContent = gameState.campaign.currentRound.roundNumber;
+
+      const medalsAvailable = getMedalsAvailable();
+      const civilianGoodsAvailable = getCivilianGoodsAvailable();
+
+      // Compute stress from accumulated round losses using Morale Factors
+      const roundLosses = gameState.campaign.currentRound.accumulatedLosses || {};
+      const accumulatedStress = gameState.campaign.currentRound.accumulatedStress || {};
+
+      const rows = NATIONS.map((nation) => {
+        const nationLosses = roundLosses[nation.id] || {};
+
+        // 计算伤亡点数（使用 Morale Board 系数）
+        const casualtyResult = computeNationCasualtyPoints(nationLosses);
+        const casualtyPoints = casualtyResult.total;
+
+        // 转换伤亡点数 → 压力点数（标准 Conversion Chart 查找表）
+        const stressFromLosses = convertCasualtyPointsToStress(casualtyPoints);
+
+        // 使用累计压力（优先），回退到从损失计算的壓力
+        const systemStressPoints = accumulatedStress[nation.id] || stressFromLosses;
+
+        // 玩家手动修正
+        const stressAdj = getRoundStressAdjustment(nation.id);
+        const totalStressPoints = systemStressPoints + stressAdj;
+
+        const zone = getStressZone(totalStressPoints, nation.id);
+        const threshold = NATION_STRESS_THRESHOLDS[nation.id] || 5;
+        const medals = medalsAvailable[nation.id] || 0;
+        const civilianGoods = civilianGoodsAvailable[nation.id] || 0;
+
+        // 本回合压力恢复 = 勋章 + 民用物资可抵消的压力点数（规则 §12 Step 1: 1:1 兑换）
+        const stressRecoveryPotential = medals + civilianGoods;
+        const effectiveStress = Math.max(0, totalStressPoints - stressRecoveryPotential);
+
+        const zoneColorStyle = `background:${zone.bg};border-left:4px solid ${zone.color};`;
+        const sideClass = nation.side === 'axis' ? 'axis-nation' : 'allied-nation';
+
+        const breakdownItems = casualtyResult.breakdown.map((b) => `${b.unit} ×${b.count} (系数${b.factor}) = ${b.points}`).join('；');
+        const conversionRange = getStressConversionRange(stressFromLosses);
+        const stressTooltip = `伤亡点数：${casualtyPoints}（${breakdownItems || '0'}）\n压力转换：${casualtyPoints} 伤亡点 → [${conversionRange}] → ${stressFromLosses} 压力点\n累计压力：${systemStressPoints}\n玩家修正：${stressAdj > 0 ? '+' + stressAdj : stressAdj}\n勋章/民用物资可抵消：${stressRecoveryPotential}\n有效压力：${effectiveStress}`;
+
+        return `<tr>
+          <td class="col-nation ${sideClass}" title="${escapeHtml(stressTooltip)}">${nation.label}</td>
+          <td style="font-weight:700;" title="${escapeHtml(stressTooltip)}">${totalStressPoints}</td>
+          <td style="${zoneColorStyle}">${zone.labelCN} <span style="color:${zone.color};font-size:10px;">●</span></td>
+          <td title="Stress Threshold：压力点 ≥ ${threshold} 时前进一个 Zone">${threshold}</td>
+          <td style="font-size:11px;color:var(--muted);" title="累积惩罚，每回合重复触发">${zone.penalty}</td>
+          <td>
+            <button class="stress-inline-btn" data-stress-action="medal-dec" data-nation="${nation.id}" type="button" title="减少可用勋章">−</button>
+            <span style="margin:0 4px;font-weight:600;">${medals}</span>
+            <button class="stress-inline-btn" data-stress-action="medal-inc" data-nation="${nation.id}" type="button" title="增加可用勋章">+</button>
+          </td>
+          <td>
+            <button class="stress-inline-btn" data-stress-action="civilian-dec" data-nation="${nation.id}" type="button" title="减少可用民用物资">−</button>
+            <span style="margin:0 4px;font-weight:600;">${civilianGoods}</span>
+            <button class="stress-inline-btn" data-stress-action="civilian-inc" data-nation="${nation.id}" type="button" title="增加可用民用物资">+</button>
+          </td>
+          <td style="font-weight:700;" title="勋章 ${medals} + 民用物资 ${civilianGoods} = 可抵消 ${stressRecoveryPotential} 压力点">${stressRecoveryPotential}</td>
+        </tr>`;
+      }).join('');
+
+      tbody.innerHTML = rows;
+    }
+
+    function adjustMedals(nationId, delta) {
+      const medals = getMedalsAvailable();
+      const current = medals[nationId] || 0;
+      const next = Math.max(0, current + delta);
+      if (next > 0) medals[nationId] = next;
+      else delete medals[nationId];
+      saveState();
+      if (gameState.ui.currentView === 'stress') renderStressView();
+    }
+
+    function adjustCivilianGoods(nationId, delta) {
+      const goods = getCivilianGoodsAvailable();
+      const current = goods[nationId] || 0;
+      const next = Math.max(0, current + delta);
+      if (next > 0) goods[nationId] = next;
+      else delete goods[nationId];
+      saveState();
+      if (gameState.ui.currentView === 'stress') renderStressView();
+    }
+
+    // ─── Event Binding ─────────────────────────────────────────────────────
+
     function bindEvents() {
-      document.querySelectorAll('[data-show-view]').forEach((button) => {
-        button.addEventListener('click', () => showView(button.dataset.showView));
+      // Use event delegation for data-show-view so dynamically created buttons work
+      document.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-show-view]');
+        if (button) {
+          showView(button.dataset.showView);
+        }
       });
 
       document.querySelectorAll('input[name="battleMode"]').forEach((input) => {
         input.addEventListener('change', () => {
           if (!input.checked) return;
           gameState.battleMode = input.value;
+          if (input.value === 'quick') {
+            addBattleLog('提示：快速战斗模式尚未完整实现，当前将按完整战斗模式运行。', { save: false });
+          }
           saveState();
           updateToolbar();
         });
@@ -4378,6 +6575,8 @@
           gameState.damage.assignments.airDamage = null;
           gameState.damage.assignments.surfaceDamage = null;
           gameState.damage.forceAdvantageSnapshot = null;
+          resetRepairState();
+          resetCombatResolutionState();
           resetAllAutoAssignmentFlags();
           saveState();
           updateBoardBackground();
@@ -4395,10 +6594,42 @@
       });
 
       document.getElementById('continueBattleButton').addEventListener('click', () => {
-        showView('battle');
+        // If a battle was just completed, go to battle summary
+        if (gameState.combatResolution && gameState.combatResolution.performed) {
+          showView('battle-summary');
+        } else {
+          showView('battle');
+        }
       });
 
       document.getElementById('clearSaveButton').addEventListener('click', clearSave);
+
+      // Battle Summary buttons
+      const startNewBattleFromSummaryBtn = document.getElementById('startNewBattleFromSummaryButton');
+      if (startNewBattleFromSummaryBtn) {
+        startNewBattleFromSummaryBtn.addEventListener('click', () => {
+          startNewBattle();
+          showView('battle');
+        });
+      }
+
+      const goToRoundSummaryBtn = document.getElementById('goToRoundSummaryButton');
+      if (goToRoundSummaryBtn) {
+        goToRoundSummaryBtn.addEventListener('click', () => {
+          accumulateBattleToRound();
+          showView('round');
+        });
+      }
+
+      const resetRoundBtn = document.getElementById('resetRoundButton');
+      if (resetRoundBtn) {
+        resetRoundBtn.addEventListener('click', () => {
+          const confirmed = window.confirm('确定要重置本回合吗？这将恢复到回合开始时的状态，本回合所有战斗数据将丢失。');
+          if (!confirmed) return;
+          resetRound();
+          showView('home');
+        });
+      }
 
       document.getElementById('debugToggleButton').addEventListener('click', () => {
         gameState.ui.debugMode = !gameState.ui.debugMode;
@@ -4423,6 +6654,21 @@
           saveState();
         });
       });
+
+      const autoRepairCheckbox = document.getElementById('autoRepairCheckbox');
+      if (autoRepairCheckbox) {
+        autoRepairCheckbox.addEventListener('change', () => {
+          const repairState = ensureRepairState();
+          repairState.autoRepairEnabled = autoRepairCheckbox.checked;
+          if (autoRepairCheckbox.checked) {
+            selectAllDamagedZonesForSide('axis', true);
+            selectAllDamagedZonesForSide('allied', true);
+          } else {
+            selectAllDamagedZonesForSide('axis', false);
+            selectAllDamagedZonesForSide('allied', false);
+          }
+        });
+      }
 
       document.querySelectorAll('[data-mode-help-side]').forEach((button) => {
         button.addEventListener('click', () => {
@@ -4513,6 +6759,47 @@
       overlay.addEventListener('wheel', handleOverlayWheel, { passive: false });
       overlay.addEventListener('pointermove', handleOverlayPointerMove);
       overlay.addEventListener('pointerleave', () => updateHoverInfo(null));
+
+      // Round summary cell editing via event delegation on the round view
+      const roundView = document.getElementById('view-round');
+      if (roundView) {
+        roundView.addEventListener('click', handleRoundCellClick);
+        roundView.addEventListener('contextmenu', handleRoundCellContextMenu);
+        roundView.addEventListener('wheel', handleRoundCellWheel, { passive: false });
+      }
+
+      // Round summary buttons
+      const confirmEndRoundBtn = document.getElementById('confirmEndRoundFromSummaryButton');
+      if (confirmEndRoundBtn) {
+        confirmEndRoundBtn.addEventListener('click', () => {
+          const confirmed = window.confirm('确定结束第 ' + gameState.campaign.currentRound.roundNumber + ' 回合吗？回合数据将保存到历史记录。');
+          if (!confirmed) return;
+          confirmEndRound();
+          showView('home');
+        });
+      }
+
+      const resetRoundFromSummaryBtn = document.getElementById('resetRoundFromSummaryButton');
+      if (resetRoundFromSummaryBtn) {
+        resetRoundFromSummaryBtn.addEventListener('click', () => {
+          const confirmed = window.confirm('确定要重置本回合吗？这将恢复到回合开始时的状态，本回合所有战斗数据将丢失。');
+          if (!confirmed) return;
+          resetRound();
+          showView('home');
+        });
+      }
+
+      // Stress view inline buttons via event delegation
+      document.addEventListener('click', (event) => {
+        const btn = event.target.closest('[data-stress-action]');
+        if (!btn) return;
+        const action = btn.dataset.stressAction;
+        const nationId = btn.dataset.nation;
+        if (action === 'medal-inc') adjustMedals(nationId, 1);
+        else if (action === 'medal-dec') adjustMedals(nationId, -1);
+        else if (action === 'civilian-inc') adjustCivilianGoods(nationId, 1);
+        else if (action === 'civilian-dec') adjustCivilianGoods(nationId, -1);
+      });
 
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && gameState.ui.inputMode) {
